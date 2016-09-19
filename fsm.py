@@ -14,6 +14,7 @@ class fsmInput(object):
     def __init__(self, name):
         self._name = name
         self.conn = False #pv connessa
+        self.val = None
         self.data = {}    # pv data
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
@@ -27,6 +28,7 @@ class fsmInput(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
+        self.val = args.get('value', None)
         self.trigger()
         self._unlock()        
         self.unlock()
@@ -36,6 +38,7 @@ class fsmInput(object):
         self.lock()
         self._lock()
         self.data = args
+        self.val=args.get('value', None)
         self.trigger()
         self._unlock()        
         self.unlock()
@@ -99,18 +102,24 @@ class fsmOutputs(object):
 
 # classe base per la macchina a stati
 class fsmBase(object):
-    def __init__(self, inputs, outputs, states):
-        # 'states' è un dizionario in cui la chiave è il nome dello stato e 
+    def __init__(self, inputs, outputs, stateDefs):
+        
+        # stateDefs e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
         self._inputs = inputs
         self._outputs = outputs
-        _states = {}
+        _states = {}   #perche' prima lo definisci e poi lo assegni?
         self._inputs.lock()
-        for state in states:
-            _states[state] = self._inputs.link(states[state], self)
+        for stateDef in stateDefs:
+            _states[stateDef] = self._inputs.link(stateDefs[stateDef], self)
         self._states = _states
-        self._curstate = None
         self._inputs.unlock()
+        self._curstate = None
+        self._curexit = None
+        self._nextstate = None
+        self._nextentry = None
+        self._nextexit = None
+        self._progress = 0  #to report progress of the procedure [0-100]
         self._cond = threading.Condition()
     
     # ottiene accesso esclusivo a questo oggetto        
@@ -140,7 +149,6 @@ class fsmBase(object):
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
                 self._cursens = self._states[self._nextstatename]
-                self._curstatename = self._nextstatename
             
             self.commonEval()                
             self._curstate()        
@@ -150,10 +158,12 @@ class fsmBase(object):
                     self._curexit()
             else:
                 again = False        
+    
     # valuta all'infinito la macchina a stati
     def eval_forever(self):
         self.lock()
         while(1):
+            print "-------------------"
             self.eval() # eval viene eseguito con l'accesso esclusivo su questa macchina
             self._cond.wait() # la macchina va in sleep in attesa di un evento (da un ingresso)
 
@@ -164,70 +174,106 @@ class fsmBase(object):
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, name):
         if name in self._cursens:
-            self._cond.notify() #sveglia la macchina solo se quell'ingresso è nella sensitivity list dello stato corrente
+            self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
 
     def commonEval(self):
-		pass
+        pass
 
 
 ################################################################################
 
 # ESEMPIO DI UTILIZZO
             
-class testFsm(fsmBase):
-    def __init__(self, inputs, outputs):
-        fsmBase.__init__(self, inputs, outputs, 
-                         {
-                          "init" : [],          # lo stato init non è interessanto a nessun ingresso
-                          "uno"  : ['A'],       # lo stato 'uno' è interessato agli eventi dell'ingresso A
-                          "due"  : ['A', 'B']   # lo stato 'due' è interessato agli eventi dell'ingresso B
-                          }
-                         )
-        
+class zerFreqFsm(fsmBase):
+    def __init__(self, inputs, outputs, statesWithPvs):
+        fsmBase.__init__(self, inputs, outputs, statesWithPvs)
+        self.freqErr = self.input("freqErr")
+        self.enable = self.input("zeroEn")
+        self.movn = self.input("m1:motor.MOVN")
+        self.position = self.input("m1:motor")
+        self.moveRel = self.input("m1:moveRel")
         self.gotoState('init')
-        
 
+
+    def commonEval(self):
+        pass
 
     #eval dello stato 'init'        
     def init_eval(self):
         print "init eval"
-        self.gotoState('uno')
+        self.gotoState('idle')
     
     # facoltativa: questa veiene eseguita una sola volta quando la macchina entra nello stato 1
-    def uno_entry(self):
-        print "entering in 'uno'"
-        self.timer('t1').set(5.5)
+    def idle_entry(self):
+        print "boot-up complete, entering idle..."
         
-    # obbligatoria: viene eseguita un numero imprecisato di volte finchè rimane nello stato 1       
-    def uno_eval(self):
-        print "evaluating 'uno'"
-        i = self.input('A')
-        i.val()
-        
-        self.input('A').value()
-        self.input('A').severity()
-
-        if i.data.get('value', None) == 1:
-            self.gotoState('due')
-         elif self.timer('t1').expired():
-         	self.gotoState('error')   
+    # obbligatoria: viene eseguita un numero imprecisato di volte finche' rimane nello stato 1       
+    def idle_eval(self):
+        print "evaluating 'idle'"
+        if enable.val == 1:
+            if freqErr.val > 10:
+            	self.gotoState("outRng_goLow")
+            else self.gotoState("inRng_goLows")
     
-    # facoltativa: viene eseguita una sola volta all'uscita dello stato 'uno'        
-    def uno_exit(self):
-        print "exiting from 'uno'"
-            
-    # so on...            
-    def due_eval(self):
-        print "evaluating 'due'"
-        if self.input('A').conn and self.input('A').data['value'] == 0:
-            self.gotoState('uno')
-        
+    def idle_exit(self):
+        print "Starting zeroing!"
+    
+    def outRng_goLow_entry(self):
+    	freqerr0 = self.input('freqErr').val
+		if self.input("m1:motor.MOVN").val == 0
+			if freqerr0 < 10k:
+				self.gotoState("outRng_goLow")			
+			move of n step down
+		lastmovn = movn
+
+
+    def outRng_goLow_eval(self):
+        print "evaluating outRng_goLow"
+        self.gotoState("outRng_gohigh")
+    
+    def outRng_gohigh_eval(self):
+        print "evaluating outRng_gohigh"
+        self.gotoState("inRng_golow") 
+
+    def inRng_golow_eval(self):
+        print "evaluating inRng_golow"
+        self.gotoState("inRng_goHigh")
+    
+    def inRng_goHigh_eval(self):
+        print "evaluating inRng_goHigh"
+        self.gotoState("minimize")
+    
+    def minimize_eval(self):
+        print "evaluating minimize"
+        self.gotoState("end")
+    
+    def end_eval(self):
+        print "evaluating end"
+        self.gotoState("error")
+    
+    def error_eval(self):
+        print "evaluating error"
+        self.gotoState("idle")            
         
         
 inputs = fsmInputs()
 outputs = fsmOutputs()
 
-f = testFsm(inputs, outputs)
+statesWithPvs = {
+    "init" : [],
+    "idle" : ["zeroEn"],
+    "outRng_goLow" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "outRng_gohigh" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "inRng_golow" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "inRng_goHigh" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "minimize" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "end" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
+    "error" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"]
+}
+
+
+
+f = zerFreqFsm(inputs, outputs, statesWithPvs)
 
 f.eval_forever()        
