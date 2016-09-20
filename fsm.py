@@ -10,7 +10,7 @@ import threading
 
 #classe che rappresenta un ingresso per le macchine a stati
 
-class fsmInput(object):
+class fsmIO(object):
     def __init__(self, name):
         self._name = name
         self.conn = False #pv connessa
@@ -28,7 +28,6 @@ class fsmInput(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
-        self.val = args.get('value', None)
         self.trigger()
         self._unlock()        
         self.unlock()
@@ -43,6 +42,14 @@ class fsmInput(object):
         self._unlock()        
         self.unlock()
     
+    def putcb(self, name):
+        self.lock()
+        self._lock()
+        self.trigger()
+        self._unlock()        
+        self.unlock()
+    	pass
+
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self):
         for o in self._attached:
@@ -65,26 +72,29 @@ class fsmInput(object):
     def unlock(self):
         self._lck.release()
         
+    def put(self, value):
+    	self._pv.put(value, callback=self.putcb, use_complete=True)
+        
 
 #rappresenta una lista di oggetti input
-class fsmInputs(object):
+class fsmIOs(object):
 
     def __init__(self):
-        self._inputs = {}
+        self._ios = {}
         self._lck = threading.Lock()
     
     # connette (crea se non esistono) gli ingressi names all'oggetto obj
     def link(self, names, obj):
         ret = {}
         for name in names:
-            if name not in self._inputs:
-                self._inputs[name] = fsmInput(name)
-            self._inputs[name].attach(obj)
-            ret[name] = self._inputs[name]
+            if name not in self._ios:
+                self._ios[name] = fsmIO(name)
+            self._ios[name].attach(obj)
+            ret[name] = self._ios[name]
         return ret
 
     def get(self, name):
-        return self._inputs[name]            
+        return self._ios[name]            
     
     # ottiene l'accesso esclusivo a questo oggetto            
     def lock(self):
@@ -93,35 +103,40 @@ class fsmInputs(object):
     def unlock(self):
         self._lck.release()
 
+    def getFsmIO(self, fsm):
+    	ret = {}
+    	for io in self._ios:
+    		if fsm in io._attached:
+    			ret[io._name] = io
+    	return ret
     
 
-class fsmOutputs(object):
-    pass    
 
 
 
 # classe base per la macchina a stati
 class fsmBase(object):
-    def __init__(self, inputs, outputs, stateDefs):
+    def __init__(self, io, stateDefs):
         
         # stateDefs e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
-        self._inputs = inputs
-        self._outputs = outputs
-        _states = {}   #perche' prima lo definisci e poi lo assegni?
-        self._inputs.lock()
+        self._ios = io
+        self._states = {}   #perche' prima lo definisci e poi lo assegni?
+        self._ios.lock()
         for stateDef in stateDefs:
-            _states[stateDef] = self._inputs.link(stateDefs[stateDef], self)
-        self._states = _states
-        self._inputs.unlock()
+            self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
+        self._ios.unlock()
         self._curstate = None
         self._curexit = None
         self._nextstate = None
         self._nextentry = None
         self._nextexit = None
         self._progress = 0  #to report progress of the procedure [0-100]
+        self._cursens = {}
         self._cond = threading.Condition()
-    
+    	self._myios = self._ios.getFsmIO(self)
+
+
     # ottiene accesso esclusivo a questo oggetto        
     def lock(self):
         self._cond.acquire()
@@ -169,13 +184,14 @@ class fsmBase(object):
 
             
     def input(self, name):
-        return self._inputs.get(name)       
+        return self._ios.get(name)       
 
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, name):
         if name in self._cursens:
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
+    #metodo che scrive su output stato corrente
 
     def commonEval(self):
         pass
@@ -197,7 +213,8 @@ class zerFreqFsm(fsmBase):
 
 
     def commonEval(self):
-        pass
+        for io in self._myios:
+        	pass
 
     #eval dello stato 'init'        
     def init_eval(self):
@@ -221,10 +238,8 @@ class zerFreqFsm(fsmBase):
     
     def outRng_goLow_entry(self):
     	freqerr0 = self.input('freqErr').val
-		if self.input("m1:motor.MOVN").val == 0
-			if freqerr0 < 10k:
-				self.gotoState("outRng_goLow")			
-			move of n step down
+		if self.input("m1:motor.MOVN").val == 0			
+			self.moveRel.put(100)
 		lastmovn = movn
 
 
@@ -257,7 +272,7 @@ class zerFreqFsm(fsmBase):
         self.gotoState("idle")            
         
         
-inputs = fsmInputs()
+inputs = fsmIOs()
 outputs = fsmOutputs()
 
 statesWithPvs = {
