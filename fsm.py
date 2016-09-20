@@ -42,6 +42,7 @@ class fsmIO(object):
         self._unlock()        
         self.unlock()
     
+    #put callback
     def putcb(self, name):
         self.lock()
         self._lock()
@@ -116,12 +117,12 @@ class fsmIOs(object):
 
 # classe base per la macchina a stati
 class fsmBase(object):
-    def __init__(self, io, stateDefs):
+    def __init__(self, ios, stateDefs):
         
         # stateDefs e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
         self._ios = io
-        self._states = {}   #perche' prima lo definisci e poi lo assegni?
+        self._states = {}
         self._ios.lock()
         for stateDef in stateDefs:
             self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
@@ -131,7 +132,6 @@ class fsmBase(object):
         self._nextstate = None
         self._nextentry = None
         self._nextexit = None
-        self._progress = 0  #to report progress of the procedure [0-100]
         self._cursens = {}
         self._cond = threading.Condition()
     	self._myios = self._ios.getFsmIO(self)
@@ -171,6 +171,7 @@ class fsmBase(object):
                 again = True
                 if self._curexit:
                     self._curexit()
+                self.commonExit()
             else:
                 again = False        
     
@@ -191,54 +192,123 @@ class fsmBase(object):
         if name in self._cursens:
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
-    #metodo che scrive su output stato corrente
-
     def commonEval(self):
         pass
+
+    def commonExit(self):
+    	pass
 
 
 ################################################################################
 
 # ESEMPIO DI UTILIZZO
             
-class zerFreqFsm(fsmBase):
-    def __init__(self, inputs, outputs, statesWithPvs):
+class zeroFreqFsm(fsmBase):
+    def __init__(self, ios, statesWithPvs):
         fsmBase.__init__(self, inputs, outputs, statesWithPvs)
         self.freqErr = self.input("freqErr")
         self.enable = self.input("zeroEn")
         self.movn = self.input("m1:motor.MOVN")
         self.position = self.input("m1:motor")
         self.moveRel = self.input("m1:moveRel")
+        self.limitSwitch1 = 0
+        self.limitSwitch2 = 0
+        self.progress = 0  #to report progress of the procedure [0-100]
         self.gotoState('init')
 
+        #info to be passed to fsm
+        self.maxFreqDelta = 100;
+        self.microstep = 64
+        self.bigStep = microstep*20
+        self.smallStep = microstep*2
+        self.maxSteps = microstep*1500
+        self.maxStepsDelta = maxFreqDelta*smallStep
+
+        #auxiliary variables
+        self.lastmovn = movn.val
+        self.freqErr0 = freqErr.val
+        self.stepsDone = 0
+        self.foundDirection = 0
 
     def commonEval(self):
-        for io in self._myios:
-        	pass
+        #check all connections useful to the current state
+        if enable.val != 1:
+        	self.gotoState("stop") 
+        for io in self._cursens:
+        	if not io.conn:
+        		self.gotoState("error")
 
-    #eval dello stato 'init'        
+    def commonExit(self):
+    	#write current state name, current operation and progress to pv
+    	self.progress += 1 #TODO
+    	self.reportState = self._nextstatename
+       
     def init_eval(self):
-        print "init eval"
+        print "------->Boot up zeroFreq finite state machine"
         self.gotoState('idle')
     
-    # facoltativa: questa veiene eseguita una sola volta quando la macchina entra nello stato 1
     def idle_entry(self):
         print "boot-up complete, entering idle..."
         
-    # obbligatoria: viene eseguita un numero imprecisato di volte finche' rimane nello stato 1       
     def idle_eval(self):
-        print "evaluating 'idle'"
+        print "evaluating idle"
         if enable.val == 1:
-            if freqErr.val > 10:
-            	self.gotoState("outRng_goLow")
-            else self.gotoState("inRng_goLows")
-    
-    def idle_exit(self):
-        print "Starting zeroing!"
-    
+            if freqErr.val <= 1:
+            	self.gotoState("end")
+            elif 1<freqErr.val<=250:
+            	self.gotoState("badRange")
+            elif 250<freqErr.val<10e3:
+            	self.gotoState("inRange")
+            else:
+            	self.gotoState("outRange")
+
+    #move down of 1000 steps to exit badRange
+    def badRange_entry(self):
+    	if movn.val == 0			
+			moveRel.put(-1000 * microstep)
+		lastmovn = movn.val
+
+	#check if successfully exited the bad range when end of movement
+    def badRange_eval(self):
+    	if movn.val < lastmovn:
+    		if 250<freqErr.val<10e3:
+    			self.gotoState("inRange")
+    		else:
+    			gotoState("error")
+
+    #move down and save initial freqErr
+    def inRange_entry(self):
+    	freqErr0 = freqErr.val
+    	if movn.val == 0
+    		numSteps = bigStep if freqErr.val>250 else smallStep
+    		moveRel.put(-numSteps)
+    		stepsDone = numSteps
+    	lastmovn = movn.val
+
+    #move until i exit the delta, where freq is not correlable to movement
+    def inRange_eval(self):
+    	if lastmovn < movn.val:
+    		if abs(freqErr.val-freqErr0)<maxFreqDelta:  #out of delta i assume the freqerr is safe
+    			self.gotoState("minimize")
+    			self.foundDirection = -1 if freqErr.val < freqErr0 else 1
+    		elif freqErr.val > 10e3 or limitSwitch1.val or limitSwitch2.val  #did not surpassed delta
+    			self.gotoState("tryUp")
+    		elif stepsDone > maxStepsDelta*1.5:  #stall
+    			self.gotoState("error")
+    		else:
+    			numSteps = bigStep if freqErr.val>250 else smallStep
+    			moveRel.put(-numSteps)
+    			stepsDone = numSteps
+    	lastmovn = movn.val
+
+    def outRange_entry(self):
+    	
+
+
+
     def outRng_goLow_entry(self):
-    	freqerr0 = self.input('freqErr').val
-		if self.input("m1:motor.MOVN").val == 0			
+    	freqErr0 = self.input('freqErr').val
+		if movn.val == 0			
 			self.moveRel.put(100)
 		lastmovn = movn
 
@@ -265,15 +335,15 @@ class zerFreqFsm(fsmBase):
     
     def end_eval(self):
         print "evaluating end"
-        self.gotoState("error")
+        enable.put(0);
+        self.gotoState("idle")
     
     def error_eval(self):
         print "evaluating error"
         self.gotoState("idle")            
         
         
-inputs = fsmIOs()
-outputs = fsmOutputs()
+ios = fsmIOs()
 
 statesWithPvs = {
     "init" : [],
@@ -289,6 +359,6 @@ statesWithPvs = {
 
 
 
-f = zerFreqFsm(inputs, outputs, statesWithPvs)
+f = zeroFreqFsm(ios, statesWithPvs)
 
 f.eval_forever()        
