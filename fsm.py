@@ -119,7 +119,6 @@ class fsmTimers(threading.Thread):
         self._cond.release()
     
 #classe che rappresenta un ingresso per le macchine a stati
-
 class fsmIO(object):
     def __init__(self, name):
         self._name = name
@@ -138,6 +137,7 @@ class fsmIO(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
+        self.val = args.get('value', None)
         self.trigger()
         self._unlock()        
         self.unlock()
@@ -234,7 +234,7 @@ class fsmBase(object):
         self._timers = {}
         self._ios = args.get('ios', fsmIOs())
         self._logger = args.get('logger', fsmLogger())
-        self._states = {}   #perche' prima lo definisci e poi lo assegni?
+        self._states = {}
         for stateDef in stateDefs:
             self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
         self._curstatename = 'undefined'
@@ -298,8 +298,8 @@ class fsmBase(object):
                 self._curexit = self._nextexit
                 self._cursens = self._states[self._nextstatename]
             
-            self.logD('executing commonEval()')
-            self.commonEval()                
+            #self.logD('executing commonEval()')
+            #self.commonEval()                
             self.logD('executing %s_eval()' %(self._nextstatename))
             self._curstate()        
             if self._nextstate != self._curstate:
@@ -307,7 +307,8 @@ class fsmBase(object):
                 if self._curexit:
                     self.logD('executing %s_exit()' %(self._curstatename))
                     self._curexit()
-                self.commonExit()
+                #self.logD('executing commonExit()')
+                #self.commonExit()
             else:
                 again = False        
     
@@ -315,6 +316,7 @@ class fsmBase(object):
     def eval_forever(self):
         self.lock()
         while(1):
+            print "\n"
             self.logD('awoken')
             self.eval() # eval viene eseguito con l'accesso esclusivo su questa macchina
             self._cond.wait() # la macchina va in sleep in attesa di un evento (da un ingresso)
@@ -328,11 +330,11 @@ class fsmBase(object):
         if not name or name in self._cursens:
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
-    def commonEval(self):
-        pass
+    #def commonEval(self):
+    #    pass
 
-    def commonExit(self):
-    	pass
+    #def commonExit(self):
+    #	pass
 
     def tmrSet(self, name, timeout):
         if not name in self._timers:
@@ -361,8 +363,8 @@ class fsmTest(fsmBase):
     
     def uno_entry(self):
         self.logI("uno entry")
-        self.tmrSet('t1',7)
-        self.tmrSet('t2',5)
+        self.tmrSet('t1',5)
+        self.tmrSet('t2',7)
         
 
     def due_entry(self):
