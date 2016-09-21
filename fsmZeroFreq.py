@@ -9,7 +9,6 @@ class zeroFreqFsm(fsmBase):
         self.freqErr = self.input("freqErr")
         self.enable = self.input("zeroEn")
         self.movn = self.input("m1:motor.MOVN")
-        self.position = self.input("m1:motor")
         self.moveRel = self.input("m1:moveRel")
         self.limitSwitch1 = 0
         self.limitSwitch2 = 0
@@ -186,13 +185,13 @@ ios = fsmIOs()
 statesWithPvs = {
     "init" : [],
     "idle" : ["zeroEn"],
-    "outRng_goLow" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "outRng_gohigh" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "inRng_golow" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "inRng_goHigh" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "minimize" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "end" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"],
-    "error" : ["zeroEn","m1:motor", "freqErr", "m1:motor.MOVN", "m1:moveRel"]
+    "badRange" : ["zeroEn", "m1:motor.MOVN"],
+    "inRange" : ["zeroEn", "m1:motor.MOVN"],
+    "outRange" : ["zeroEn", "m1:motor.MOVN"],
+    "tryUp" : ["zeroEn", "m1:motor.MOVN"],
+    "minimize" : ["zeroEn", "m1:motor.MOVN"],
+    "end" : ["zeroEn"],
+    "error" : ["zeroEn"]
 }
 
 
