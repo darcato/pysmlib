@@ -1,13 +1,123 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 15 set 2016
 
 @author: damiano
 '''
 
+
 import epics
 import threading
+import time
+
+class fsmLogger(object):
+    levstr = ['E','W','I','D']
+    def __init__(self, lev=3):
+        self._level = lev
+        
+        
+    def log(self, lev, msg):
+        if lev <= self._level:
+            self.pushMsg('%s - %s' %(fsmLogger.levstr[lev], msg))
+            
+    def pushMsg(self, msg):
+        print msg
 
 
+#Classe timer, utilizzabile dalle macchine a stati
+class fsmTimer(object):
+    def __init__(self, fsm):
+        self.expire = 0
+        self._fsm = fsm
+        self._pending = False
+        
+    
+    def reset(self, timeout):
+        self.expire = time.time() + timeout
+        self._pending = True
+        
+    def trigger(self):
+        self._pending = False
+        self._fsm.lock()
+        self._fsm.trigger()
+        self._fsm.unlock()
+        
+    def expd(self):
+        return not self._pending    
+
+    
+# Classe per il management dei timers       
+class fsmTimers(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        #lock per l'accesso esclusivo
+        self._cond = threading.Condition()
+        #array con i timers attivi in ordine di scadenza
+        # (indice 0 è il prossimo a scadere)
+        self._timers = []
+        
+    #routine principale del thread.
+    # Funziona in questo modo, il thread va in sleep per un periodo di tempo pari a quello che manca
+    # allo scadere del prossimo timer (il primo di una lista ordinata per scadenza). Allo scadere dello 
+    # sleep, il thread inizia a vedere quanti timer sono scaduti partendo dal prossimo (possono scaderene 
+    # anche più di uno quando hanno la stessa ora di scadenza o gli intervalli rientrano nel jitter di 
+    # esecuzione del thread). Per ogni timer scaduto esegue il trigger e lo rimuove dalla lista dei trigger 
+    # pendenti  
+    def run(self):
+        #acquisissce il lock, per avere accesso esclusivo alla lista dei timer
+        self._cond.acquire()
+        next = None
+        while True:
+            if len(self._timers): # se ci sono timers in pendenti
+                now = time.time() # tempo corrente
+                i = 0
+                next = None
+                for t in self._timers:
+                    if t.expire > now: 
+                        #abbiamo trovato il primo timer non ancora scaduto,
+                        # interrompo la scansione, i rappresenta l'indice del primo timer non scaduto
+                        next = self._timers[i].expire - now
+                        break
+                    i += 1
+                # triggera gli eventi per i timer che vanno da 0 a i-1    
+                for t in self._timers[:i]:
+                    t.trigger()
+                #rimuove i primi 'i' timers (che sono scaduti)                        
+                self._timers = self._timers[i:]
+            #va in sleep per i prossimi 'next' secondi, ovvero l'intervallo di tempo al termine del quale scadra'
+            # il prossimo timer. Se non ci sono timer va in sleep a per un tempo indefinito
+            # NB: wait rilascia il lock permettendo ad altri thread di impostare altri timer
+            self._cond.wait(next)
+    
+    # imposta un timer     
+    def set(self, timer, timeout):
+        #ottiene l'accesso esclusivo alla lista dei timer
+        self._cond.acquire()
+        # imposta il tempo al quale scadrà il timer
+        timer.reset(timeout)
+        
+        # se il timer è già in lista significa che è stato reimpostato prima che scadesse, 
+        # quindi lo rimuovo e lo reimposto
+        if timer in self._timers:
+            self._timers.remove(timer)
+        i = 0    
+        for t in self._timers:
+            if t.expire > timer.expire:
+                # il timer all'indice 'i' scade dopo il timer che sto impostando, pertanto
+                # inserisco il nuovo timer in questa posizione 'i' e interrompo il ciclo
+                break
+            i += 1
+        self._timers.insert(i, timer)
+        if i == 0:
+            # CASO SPECIALE: se 'i'  == 0 significa che ho inserito in testa il nuovo timer oppure l'ho inserito
+            # in una lista vuota; nel primo caso devo svegliare il thread perche' il nuovo timer scadra' prima 
+            # del suo prossimo risveglio (impostato su quello che ora è il secondo timer in lista), nel secondo
+            # caso il thread sta dormendo per un tempo indefinito, quindi lo devo svegliare affinche reimposti 
+            # un tempo di sleep corretto
+            self._cond.notify()
+        #rilascia il lock
+        self._cond.release()
+    
 #classe che rappresenta un ingresso per le macchine a stati
 
 class fsmIO(object):
@@ -82,7 +192,6 @@ class fsmIOs(object):
 
     def __init__(self):
         self._ios = {}
-        self._lck = threading.Lock()
     
     # connette (crea se non esistono) gli ingressi names all'oggetto obj
     def link(self, names, obj):
@@ -97,16 +206,9 @@ class fsmIOs(object):
     def get(self, name):
         return self._ios[name]            
     
-    # ottiene l'accesso esclusivo a questo oggetto            
-    def lock(self):
-        self._lck.acquire()
-    
-    def unlock(self):
-        self._lck.release()
-
     def getFsmIO(self, fsm):
     	ret = {}
-    	for io in self._ios:
+    	for io in self._ios.values():
     		if fsm in io._attached:
     			ret[io._name] = io
     	return ret
@@ -117,16 +219,26 @@ class fsmIOs(object):
 
 # classe base per la macchina a stati
 class fsmBase(object):
-    def __init__(self, ios, stateDefs):
+    def __init__(self, name, stateDefs, **args):
         
         # stateDefs e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
-        self._ios = io
-        self._states = {}
-        self._ios.lock()
+
+        self._name = name
+        if not 'tmgr' in args:
+            self._tmgr = fsmTimers()
+            self._tmgr.start()
+        else:
+            self._tmgr = args['tmgr']
+                
+        self._timers = {}
+        self._ios = args.get('ios', fsmIOs())
+        self._logger = args.get('logger', fsmLogger())
+        self._states = {}   #perche' prima lo definisci e poi lo assegni?
         for stateDef in stateDefs:
             self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
-        self._ios.unlock()
+        self._curstatename = 'undefined'
+        self._nextstatename = 'undefined'
         self._curstate = None
         self._curexit = None
         self._nextstate = None
@@ -146,6 +258,9 @@ class fsmBase(object):
 
     #cambia stato
     def gotoState(self, state):
+        if (self._nextstate != self._curstate):
+            self.logI('gotoState() called twice, ignoring subsequent calls')
+            return
         self._nextstatename = state
         #metodo eval del prossimo stato
         self._nextstate = getattr(self, '%s_eval' % state)
@@ -154,22 +269,43 @@ class fsmBase(object):
         #metodo exit del prossimo stato
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
+    def log(self, lev, msg):
+        self._logger.log(lev, '%s: %s' %(self._name, msg))    
+
+    def logE(self, msg):
+        self.log(0, msg)
+
+    def logW(self, msg):
+        self.log(1, msg)
+
+    def logI(self, msg):
+        self.log(2, msg)
+
+    def logD(self, msg):
+        self.log(3, msg)
+
     #valuta la macchina a stati nello stato corrente
     def eval(self):
         again = True
         while again: 
             if self._nextstate != self._curstate:
                 if self._nextentry:
+                    self.logD('executing %s_entry()' %(self._nextstatename))
                     self._nextentry()
+                self.logD('%s => %s' % (self._curstatename, self._nextstatename))
+                self._curstatename = self._nextstatename    
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
                 self._cursens = self._states[self._nextstatename]
             
+            self.logD('executing commonEval()')
             self.commonEval()                
+            self.logD('executing %s_eval()' %(self._nextstatename))
             self._curstate()        
             if self._nextstate != self._curstate:
                 again = True
                 if self._curexit:
+                    self.logD('executing %s_exit()' %(self._curstatename))
                     self._curexit()
                 self.commonExit()
             else:
@@ -179,7 +315,7 @@ class fsmBase(object):
     def eval_forever(self):
         self.lock()
         while(1):
-            print "-------------------"
+            self.logD('awoken')
             self.eval() # eval viene eseguito con l'accesso esclusivo su questa macchina
             self._cond.wait() # la macchina va in sleep in attesa di un evento (da un ingresso)
 
@@ -188,8 +324,8 @@ class fsmBase(object):
         return self._ios.get(name)       
 
     #chiamata dagli ingressi quando arrivano eventi
-    def trigger(self, name):
-        if name in self._cursens:
+    def trigger(self, name=None):
+        if not name or name in self._cursens:
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
     def commonEval(self):
@@ -198,7 +334,56 @@ class fsmBase(object):
     def commonExit(self):
     	pass
 
+    def tmrSet(self, name, timeout):
+        if not name in self._timers:
+            self._timers[name] = fsmTimer(self)
+        t = self._timers[name]
+        self._tmgr.set(t, timeout)
+    
+    def tmrExp(self, name):
+        return not name in self._timers or self._timers[name].expd() 
 
 ################################################################################
 
 # ESEMPIO DI UTILIZZO
+
+    
+    
+                
+class fsmTest(fsmBase):
+    def __init__(self, name, **args):
+        fsmBase.__init__(self, name, {
+            'uno' : ['A'],
+            'due' : ['A','B']
+            }, **args
+            )
+        self.gotoState('uno')
+    
+    def uno_entry(self):
+        self.logI("uno entry")
+        self.tmrSet('t1',7)
+        self.tmrSet('t2',5)
+        
+
+    def due_entry(self):
+        self.logI("due entry")
+            
+    def uno_eval(self):
+        self.logD('waiting for t1')
+        if self.tmrExp('t1'):
+            self.gotoState('due')
+        
+    def due_eval(self):
+        self.logD('waiting for t2')
+        if self.tmrExp('t2'):
+            self.gotoState('uno')        
+            
+            
+            
+if __name__ == '__main__':        
+    fsm = fsmTest('fsmTest')
+    fsm.eval_forever()
+    
+        
+            
+            
