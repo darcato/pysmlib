@@ -287,11 +287,11 @@ class zeroFreqFsm(fsmBase):
 
     #move until i exit the delta, where freq is not correlable to movement
     def inRange_eval(self):
-    	if lastmovn < movn.val:
-    		if abs(freqErr.val-freqErr0)<maxFreqDelta:  #out of delta i assume the freqerr is safe
+    	if movn.val < lastmovn:
+    		if abs(freqErr.val-freqErr0)>maxFreqDelta*1.1:  #out of delta i assume the freqerr is safe
     			self.gotoState("minimize")
-    			self.foundDirection = -1 if freqErr.val < freqErr0 else 1
-    		elif freqErr.val > 10e3 or limitSwitch1.val or limitSwitch2.val  #did not surpassed delta
+    			foundDirection = -1 if freqErr.val < freqErr0 else 1
+    		elif freqErr.val >= 10e3 or limitSwitch1.val or limitSwitch2.val  #did not surpassed delta
     			self.gotoState("tryUp")
     		elif stepsDone > maxStepsDelta*1.5:  #stall
     			self.gotoState("error")
@@ -301,37 +301,74 @@ class zeroFreqFsm(fsmBase):
     			stepsDone = numSteps
     	lastmovn = movn.val
 
+    #move fast until enter the <10k range
     def outRange_entry(self):
-    	
+    	if movn.val == 0
+    		moveRel.put(-bigStep)
+    		stepsDone = bigStep
+    	lastmovn = movn.val
 
+    #continue moving
+    def outRange_eval(self):
+    	if movn.val < lastmovn:
+    		if freqErr.val < 10e3-maxFreqDelta*1.3:   #out of delta and inside 10k
+    			self.gotoState("minimize")
+    			foundDirection = -1
+    		elif limitSwitch2.val or limitSwitch2.val:  #limit switch
+    			self.gotoState("tryUp")
+    		elif stepsDone > maxSteps*1.1:			#stall
+    			self.gotoState("error")
+    		else:								#continue moving
+    			moveRel.put(-bigStep)
+    			stepsDone += bigStep
+    	lastmovn = movn.val
 
+    def tryUp_entry(self):
+    	freqErr0 = freqErr.val
+    	if movn.val == 0
+    		numSteps = bigStep if freqErr.val>250 else smallStep
+    		moveRel.put(numSteps)
+    		stepsDone = numSteps
+    	lastmovn = movn.val
 
-    def outRng_goLow_entry(self):
-    	freqErr0 = self.input('freqErr').val
-		if movn.val == 0			
-			self.moveRel.put(100)
-		lastmovn = movn
+    def tryUp_eval(self):
+    	if movn.val < lastmovn:
+    		if abs(freqErr.val-freqErr0)>maxFreqDelta*1.1:
+    			self.gotoState("minimize")
+    			foundDirection = 1 if freqErr.val < freqErr0 else -1
+    		elif limitSwitch1.val or limitSwitch2.val:
+    			self.gotoState("error")
+    		elif freqErr0>=10e3 and stepsDone>=maxSteps*1.1:
+    			self.gotoState("error")
+    		elif freqErr0<10e3 and stepsDone>=maxStepsDelta*1.5:
+    			self.gotoState("error")
+    		else:
+    			numSteps = bigStep if freqErr.val>250 else smallStep
+    			moveRel.put(numSteps)
+    			stepsDone = numSteps
+    	lastmovn = movn.val
 
+    def minimize_entry(self):
+    	freqErr0 = freqErr.val
+    	lastmovn = 1
 
-    def outRng_goLow_eval(self):
-        print "evaluating outRng_goLow"
-        self.gotoState("outRng_gohigh")
-    
-    def outRng_gohigh_eval(self):
-        print "evaluating outRng_gohigh"
-        self.gotoState("inRng_golow") 
-
-    def inRng_golow_eval(self):
-        print "evaluating inRng_golow"
-        self.gotoState("inRng_goHigh")
-    
-    def inRng_goHigh_eval(self):
-        print "evaluating inRng_goHigh"
-        self.gotoState("minimize")
-    
     def minimize_eval(self):
-        print "evaluating minimize"
-        self.gotoState("end")
+    	if movn.val < lastmovn:
+    		if stepsDone > maxStepsDelta && freqErr.val>freqErr0*1.3:
+    			gotoState("error")
+    		elif freqErr.val > 100:
+    			numSteps = (freqErr.val - 50) * smallStep
+    			moveRel.put(numSteps*foundDirection)
+    		elif freqErr.val > 20
+    			numSteps = (freqErr.val - 10) * smallStep
+    			moveRel.put(numSteps*foundDirection)
+    		elif freqErr.val > 10
+    			moveRel.put(smallStep*foundDirection)
+    		elif freqErr > 1
+    			moveRel.put(microstep*foundDirection)
+    		else:
+    			self.gotoState("end")
+    	lastmovn = movn.val
     
     def end_eval(self):
         print "evaluating end"
@@ -340,6 +377,7 @@ class zeroFreqFsm(fsmBase):
     
     def error_eval(self):
         print "evaluating error"
+        enable.put(0);
         self.gotoState("idle")            
         
         
