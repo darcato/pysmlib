@@ -56,12 +56,12 @@ class fsmTimers(threading.Thread):
         # (indice 0 è il prossimo a scadere)
         self._timers = []
         
-    #routine principale del thread.
-    # Funziona in questo modo, il thread va in sleep per un periodo di tempo pari a quello che manca
+    # routine principale del thread.
+    # Funziona in questo modo: il thread va in sleep per un periodo di tempo pari a quello che manca
     # allo scadere del prossimo timer (il primo di una lista ordinata per scadenza). Allo scadere dello 
     # sleep, il thread inizia a vedere quanti timer sono scaduti partendo dal prossimo (possono scaderene 
     # anche più di uno quando hanno la stessa ora di scadenza o gli intervalli rientrano nel jitter di 
-    # esecuzione del thread). Per ogni timer scaduto esegue il trigger e lo rimuove dalla lista dei trigger 
+    # esecuzione del thread). Per ogni timer scaduto esegue il trigger e lo rimuove dalla lista dei timer 
     # pendenti  
     def run(self):
         #acquisissce il lock, per avere accesso esclusivo alla lista dei timer
@@ -127,7 +127,8 @@ class fsmIO(object):
         self.data = {}    # pv data
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
-        self._lck = threading.Lock() 
+        self._lck = threading.Lock()
+        self.pval = None 
     
     def attach(self, obj):
         self._attached.add(obj)
@@ -137,6 +138,7 @@ class fsmIO(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
+        self.pval = self.val
         self.val = args.get('value', None)
         self.trigger()
         self._unlock()        
@@ -186,6 +188,12 @@ class fsmIO(object):
     def put(self, value):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
         
+    def rising(self):
+        return self.pval < self.val
+    
+    def falling(self):
+        return self.val < self.pval
+    
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
@@ -289,27 +297,29 @@ class fsmBase(object):
         again = True
         while again: 
             if self._nextstate != self._curstate:
-                if self._nextentry:
-                    self.logD('executing %s_entry()' %(self._nextstatename))
-                    self._nextentry()
                 self.logD('%s => %s' % (self._curstatename, self._nextstatename))
                 self._curstatename = self._nextstatename    
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
                 self._cursens = self._states[self._nextstatename]
+                self.commonEntry()
+                if self._nextentry:
+                    self.logD('executing %s_entry()' %(self._curstatename))
+                    self._nextentry()
             
-            #self.logD('executing commonEval()')
-            #self.commonEval()                
+            self.commonEval()                
             self.logD('executing %s_eval()' %(self._nextstatename))
             self._curstate()        
             if self._nextstate != self._curstate:
+                # procede a valutare lo stato successivo, ma rilascia il lock per 100ms 
+                # in modo da permettere la ricezione di eventi che possono modificare lo stato
+                # degli ingressi
                 again = True
-                self._cond.wait(0.1)
+                self._cond.wait(0.1) 
                 if self._curexit:
                     self.logD('executing %s_exit()' %(self._curstatename))
                     self._curexit()
-                #self.logD('executing commonExit()')
-                #self.commonExit()
+                self.commonExit()
             else:
                 again = False        
     
@@ -331,11 +341,14 @@ class fsmBase(object):
         if not name or name in self._cursens:
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
-    #def commonEval(self):
-    #    pass
+    def commonEval(self):
+        pass
 
-    #def commonExit(self):
-    #	pass
+    def commonExit(self):
+        pass
+
+    def commonEntry(self):
+        pass
 
     def tmrSet(self, name, timeout):
         if not name in self._timers:
