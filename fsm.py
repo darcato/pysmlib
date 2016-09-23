@@ -128,7 +128,9 @@ class fsmIO(object):
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._lck = threading.Lock()
-        self.pval = None 
+        self.pval = None
+        self._flgRising = False
+        self._flgFalling = False 
     
     def attach(self, obj):
         self._attached.add(obj)
@@ -138,8 +140,6 @@ class fsmIO(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
-        self.pval = self.val
-        self.val = args.get('value', None)
         self.trigger()
         self._unlock()        
         self.unlock()
@@ -149,6 +149,9 @@ class fsmIO(object):
         self.lock()
         self._lock()
         self.data = args
+        self.pval = self.val
+        self._flgRising = True
+        self._flgFalling = True
         self.val=args.get('value', None)
         self.trigger()
         self._unlock()        
@@ -189,11 +192,18 @@ class fsmIO(object):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
         
     def rising(self):
-        return self.pval < self.val
-    
+       	if self._flgRising and self.pval > self.val:
+       		self._flgRising = False
+        	return True
+    	else: 
+    		return False
+
     def falling(self):
-        return self.val < self.pval
-    
+        if self._flgFalling and self.val < self.pval:
+        	self._flgFalling = False
+        	return True
+    	else:
+    		return False
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
@@ -301,7 +311,7 @@ class fsmBase(object):
                 self._curstatename = self._nextstatename    
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
-                self._cursens = self._states[self._nextstatename]
+                self._cursens = self._states.get(self._nextstatename, [])
                 self.commonEntry()
                 if self._nextentry:
                     self.logD('executing %s_entry()' %(self._curstatename))
