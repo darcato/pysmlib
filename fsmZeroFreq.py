@@ -20,9 +20,10 @@ class zeroFreqFsm(fsmBase):
         #info to be passed to fsm
         self.maxFreqDelta = 100;
         self.microstep = 64
-        self.maxStepsDelta = self.maxFreqDelta*2*self.microstep  #todo: smallstep
+        self.maxStepsDelta = self.maxFreqDelta*3  #todo: smallstep
         self.midThrs = 250
         self.highThrs = 10e3
+        self.maxSteps = 130e3
 
         #auxiliary variables
         self.lastmovn = self.movn.val
@@ -45,11 +46,14 @@ class zeroFreqFsm(fsmBase):
         self.reportState = self._nextstatename
        
     def init_eval(self):
+        #set velocity and accelerations
         self.gotoState('idle')
         
     def idle_eval(self):
+        if self.freqErr.val:
+            self.logD('freq erro %.3f' % self.freqErr.val)
         if self.enable.val == 1:
-            if self.freqErr.val <= 1:
+            if self.freqErr.val < 1:
                 self.gotoState("end")
             elif 1<self.freqErr.val<=self.midThrs:
                 print "freq err is %f" % self.freqErr.val
@@ -62,7 +66,7 @@ class zeroFreqFsm(fsmBase):
     #move down of 1000 steps to exit badRange
     def badRange_entry(self):
         if self.movn.val == 0:       
-            self.moveRel.put(-100 * self.microstep)  #it was 1000
+            self.moveRel.put(-100 * self.microstep) #it was 1000
         self.lastmovn = self.movn.val
 
     #check if successfully exited the bad range when end of movement
@@ -73,6 +77,7 @@ class zeroFreqFsm(fsmBase):
                 self.gotoState("inRange")
             else:
                 self.gotoState("error")
+        self.lastmovn = self.movn.val
 
     #move down and save initial freqErr
     def inRange_entry(self):
@@ -116,7 +121,7 @@ class zeroFreqFsm(fsmBase):
                 self.foundDirection = -1
             elif self.limitSwitch1.val or self.limitSwitch2.val:  #limit switch
                 self.gotoState("tryUp")
-            elif self.stepsDone > maxSteps*1.1:            #stall
+            elif self.stepsDone > self.maxSteps*1.1:            #stall
                 self.gotoState("error")
             else:                                #continue moving
                 self.moveRel.put(-self.bigStep.val)
@@ -151,40 +156,59 @@ class zeroFreqFsm(fsmBase):
 
     def minimize_entry(self):
         self.freqErr0 = self.freqErr.val
+        self.logD("initial frequency error is %.3f" % self.freqErr0)
         self.lastmovn = 1
 
     def minimize_eval(self):
         self.commonEval()
+        self.logD('current freq error %.3f' % self.freqErr.val  )
         if self.movn.val < self.lastmovn:
             if self.stepsDone > self.maxStepsDelta and self.freqErr.val>self.freqErr0*1.3:
+                self.logI("ops: coming back")
                 self.gotoState("error")
+            #[100Hz - 10kHz] proportional towards 50Hz
             elif self.freqErr.val > 100:
                 #set fast mode
+                self.logD("going towards -> 50")
+                self.logD("max frequency error: %.3f" % self.freqErr0)
                 numSteps = (self.freqErr.val - 50) * self.smallStep.val
                 self.moveRel.put(numSteps*self.foundDirection)
-            elif freqErr.val > 20:
+            #[20Hz - 100Hz] proportional towards 5Hz
+            elif self.freqErr.val > 20:
                 #pass to slow mode acquisition
                 if self.freqErr0 > 120:
                     self.freqErr0 = 120
-                numSteps = (self.freqErr.val - 10) * self.smallStep.val
+                self.logD("going towards -> 5")
+                self.logD("max frequency error: %.3f" % self.freqErr0)
+                numSteps = (self.freqErr.val - 5) * self.smallStep.val
                 self.moveRel.put(numSteps*self.foundDirection)
-            elif freqErr.val > 10:
+            #[5Hz - 20Hz] - smallstep
+            elif self.freqErr.val > 5:
                 #be sure to be in slow mode
                 if self.freqErr0 > 30:
                     self.freqErr0 = 30
+                self.logD("going towards -> 0 smallstep")
+                self.logD("max frequency error: %.3f" % self.freqErr0)
                 self.moveRel.put(self.smallStep.val*self.foundDirection)
-            elif freqErr > 1:
+            #[1Hz - 5Hz] - microstep
+            elif self.freqErr.val > 1:
                 #be sure to be in slow mode
+                self.logD("going towards -> 0 onestep")
                 if self.freqErr0 > 15:
                     self.freqErr0 = 15
-                self.moveRel.put(self.microstep*self.foundDirection)
+                self.logD("max frequency error: %.3f" % self.freqErr0)
+                self.moveRel.put(self.foundDirection)
+            #[0Hz - 1Hz] target reached
             else:
                 self.gotoState("end")
         self.lastmovn = self.movn.val
     
+    def end_entry(self):
+        self.enable.put(0)
+        self.tmrSet('t1',2)
+
     def end_eval(self):
-        if self.enable.conn:
-            self.enable.put(0);
+        if self.tmrExp('t1'):
             self.gotoState("idle")
     
     def error_eval(self):
@@ -195,11 +219,11 @@ class zeroFreqFsm(fsmBase):
 statesWithPvs = {
     "init" : ["zeroEn", "m1:motor.MOVN", "freqErr", "m1:moveRel", "m1:motor.HLS", "m1:motor.LLS", "m1:stepFast", "m1:stepSlow"],
     "idle" : ["zeroEn"],
-    "badRange" : ["zeroEn", "m1:motor.MOVN"],
-    "inRange" : ["zeroEn", "m1:motor.MOVN"],
-    "outRange" : ["zeroEn", "m1:motor.MOVN"],
-    "tryUp" : ["zeroEn", "m1:motor.MOVN"],
-    "minimize" : ["zeroEn", "m1:motor.MOVN"],
+    "badRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "inRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "outRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "tryUp" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "minimize" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
     "end" : ["zeroEn"],
     "error" : ["zeroEn"]
 }

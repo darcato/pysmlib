@@ -153,7 +153,7 @@ class fsmIO(object):
         self.unlock()
     
     #put callback
-    def putcb(self, name):
+    def putcb(self, **args):
         self.lock()
         self._lock()
         self.trigger()
@@ -304,6 +304,7 @@ class fsmBase(object):
             self._curstate()        
             if self._nextstate != self._curstate:
                 again = True
+                self._cond.wait(0.1)
                 if self._curexit:
                     self.logD('executing %s_exit()' %(self._curstatename))
                     self._curexit()
@@ -316,7 +317,7 @@ class fsmBase(object):
     def eval_forever(self):
         self.lock()
         while(1):
-            print "\n"
+            print ""
             self.logD('awoken')
             self.eval() # eval viene eseguito con l'accesso esclusivo su questa macchina
             self._cond.wait() # la macchina va in sleep in attesa di un evento (da un ingresso)
