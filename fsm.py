@@ -14,11 +14,12 @@ class fsmLogger(object):
     levstr = ['E','W','I','D']
     def __init__(self, lev=3):
         self._level = lev
-        
+        self.startime = time.time()
         
     def log(self, lev, msg):
+    	tm = time.time() - self.startime
         if lev <= self._level:
-            self.pushMsg('%s - %s' %(fsmLogger.levstr[lev], msg))
+            self.pushMsg('%.2f, %s - %s' %(tm, fsmLogger.levstr[lev], msg))
             
     def pushMsg(self, msg):
         print msg
