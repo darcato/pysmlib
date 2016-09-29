@@ -19,7 +19,7 @@ class fsmLogger(object):
     def log(self, lev, msg):
     	tm = time.time() - self.startime
         if lev <= self._level:
-            self.pushMsg('%.2fs: %s - %s' %(tm, fsmLogger.levstr[lev], msg))
+            self.pushMsg('%8.2fs: %s - %s' %(tm, fsmLogger.levstr[lev], msg))
             
     def pushMsg(self, msg):
         print msg
@@ -34,7 +34,7 @@ class fsmTimer(object):
         self.expire = 0
         self._fsm = fsm
         self._pending = False
-        self._name = name+"_tmr"
+        self._name = name
             
     def reset(self, timeout):
         self.expire = time.time() + timeout
@@ -43,7 +43,7 @@ class fsmTimer(object):
     def trigger(self):
         self._pending = False
         self._fsm.lock()
-        self._fsm.trigger(self._name)
+        self._fsm.trigger(timername=self._name)
         self._fsm.unlock()
         
     def expd(self):
@@ -173,7 +173,7 @@ class fsmIO(object):
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self):
         for o in self._attached:
-            o.trigger(self._name)
+            o.trigger(inputname=self._name)
 
     # ottiene l'accesso esclusivo alle mmacchine a stati connesse a questo 
     # ingresso
@@ -196,14 +196,14 @@ class fsmIO(object):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
         
     def rising(self):
-       	if self._flgRising and self.pval > self.val:
+       	if self._flgRising and self.pval < self.val:
        		self._flgRising = False
         	return True
     	else: 
     		return False
 
     def falling(self):
-        if self._flgFalling and self.val < self.pval:
+        if self._flgFalling and self.pval > self.val:
         	self._flgFalling = False
         	return True
     	else:
@@ -292,7 +292,8 @@ class fsmBase(object):
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
     def log(self, lev, msg):
-        self._logger.log(lev, '%s: %s' %(self._name, msg))    
+        whites = len(max(self._states, key=len)) - len(self._curstatename)
+        self._logger.log(lev, '%s[%s] :%s %s' %(self._name, self._curstatename, " "*whites, msg))    
 
     def logE(self, msg):
         self.log(0, msg)
@@ -354,10 +355,14 @@ class fsmBase(object):
         return self._ios.get(name)       
 
     #chiamata dagli ingressi quando arrivano eventi
-    def trigger(self, name=None):
-        if not name or name in self._cursens:
-            self.logD(repr(name) +" is triggering " + self._curstatename)
+    def trigger(self, **args):
+        if 'inputname' in args and args['inputname'] in self._cursens:
+            self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename)
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
+        if 'timername' in args:
+            self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
+            self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
+        	   
 
     def commonEval(self):
         pass
