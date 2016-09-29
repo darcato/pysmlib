@@ -18,18 +18,23 @@ class zeroFreqFsm(fsmBase):
         self.gotoState('init')
 
         #info to be passed to fsm
-        self.maxFreqDelta = 100;
+        #self.maxFreqDelta = 100;  #max false increment in wrong direction
         self.microstep = 64
-        self.maxStepsDelta = self.maxFreqDelta*3  #todo: smallstep
-        self.midThrs = 250
-        self.highThrs = 10e3
-        self.maxSteps = 130e3
+        #self.maxStepsDelta = self.maxFreqDelta*3  #todo: smallStep
+        self.maxUncertain = 100 #the maximum freq noise in each point -> should become a linear fit
+        self.midThrs = 100 + 2.2*125#self.bigStep.val   
+        self.highThrs = 10e3 #the max read freq err
+        self.maxSteps = 130e3  #total steps between limit swtiches
+        self.stepPerSec = 100  #seconds to perform a microstep
+
 
         #auxiliary variables
-        self.lastmovn = self.movn.val
-        self.freqErr0 = self.freqErr.val
+        self.freqErrPrev = self.freqErr.val
         self.stepsDone = 0
         self.foundDirection = 0
+        self.freqErrAvg = 0
+        self.nSamples = 0
+        self.returnState = ""
 
     #check all connections useful to the current state
     def myEval(self):
@@ -49,10 +54,15 @@ class zeroFreqFsm(fsmBase):
         #set velocity and accelerations
         self.gotoState('idle')
         
+    def idle_entry(self):
+        self.foundDirection = -1
+        self.stepsDone = 0
+        
     def idle_eval(self):
         if self.freqErr.val:
             self.logD('freq erro %.3f' % self.freqErr.val)
         if self.enable.val == 1:
+            self.logTimeReset() #reset time of the logger, will print times relative to now
             if self.freqErr.val < 1:
                 self.gotoState("end")
             elif 1<self.freqErr.val<=self.midThrs:
@@ -63,166 +73,249 @@ class zeroFreqFsm(fsmBase):
             else:
                 self.gotoState("outRange")
 
-    #move down of 1000 steps to exit badRange
+    #move down of 1000Hz to exit badRange
     def badRange_entry(self):
-        if self.movn.val == 0:       
-            self.moveRel.put(-100 * self.microstep) #it was 1000
-        self.lastmovn = self.movn.val
+        self.logD("moving of 1kHz to exit badrange")
+        #will go to a freq range of [1kHz-2midThrs -> 1kHz+midThrs] depending on the starting point & direction
+        numSteps = self.smallStep.val * 1000
+        self.moveRel.put(self.foundDirection*numSteps) #it was 1000 full steps in old system
+        self.tmrSet('moveTimeout', numSteps*self.stepPerSec*1.5)
 
     #check if successfully exited the bad range when end of movement
     def badRange_eval(self):
         self.myEval()
-        if self.movn.val < self.lastmovn:
-            if self.midThrs<self.freqErr.val<self.highThrs:
-                self.gotoState("inRange")
-            else:
-                self.gotoState("error")
-        self.lastmovn = self.movn.val
+        if self.limitSwitch1.val or self.limitSwitch2.val:
+            self.logE("reached limit switch with low freq err (%.2f), check mountings; aborting.." % self.freqErr.val)
+            self.gotoState("error")
+        elif self.movn.falling():
+            self.returnState = "badRange2"
+            self.gotoState("antiBounce")
+        elif self.tmrExp("moveTimeout"):
+            self.logE("waiting too long for movement to finish")
+            self.gotoState("error")    
 
-    #move down and save initial freqErr
+    def badRange2_eval(self):
+        self.myEval()
+        if self.midThrs<self.freqErrAvg<self.highThrs:
+            self.gotoState("inRange")
+        else:
+            self.logE("ops: gone out of range or stall: read %.2fHz" % (self.freqErr.val))
+            self.gotoState("error")
+
     def inRange_entry(self):
-        self.freqErr0 = self.freqErr.val
-        if self.movn.val == 0:
-            numSteps = self.bigStep.val if self.freqErr.val>self.midThrs else self.smallStep.val
-            self.moveRel.put(-numSteps)
-            self.stepsDone = numSteps
+        self.freqErrPrev = self.freqErr.val
+        numSteps = self.bigStep.val
+        self.moveRel.put(self.foundDirection*numSteps)
+        self.tmrSet("moveTimeout", numSteps/self.stepPerSec*1.5)
+        self.escapeLimSwOn = 0
+        if self.limitSwitch1.val or self.limitSwitch2.val:
+            self.tmrSet("escapeLimSw", 1)
+            self.escapeLimSwOn = 1
 
-    #move until i exit the delta, where freq is not correlable to movement
     def inRange_eval(self):
         self.myEval()
-        if self.movn.falling():
-            if abs(self.freqErr.val-self.freqErr0)>self.maxFreqDelta*1.1:  #out of delta i assume the freqerr is safe
-                self.gotoState("startMinimize")
-                self.foundDirection = -1 if self.freqErr.val < self.freqErr0 else 1
-            elif self.freqErr.val >= self.highThrs or self.limitSwitch1.val or self.limitSwitch2.val:  #did not surpassed delta
-                self.gotoState("tryUp")
-            elif self.stepsDone > self.maxStepsDelta*1.5:  #stall
+        if self.escapeLimSwOn and tmrExp("escapeLimSw") and (self.limitSwitch1.val or self.limitSwitch2.val):
+            if self.foundDirection ==-1:
+                self.foundDirection = 1
+                self.freqErrPrev = self.freqErr.val
+                numSteps = self.bigStep.val
+                self.moveRel.put(self.foundDirection*numSteps)
+                self.tmrSet("moveTimeout", numSteps/self.stepPerSec*1.5)
+                self.tmrSet("escapeLimSw", 1)
+                self.escapeLimSwOn = 1
+            elif self.foundDirection == 1:
                 self.gotoState("error")
-            else:
-                numSteps = self.bigStep.val if self.freqErr.val>self.midThrs else self.smallStep.val
-                self.moveRel.put(-numSteps)
-                self.stepsDone = numSteps
+                self.logE("could not escape limit switches in any direction")
+        elif self.movn.falling():
+            self.returnState = "inRange2"
+            self.gotoState("antiBounce")
+        elif self.tmrExp("moveTimeout") and self.tmrExp("escapeLimSw"):
+            self.logE("waiting too long for movement to finish")
+            self.gotoState("error")
+
+    def antiBounce_entry(self):
+        self.tmrSet("antiBounce", 0.3)
+
+    def antiBounce_eval(self):
+        self.myEval()
+        if self.tmrExp("antiBounce"):
+            self.gotoState("averaging")
+
+    def averaging_entry(self):
+        self.freqErrAvg = 0
+        self.nSamples = 0
+        self.tmrSet("averaging", 0.7)
+
+    def averaging_eval(self):
+        self.myEval()
+        self.freqErrAvg += self.freqErr.val
+        self.nSamples += 1
+        if self.nSamples>=3 or self.tmrExp("averaging"):
+            self.freqErrAvg /= self.nSamples
+            self.gotoState(self.returnState)
+            self.logD("read %d samples, with avg value of %.2f" %(self.nSamples, self.freqErrAvg))
+
+    def inRange2_eval(self):
+        self.myEval()
+        if abs(self.freqErrAvg-self.freqErrPrev)>0.5*self.bigStep.val/self.smallStep.val:  #moved at least 50% of what expected
+            self.gotoState("startMinimize")
+            if self.freqErrAvg > self.freqErrPrev:
+                self.foundDirection = -self.foundDirection
+        elif (self.limitSwitch1.val or self.limitSwitch2.val) and self.foundDirection==-1:
+            gotoState("inRange")
+            self.foundDirection = 1
+        elif self.freqErrAvg>=self.highThrs:
+            self.gotoState("outRange")
+            self.foundDirection = 1
+        else: #freq did not change enough
+            self.logE("stall detected!")
+            self.gotoState("error")
 
     #move fast until enter the <10k range
     def outRange_entry(self):
-        if self.movn.val == 0:
-            self.moveRel.put(-self.bigStep.val)
-            self.stepsDone = self.bigStep.val
-        self.lastmovn = self.movn.val
+        #I need to hit a 20kHz window, try with steps of 6.5kHz (should find at least 3 hit)
+        numSteps += self.smallStep.val * 6.5e3
+        self.moveRel.put(self.foundDirection*numSteps)
+        self.tmrSet('moveTimeout', numSteps/self.stepPerSec*1.5)
+        self.escapeLimSwOn = 0
+        if self.limitSwitch1.val or self.limitSwitch2.val:
+            self.tmrSet("escapeLimSw", 1)
+            self.escapeLimSwOn = 1
 
-    #continue moving
+    #continue moving at 6.5kHz steps until inRange, limit switch or error
     def outRange_eval(self):
         self.myEval()
-        if self.movn.val < self.lastmovn:
-            if self.freqErr.val < self.highThrs-self.maxFreqDelta*1.3:   #out of delta and inside 10k
-                self.gotoState("startMinimize")
-                self.foundDirection = -1
-            elif self.limitSwitch1.val or self.limitSwitch2.val:  #limit switch
-                self.gotoState("tryUp")
-            elif self.stepsDone > self.maxSteps*1.1:            #stall
+        if self.escapeLimSwOn and tmrExp("escapeLimSw") and (self.limitSwitch1.val or self.limitSwitch2.val):
+            if self.foundDirection ==-1:
+                self.foundDirection = 1
+                numSteps = self.smallStep.val * 6.5e3
+                self.moveRel.put(self.foundDirection*numSteps)
+                self.stepsDone += numSteps
+                self.tmrSet("moveTimeout", numSteps/self.stepPerSec*1.5)
+                self.tmrSet("escapeLimSw", 1)
+                self.escapeLimSwOn = 1
+            elif self.foundDirection == 1:
                 self.gotoState("error")
-            else:                                #continue moving
-                self.moveRel.put(-self.bigStep.val)
-                self.stepsDone += self.bigStep.val
-        self.lastmovn = self.movn.val
+                self.logE("could not escape limit switches in any direction")
+        elif self.movn.falling():
+            self.returnState = "outRange2"
+            self.gotoState("antiBounce")
+        elif self.tmrExp("moveTimeout") and self.tmrExp("escapeLimSw"):
+            self.logE("waiting too long for movement to finish")
+            self.gotoState("error")
 
-    def tryUp_entry(self):
-        self.freqErr0 = self.freqErr.val
-        if movn.val == 0:
-            numSteps = self.bigStep.val if self.freqErr.val>self.midThrs else self.smallStep.val
-            self.moveRel.put(numSteps)
-            self.stepsDone = numSteps
-        self.lastmovn = self.movn.val
-
-    def tryUp_eval(self):
+    def outRange2_eval(self):
         self.myEval()
-        if self.movn.val < self.lastmovn:
-            if abs(self.freqErr.val-self.freqErr0)>self.maxFreqDelta*1.1:
-                self.gotoState("startMinimize")
-                self.foundDirection = 1 if self.freqErr.val < self.freqErr0 else -1
-            elif self.limitSwitch1.val or self.limitSwitch2.val:
-                self.gotoState("error")
-            elif self.freqErr0>=highThrs and self.stepsDone>=self.maxSteps*1.1:
-                self.gotoState("error")
-            elif self.freqErr0<highThrs and self.stepsDone>=self.maxStepsDelta*1.5:
-                self.gotoState("error")
-            else:
-                numSteps = self.bigStep.val if self.freqErr.val>self.midThrs else self.smallStep.val
-                self.moveRel.put(numSteps)
-                self.stepsDone = numSteps
-        self.lastmovn = self.movn.val
+        if self.freqErrAvg < self.highThrs-self.maxUncertain: #inside 10k
+            self.gotoState("startMinimize")
+        elif (self.limitSwitch1.val or self.limitSwitch2.val) and self.foundDirection==-1:  #first limit switch
+            self.foundDirection = 1
+            self.logD("changing direction")
+            self.gotoState("outRange")
+        elif (self.limitSwitch1.val or self.limitSwitch2.val) and self.foundDirection==1:
+            self.gotoState("error")
+            self.logE("hit limit switches in both directions")
+        elif self.stepsDone > self.maxSteps*2.1: #stall
+            self.logE("stall detected!")
+            self.gotoState("error")
+        else: #continue moving
+            gotoState("outRange")
 
-    def startMinimize_eval(self):
-        self.logD("initial frequency error is %.3f ~~~~~~~~~~~~~~~~~~~~~~" % self.freqErr0)
+    # useful to initialize minimize
+    def startMinimize_eval(self):    
         self.stepsDone = 0
-        self.freqErr0 = self.freqErr.val
+        self.freqErrPrev = self.freqErr.val
         self.gotoState("minimize")
+        self.logD("initial frequency error is %.3f direction %d ~~~~~~~~~~~~" % (self.freqErrPrev, self.foundDirection))
+        self.tmrSet("minimizeTimeout", 120)
 
+    #check status and call move to minimize
     def minimize_eval(self):
         self.myEval()
         self.logD('current freq error %.3f' % self.freqErr.val  )
         self.amount = 0;
-        if self.stepsDone > self.maxStepsDelta and self.freqErr.val>self.freqErr0*1.3:
-            self.logI("ops: coming back")
+        f0 = 100
+        f1 = 15
+        f2 = 3
+        if self.tmrExp("minimizeTimeout"): #minimizeTimeout
+            self.gotoState("error")
+            self.logE("minimize is taking too long without converging")
+        elif self.limitSwitch1.val or self.limitSwitch2.val: #should not find limit switches
+            self.gotoState("error")
+            self.logE("limit switch toggled while minimizing")
+        elif self.stepsDone > self.bigStep.val and abs(self.freqErrAvg-self.freqErrPrev)<=self.stepsDone/self.smallStep.val*0.50: #stall
+             self.gotoState("error")
+             self.logE("stall detected!")
+        elif self.stepsDone > self.bigStep.val and self.freqErr.val>self.freqErrPrev*1.3:  #coming back
+            self.logI("ops: coming back after %d steps" %self.stepsDone)
             self.gotoState("error")
         #[100Hz - 10kHz] proportional towards 50Hz
-        elif self.freqErr.val > 100:
+        elif self.freqErrAvg > f0:
             #set fast mode
             self.logD("going towards -> 50")
-            self.logD("max frequency error: %.3f" % self.freqErr0)
-            numSteps = (self.freqErr.val - 50) * self.smallStep.val
+            self.logD("max frequency error: %.3f" % self.freqErrPrev)      
+            numSteps = (self.freqErrAvg - 50) * self.smallStep.val
             self.amount = numSteps*self.foundDirection
             self.gotoState("move")
-        #[20Hz - 100Hz] proportional towards 5Hz
-        elif self.freqErr.val > 20:
+        #[15Hz - 100Hz] proportional towards 5Hz
+        elif self.freqErrAvg > f1:
             #pass to slow mode acquisition
-            if self.freqErr0 > 120:
-                self.freqErr0 = 120
             self.logD("going towards -> 5")
-            self.logD("max frequency error: %.3f" % self.freqErr0)
-            numSteps = (self.freqErr.val - 5) * self.smallStep.val
+            self.logD("max frequency error: %.3f" % self.freqErrPrev)
+            numSteps = (self.freqErrAvg - 5) * self.smallStep.val
             self.amount = numSteps*self.foundDirection
             self.gotoState("move")
-        #[5Hz - 20Hz] - smallstep
-        elif self.freqErr.val > 5:
+        #[3Hz - 15Hz] - smallStep
+        elif self.freqErrAvg > f2:
             #be sure to be in slow mode
-            if self.freqErr0 > 30:
-                self.freqErr0 = 30
-            self.logD("going towards -> 0 smallstep")
-            self.logD("max frequency error: %.3f" % self.freqErr0)
+            self.logD("going towards -> 0 smallStep")
+            self.logD("max frequency error: %.3f" % self.freqErrPrev)
             self.amount = self.smallStep.val*self.foundDirection
             self.gotoState("move")
-        #[1Hz - 5Hz] - microstep
-        elif self.freqErr.val > 1:
+        #[1Hz - 3Hz] - microstep
+        elif self.freqErrAvg > 1:
             #be sure to be in slow mode
             self.logD("going towards -> 0 onestep")
-            if self.freqErr0 > 15:
-                self.freqErr0 = 15
-            self.logD("max frequency error: %.3f" % self.freqErr0)
+            self.logD("max frequency error: %.3f" % self.freqErrPrev)
             self.amount = self.foundDirection
             self.gotoState("move")
         #[0Hz - 1Hz] target reached
         else:
             self.gotoState("end")
     
+    #perform movement
     def move_entry(self):
+        self.freqErrPrev = self.freqErr.val
         self.moveRel.put(self.amount)
         self.logD("moving of %d steps" % self.amount)
         self.stepsDone += self.amount
+        self.tmrSet('moveTimeout', abs(self.amount)/self.stepPerSec*1.5)
 
+    #wait for movement to end and return to minimize
     def move_eval(self):
+        self.logD("freqErr: %.2f - movn %d" %(self.freqErr.val, self.movn.val))
+        self.myEval()
         if self.movn.falling():
-            self.gotoState("minimize")
+            self.returnState="minimize"
+            self.gotoState("antiBounce")
+        elif self.tmrExp('moveTimeout'): # self.movn.falling():
+            self.logE("waiting too long for movement to finish")
+            self.gotoState("error")
 
+    #success
     def end_entry(self):
         self.enable.put(0)
-        self.tmrSet('t1',2)
+        self.logD("frequency successfully reduced to zero!")
+        self.tmrSet('exit',2)
 
+    #wait a timer and return to idle
     def end_eval(self):
-        if self.tmrExp('t1'):
+        if self.tmrExp('exit'):
             self.gotoState("idle")
     
+    #fail
     def error_eval(self):
+        self.logD("ERROR: cannot complete frequency zeroing")
         if self.enable.conn:
             self.enable.put(0);
             self.gotoState("idle")            
@@ -233,8 +326,7 @@ statesWithPvs = {
     "badRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
     "inRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
     "outRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
-    "tryUp" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
-    "minimize" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "minimize" : ["zeroEn", "freqErr", "m1:motor.HLS", "m1:motor.LLS"],
     "move" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
     "end" : ["zeroEn"],
     "error" : ["zeroEn"]
