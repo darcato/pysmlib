@@ -19,20 +19,23 @@ class fsmLogger(object):
     def log(self, lev, msg):
     	tm = time.time() - self.startime
         if lev <= self._level:
-            self.pushMsg('%.2f, %s - %s' %(tm, fsmLogger.levstr[lev], msg))
+            self.pushMsg('%.2fs: %s - %s' %(tm, fsmLogger.levstr[lev], msg))
             
     def pushMsg(self, msg):
         print msg
 
+    def resetTime(self):
+    	self.startime = time.time()
+
 
 #Classe timer, utilizzabile dalle macchine a stati
 class fsmTimer(object):
-    def __init__(self, fsm):
+    def __init__(self, fsm, name):
         self.expire = 0
         self._fsm = fsm
         self._pending = False
-        
-    
+        self._name = name+"_tmr"
+            
     def reset(self, timeout):
         self.expire = time.time() + timeout
         self._pending = True
@@ -40,7 +43,7 @@ class fsmTimer(object):
     def trigger(self):
         self._pending = False
         self._fsm.lock()
-        self._fsm.trigger()
+        self._fsm.trigger(self._name)
         self._fsm.unlock()
         
     def expd(self):
@@ -303,6 +306,9 @@ class fsmBase(object):
     def logD(self, msg):
         self.log(3, msg)
 
+    def logTimeReset(self):
+    	self._logger.resetTime()
+
     #valuta la macchina a stati nello stato corrente
     def eval(self):
         again = True
@@ -350,6 +356,7 @@ class fsmBase(object):
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, name=None):
         if not name or name in self._cursens:
+            self.logD(repr(name) +" is triggering " + self._curstatename)
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
 
     def commonEval(self):
@@ -363,9 +370,10 @@ class fsmBase(object):
 
     def tmrSet(self, name, timeout):
         if not name in self._timers:
-            self._timers[name] = fsmTimer(self)
+            self._timers[name] = fsmTimer(self, name)
         t = self._timers[name]
         self._tmgr.set(t, timeout)
+        self.logD("activating a timer: '%s', %.2fs" % (name, timeout))
     
     def tmrExp(self, name):
         return not name in self._timers or self._timers[name].expd() 
