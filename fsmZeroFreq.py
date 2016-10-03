@@ -14,19 +14,21 @@ class zeroFreqFsm(fsmBase):
         self.limitSwitch2 = self.input("m1:motor.LLS")
         self.bigStep = self.input("m1:stepFast")
         self.smallStep = self.input("m1:stepSlow")
+        self.velocity = self.input("m1:motor.VELO")
+        self.acceleration = self.input("m1:motor.ACCL")
         self.progress = 0  #to report progress of the procedure [0-100]
         self.gotoState('init')
 
         #info to be passed to fsm
         #self.maxFreqDelta = 100;  #max False increment in wrong direction
-        self.microstep = 64
+        #self.microstep = 64
         #self.maxStepsDelta = self.maxFreqDelta*3  #todo: smallStep
         self.maxUncertain = 100 #the maximum freq noise in each point -> should become a linear fit
         self.midThrs = 100 + 2.2*125#self.bigStep.val   
         self.highThrs = 10e3 #the max read freq err
         self.maxSteps = 130e3  #total steps between limit swtiches
-        self.stepPerSec = 100  #seconds to perform a microstep
-        self.startTime = 2 #time for the motor to start moving
+        self.stepPerSec = 100  #velocity mstep/sec
+        self.startTime = 2.5 #time for the motor to start moving
 
 
         #auxiliary variables
@@ -39,7 +41,7 @@ class zeroFreqFsm(fsmBase):
         self.moveStarted = False
 
     #check all connections useful to the current state
-    def myEval(self):
+    def generalCheck(self):
         if self.enable.conn and self.enable.val==0:
             self.gotoState("end") 
         for io in self._cursens:
@@ -53,7 +55,6 @@ class zeroFreqFsm(fsmBase):
         self.reportState = self._nextstatename
        
     def init_eval(self):
-        #set velocity and accelerations
         self.gotoState('idle')
         
     def idle_entry(self):
@@ -65,6 +66,9 @@ class zeroFreqFsm(fsmBase):
             self.logD('freq erro %.3f' % self.freqErr.val)
         if self.enable.val == 1:
             self.logTimeReset() #reset time of the logger, will print times relative to now
+            self.acceleration.put(0.3)
+            self.velocity.put(12800)
+            self.stepPerSec = self.velocity.val
             if self.freqErr.val < 1:
                 self.gotoState("end")
             elif 1<self.freqErr.val<=self.midThrs:
@@ -86,7 +90,7 @@ class zeroFreqFsm(fsmBase):
 
     #check if successfully exited the bad range when end of movement
     def badRange_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.limitSwitch1.val or self.limitSwitch2.val:
             self.logE("reached limit switch with low freq err (%.2f), check mountings; aborting.." % self.freqErr.val)
             self.gotoState("error")
@@ -100,7 +104,7 @@ class zeroFreqFsm(fsmBase):
             self.gotoState("error")    
 
     def badRange2_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.midThrs<self.freqErrAvg<self.highThrs:
             self.gotoState("inRange")
         else:
@@ -109,7 +113,7 @@ class zeroFreqFsm(fsmBase):
 
     def inRange_entry(self):
         self.freqErrPrev = self.freqErr.val
-        numSteps = self.bigStep.val
+        numSteps = 2*self.bigStep.val
         self.moveRel.put(self.foundDirection*numSteps)
         self.moveStarted = False
         self.tmrSet("moveTimeout", self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
@@ -119,12 +123,12 @@ class zeroFreqFsm(fsmBase):
             self.escapeLimSwOn = 1
 
     def inRange_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.escapeLimSwOn and self.tmrExp("escapeLimSw") and (self.limitSwitch1.val or self.limitSwitch2.val):
             if self.foundDirection ==-1:
                 self.foundDirection = 1
                 self.freqErrPrev = self.freqErr.val
-                numSteps = self.bigStep.val
+                numSteps = 2*self.bigStep.val
                 self.moveRel.put(self.foundDirection*numSteps)
                 self.moveStarted = False
                 self.tmrSet("moveTimeout", self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
@@ -146,7 +150,7 @@ class zeroFreqFsm(fsmBase):
         self.tmrSet("antiBounce", 0.1)
 
     def antiBounce_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.tmrExp("antiBounce"):
             self.gotoState("averaging")
 
@@ -156,18 +160,18 @@ class zeroFreqFsm(fsmBase):
         self.tmrSet("averaging", 0.5)
 
     def averaging_eval(self):
-        self.myEval()
+        self.generalCheck()
         self.logD("triggered read ------> %.2f"%self.freqErr.val)
         self.freqErrAvg += self.freqErr.val
         self.nSamples += 1
-        if self.nSamples>=3 or self.tmrExp("averaging"):
+        if self.nSamples>=5 or self.tmrExp("averaging"):
             self.freqErrAvg /= self.nSamples
             self.gotoState(self.returnState)
             self.logD("read %d samples, with avg value of %.2f" %(self.nSamples, self.freqErrAvg))
 
     def inRange2_eval(self):
-        self.myEval()
-        if abs(self.freqErrAvg-self.freqErrPrev)>0.5*self.bigStep.val/self.smallStep.val:  #moved at least 50% of what expected
+        self.generalCheck()
+        if abs(self.freqErrAvg-self.freqErrPrev)>0.5*2*self.bigStep.val/self.smallStep.val:  #moved at least 50% of what expected
             self.gotoState("startMinimize")
             if self.freqErrAvg > self.freqErrPrev:
                 self.foundDirection = -self.foundDirection
@@ -196,7 +200,7 @@ class zeroFreqFsm(fsmBase):
 
     #continue moving at 6.5kHz steps until inRange, limit switch or error
     def outRange_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.escapeLimSwOn and self.tmrExp("escapeLimSw") and (self.limitSwitch1.val or self.limitSwitch2.val):
             if self.foundDirection ==-1:
                 self.foundDirection = 1
@@ -220,7 +224,7 @@ class zeroFreqFsm(fsmBase):
             self.gotoState("error")
 
     def outRange2_eval(self):
-        self.myEval()
+        self.generalCheck()
         if self.freqErrAvg < self.highThrs-self.maxUncertain: #inside 10k
             self.gotoState("startMinimize")
         elif (self.limitSwitch1.val or self.limitSwitch2.val) and self.foundDirection==-1:  #first limit switch
@@ -247,7 +251,7 @@ class zeroFreqFsm(fsmBase):
 
     #check status and call move to minimize
     def minimize_eval(self):
-        self.myEval()
+        self.generalCheck()
         self.logD('current freq error %.3f' % self.freqErr.val  )
         self.amount = 0;
         f0 = 100
@@ -266,7 +270,7 @@ class zeroFreqFsm(fsmBase):
              self.gotoState("error")
              self.logE("stall detected! avg=%.2f prev=%.2f stepsDone=%d expected=%.2f" %(self.freqErrAvg, self.freqErrPrev, self.stepsDone, self.stepsDone/self.smallStep.val*0.50))
         #overflow: freq err gone over 0, growing back
-        elif self.stepsDone > self.bigStep.val and self.freqErrAvg>self.freqErrPrev*1.2:  #coming back
+        elif self.stepsDone > self.bigStep.val and self.freqErrAvg>self.freqErrPrev*1.3:  #coming back
             self.logI("ops: coming back after %d steps: freq from %.2f to %.2f" %(self.stepsDone, self.freqErrPrev, self.freqErrAvg))
             self.gotoState("error")
         #[100Hz - 10kHz] proportional towards 50Hz
@@ -315,7 +319,7 @@ class zeroFreqFsm(fsmBase):
     #wait for movement to end and return to minimize
     def move_eval(self):
         self.logD("freqErr: %.2f - dmov %d" %(self.freqErr.val, self.dmov.val))
-        self.myEval()
+        self.generalCheck()
         if self.dmov.falling():
             self.moveStarted = True
         elif self.moveStarted and self.dmov.rising():
@@ -347,7 +351,8 @@ class zeroFreqFsm(fsmBase):
             self.gotoState("idle")            
 
 statesWithPvs = {
-    "init" : ["zeroEn", "m1:motor.DMOV", "freqErr", "m1:moveRel", "m1:motor.HLS", "m1:motor.LLS", "m1:stepFast", "m1:stepSlow"],
+    "init" : ["zeroEn", "m1:motor.DMOV", "freqErr", "m1:moveRel", "m1:motor.HLS", 
+    "m1:motor.LLS", "m1:stepFast", "m1:stepSlow", "m1:motor.VELO","m1:motor.ACCL"],
     "idle" : ["zeroEn"],
     "badRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
     "inRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
