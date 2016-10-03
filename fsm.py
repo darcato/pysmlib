@@ -332,7 +332,7 @@ class fsmBase(object):
                 self._curstatename = self._nextstatename    
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
-                self._cursens = self._states.get(self._nextstatename, [])
+                self._cursens = self._states.get(self._nextstatename, {})
                 self.commonEntry()
                 if self._nextentry:
                     self.logD('executing %s_entry()' %(self._curstatename))
