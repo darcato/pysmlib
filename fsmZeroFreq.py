@@ -8,7 +8,7 @@ class zeroFreqFsm(fsmBase):
         fsmBase.__init__(self, name, statesWithPvs, **args)
         self.freqErr = self.input("freqErr")
         self.enable = self.input("zeroEn")
-        self.movn = self.input("m1:motor.MOVN")
+        self.dmov = self.input("m1:motor.DMOV")
         self.moveRel = self.input("m1:moveRel")
         self.limitSwitch1 = self.input("m1:motor.HLS")
         self.limitSwitch2 = self.input("m1:motor.LLS")
@@ -90,10 +90,10 @@ class zeroFreqFsm(fsmBase):
         if self.limitSwitch1.val or self.limitSwitch2.val:
             self.logE("reached limit switch with low freq err (%.2f), check mountings; aborting.." % self.freqErr.val)
             self.gotoState("error")
-        elif self.movn.rising():
+        elif self.dmov.falling():
             self.moveStarted = True
             self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
-        elif self.moveStarted and self.movn.falling():
+        elif self.moveStarted and self.dmov.rising():
             self.returnState = "badRange2"
             self.gotoState("antiBounce")
         elif self.tmrExp("moveTimeout"):
@@ -134,10 +134,10 @@ class zeroFreqFsm(fsmBase):
             elif self.foundDirection == 1:
                 self.gotoState("error")
                 self.logE("could not escape limit switches in any direction")
-        elif self.movn.rising():
+        elif self.dmov.falling():
             self.moveStarted = True
             self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
-        elif self.moveStarted and self.movn.falling():
+        elif self.moveStarted and self.dmov.rising():
             self.returnState = "inRange2"
             self.gotoState("antiBounce")
         elif self.tmrExp("moveTimeout") and self.tmrExp("escapeLimSw"):
@@ -212,10 +212,10 @@ class zeroFreqFsm(fsmBase):
             elif self.foundDirection == 1:
                 self.gotoState("error")
                 self.logE("could not escape limit switches in any direction")
-        elif self.movn.rising():
+        elif self.dmov.falling():
             self.moveStarted = True
             self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
-        elif self.moveStarted and self.movn.falling():
+        elif self.moveStarted and self.dmov.rising():
             self.returnState = "outRange2"
             self.gotoState("antiBounce")
         elif self.tmrExp("moveTimeout") and self.tmrExp("escapeLimSw"):
@@ -237,7 +237,7 @@ class zeroFreqFsm(fsmBase):
             self.logE("stall detected!")
             self.gotoState("error")
         else: #continue moving
-            gotoState("outRange")
+            self.gotoState("outRange")
 
     # useful to initialize minimize
     def startMinimize_eval(self):    
@@ -317,15 +317,15 @@ class zeroFreqFsm(fsmBase):
 
     #wait for movement to end and return to minimize
     def move_eval(self):
-        self.logD("freqErr: %.2f - movn %d" %(self.freqErr.val, self.movn.val))
+        self.logD("freqErr: %.2f - dmov %d" %(self.freqErr.val, self.dmov.val))
         self.myEval()
-        if self.movn.rising():
+        if self.dmov.falling():
             self.tmrSet('moveTimeout', 0.3 + abs(self.amount)/self.stepPerSec*1.2)
             self.moveStarted = True
-        elif self.moveStarted and self.movn.falling():
+        elif self.moveStarted and self.dmov.rising():
             self.returnState="minimize"
             self.gotoState("antiBounce")
-        elif self.tmrExp('moveTimeout'): # self.movn.falling():
+        elif self.tmrExp('moveTimeout'): # self.dmov.rising():
             self.logE("waiting too long for movement to %s" % ("finish" if self.moveStarted else "begin"))
             self.gotoState("error")
 
@@ -351,11 +351,11 @@ class zeroFreqFsm(fsmBase):
             self.gotoState("idle")            
 
 statesWithPvs = {
-    "init" : ["zeroEn", "m1:motor.MOVN", "freqErr", "m1:moveRel", "m1:motor.HLS", "m1:motor.LLS", "m1:stepFast", "m1:stepSlow"],
-    "idle" : ["zeroEn"],
-    "badRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
-    "inRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
-    "outRange" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "init" : ["zeroEn", "m1:motor.DMOV", "freqErr", "m1:moveRel", "m1:motor.HLS", "m1:motor.LLS", "m1:stepFast", "m1:stepSlow"],
+    "idle" : ["zeroEn", "m1:motor.DMOV"],
+    "badRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
+    "inRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
+    "outRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
     "badRange2" : ["zeroEn"],
     "inRange2" : ["zeroEn"],
     "outRange2" : ["zeroEn"],
@@ -363,7 +363,7 @@ statesWithPvs = {
     "averaging" : ["zeroEn", "freqErr"],
     "startMinimize" : ["zeroEn"],
     "minimize" : ["zeroEn"],
-    "move" : ["zeroEn", "m1:motor.MOVN", "m1:motor.HLS", "m1:motor.LLS"],
+    "move" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
     "end" : ["zeroEn"],
     "error" : ["zeroEn"]
 }
