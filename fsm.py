@@ -224,6 +224,8 @@ class fsmIOs(object):
     
     # connette (crea se non esistono) gli ingressi names all'oggetto obj
     def link(self, names, obj):
+        if names is None:
+            return None
         ret = {}
         for name in names:
             if name not in self._ios:
@@ -369,7 +371,7 @@ class fsmBase(object):
 
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
-        if 'inputname' in args and args['inputname'] in self._cursens:
+        if 'inputname' in args and (self._cursens is None or args['inputname'] in self._cursens):
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
         if 'timername' in args:
