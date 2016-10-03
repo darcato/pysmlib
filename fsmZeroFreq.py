@@ -82,7 +82,7 @@ class zeroFreqFsm(fsmBase):
         numSteps = self.smallStep.val * 1000
         self.moveRel.put(self.foundDirection*numSteps) #it was 1000 full steps in old system
         self.moveStarted = False
-        self.tmrSet('moveTimeout', self.startTime)
+        self.tmrSet('moveTimeout', self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
 
     #check if successfully exited the bad range when end of movement
     def badRange_eval(self):
@@ -92,7 +92,6 @@ class zeroFreqFsm(fsmBase):
             self.gotoState("error")
         elif self.dmov.falling():
             self.moveStarted = True
-            self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
         elif self.moveStarted and self.dmov.rising():
             self.returnState = "badRange2"
             self.gotoState("antiBounce")
@@ -113,10 +112,10 @@ class zeroFreqFsm(fsmBase):
         numSteps = self.bigStep.val
         self.moveRel.put(self.foundDirection*numSteps)
         self.moveStarted = False
-        self.tmrSet("moveTimeout", self.startTime)
+        self.tmrSet("moveTimeout", self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
         self.escapeLimSwOn = 0
         if self.limitSwitch1.val or self.limitSwitch2.val:
-            self.tmrSet("escapeLimSw", 1)
+            self.tmrSet("escapeLimSw", 5)
             self.escapeLimSwOn = 1
 
     def inRange_eval(self):
@@ -128,15 +127,14 @@ class zeroFreqFsm(fsmBase):
                 numSteps = self.bigStep.val
                 self.moveRel.put(self.foundDirection*numSteps)
                 self.moveStarted = False
-                self.tmrSet("moveTimeout", self.startTime)
-                self.tmrSet("escapeLimSw", 1)
+                self.tmrSet("moveTimeout", self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
+                self.tmrSet("escapeLimSw", 5)
                 self.escapeLimSwOn = 1
             elif self.foundDirection == 1:
                 self.gotoState("error")
                 self.logE("could not escape limit switches in any direction")
         elif self.dmov.falling():
             self.moveStarted = True
-            self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
         elif self.moveStarted and self.dmov.rising():
             self.returnState = "inRange2"
             self.gotoState("antiBounce")
@@ -189,11 +187,11 @@ class zeroFreqFsm(fsmBase):
         numSteps = self.smallStep.val * 6.5e3
         self.moveRel.put(self.foundDirection*numSteps)
         self.moveStarted = False
-        self.tmrSet('moveTimeout', self.startTime)
+        self.tmrSet('moveTimeout', self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
         self.stepsDone += numSteps
         self.escapeLimSwOn = 0
         if self.limitSwitch1.val or self.limitSwitch2.val:
-            self.tmrSet("escapeLimSw", 1)
+            self.tmrSet("escapeLimSw", 5)
             self.escapeLimSwOn = 1
 
     #continue moving at 6.5kHz steps until inRange, limit switch or error
@@ -206,15 +204,14 @@ class zeroFreqFsm(fsmBase):
                 self.moveRel.put(self.foundDirection*numSteps)
                 self.moveStarted = False
                 self.stepsDone += numSteps
-                self.tmrSet("moveTimeout", self.startTime)
-                self.tmrSet("escapeLimSw", 1)
+                self.tmrSet("moveTimeout", self.startTime + abs(self.moveRel.val)/self.stepPerSec*1.2)
+                self.tmrSet("escapeLimSw", 5)
                 self.escapeLimSwOn = 1
             elif self.foundDirection == 1:
                 self.gotoState("error")
                 self.logE("could not escape limit switches in any direction")
         elif self.dmov.falling():
             self.moveStarted = True
-            self.tmrSet('moveTimeout', 0.3 + abs(self.moveRel.val)/self.stepPerSec*1.2)
         elif self.moveStarted and self.dmov.rising():
             self.returnState = "outRange2"
             self.gotoState("antiBounce")
@@ -312,7 +309,7 @@ class zeroFreqFsm(fsmBase):
         self.logD("moving of %d steps" % self.amount)
         self.stepsDone += abs(self.amount)
         self.moveStarted = False
-        self.tmrSet('moveTimeout', self.startTime)
+        self.tmrSet('moveTimeout', self.startTime + abs(self.amount)/self.stepPerSec*1.2)
         self.moveRel.put(self.amount)
 
     #wait for movement to end and return to minimize
@@ -320,7 +317,6 @@ class zeroFreqFsm(fsmBase):
         self.logD("freqErr: %.2f - dmov %d" %(self.freqErr.val, self.dmov.val))
         self.myEval()
         if self.dmov.falling():
-            self.tmrSet('moveTimeout', 0.3 + abs(self.amount)/self.stepPerSec*1.2)
             self.moveStarted = True
         elif self.moveStarted and self.dmov.rising():
             self.returnState="minimize"
@@ -352,7 +348,7 @@ class zeroFreqFsm(fsmBase):
 
 statesWithPvs = {
     "init" : ["zeroEn", "m1:motor.DMOV", "freqErr", "m1:moveRel", "m1:motor.HLS", "m1:motor.LLS", "m1:stepFast", "m1:stepSlow"],
-    "idle" : ["zeroEn", "m1:motor.DMOV"],
+    "idle" : ["zeroEn"],
     "badRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
     "inRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
     "outRange" : ["zeroEn", "m1:motor.DMOV", "m1:motor.HLS", "m1:motor.LLS"],
