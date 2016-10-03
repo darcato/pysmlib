@@ -32,13 +32,14 @@ class zeroFreqFsm(fsmBase):
 
 
         #auxiliary variables
-        self.freqErrPrev = self.freqErr.val
-        self.stepsDone = 0
-        self.foundDirection = 0
-        self.freqErrAvg = 0
-        self.nSamples = 0
-        self.returnState = ""
-        self.moveStarted = False
+        self.freqErrPrev = self.freqErr.val #the value of the freq err before the last movement
+        self.stepsDone = 0 # a counter of the num of steps done in a state
+        self.foundDirection = 0 #+-1 indicates the direction which is currently being tested or that resulted right at the end
+        self.freqErrAvg = 0 #the value of the last freq err read (averaged)
+        self.nSamples = 0 #num of samples read to perform freq err average
+        self.returnState = "" #the state to return from state average
+        self.moveStarted = False #flag to indicate that the falling on dmov has already been registered
+        self.amount = 0  #num of steps to be performed, passed from minimize to move
 
     #check all connections useful to the current state
     def generalCheck(self):
@@ -62,17 +63,18 @@ class zeroFreqFsm(fsmBase):
         self.stepsDone = 0
         
     def idle_eval(self):
-        if self.freqErr.val:
-            self.logD('freq erro %.3f' % self.freqErr.val)
         if self.enable.val == 1:
             self.logTimeReset() #reset time of the logger, will print times relative to now
             self.acceleration.put(0.3)
             self.velocity.put(12800)
             self.stepPerSec = self.velocity.val
+            self.midThrs = 100 + 2.2*self.bigStep.val 
             if self.freqErr.val < 1:
                 self.gotoState("end")
+            elif self.midThrs>=self.highThrs:
+                self.logE("wrong bigstep value")
+                self.gotoState("error")
             elif 1<self.freqErr.val<=self.midThrs:
-                print "freq err is %f" % self.freqErr.val
                 self.gotoState("badRange")
             elif self.midThrs<self.freqErr.val<self.highThrs:
                 self.gotoState("inRange")
