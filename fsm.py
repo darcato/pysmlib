@@ -134,7 +134,7 @@ class fsmIO(object):
         self._lck = threading.Lock()
         self.pval = None
         self._flgRising = False
-        self._flgFalling = False 
+        self._flgFalling = False
     
     def attach(self, obj):
         self._attached.add(obj)
@@ -144,7 +144,7 @@ class fsmIO(object):
         self.lock()
         self._lock()
         self.conn = args.get('conn', False)
-        self.trigger()
+        self.trigger(reason="connectionCallback")
         self._unlock()        
         self.unlock()
     
@@ -157,7 +157,7 @@ class fsmIO(object):
         self._flgRising = True
         self._flgFalling = True
         self.val=args.get('value', None)
-        self.trigger()
+        self.trigger(reason="changeCallback")
         self._unlock()        
         self.unlock()
     
@@ -165,15 +165,16 @@ class fsmIO(object):
     def putcb(self, **args):
         self.lock()
         self._lock()
-        self.trigger()
-        self._unlock()        
+        self.trigger(reason="putCallback")
+        self._unlock()
         self.unlock()
     	pass
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
-    def trigger(self):
+    def trigger(self, **args):
         for o in self._attached:
-            o.trigger(inputname=self._name)
+            print "--------------------------" + str(args['reason'])
+            o.trigger(inputname=self._name, reason=str(args['reason']))
 
     # ottiene l'accesso esclusivo alle mmacchine a stati connesse a questo 
     # ingresso
@@ -194,6 +195,9 @@ class fsmIO(object):
         
     def put(self, value):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
+
+    def putComplete(self):
+    	return self._pv.put_complete
         
     def rising(self):
        	if self._flgRising and self.pval < self.val:
@@ -226,7 +230,7 @@ class fsmIOs(object):
         return ret
 
     def get(self, name):
-        return self._ios[name]            
+        return self._ios[name]
     
     def getFsmIO(self, fsm):
     	ret = {}
@@ -357,7 +361,7 @@ class fsmBase(object):
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
         if 'inputname' in args and args['inputname'] in self._cursens:
-            self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename)
+            self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename) + " - " + repr(args['reason'])
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
