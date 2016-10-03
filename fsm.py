@@ -293,6 +293,8 @@ class fsmBase(object):
         if (self._nextstate != self._curstate):
             self.logI('gotoState() called twice, ignoring subsequent calls')
             return
+        if self._curstatename == state:
+            return
         self._nextstatename = state
         #metodo eval del prossimo stato
         self._nextstate = getattr(self, '%s_eval' % state)
