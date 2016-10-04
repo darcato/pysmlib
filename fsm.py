@@ -173,8 +173,7 @@ class fsmIO(object):
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self, **args):
         for o in self._attached:
-            print "--------------------------" + str(args['reason'])
-            o.trigger(inputname=self._name, reason=str(args['reason']))
+            o.trigger(inputname=self._name, reason=args['reason'])
 
     # ottiene l'accesso esclusivo alle mmacchine a stati connesse a questo 
     # ingresso
@@ -361,7 +360,7 @@ class fsmBase(object):
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
         if 'inputname' in args and args['inputname'] in self._cursens:
-            self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename) + " - " + repr(args['reason'])
+            self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
             self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
