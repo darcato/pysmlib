@@ -268,6 +268,7 @@ class fsmBase(object):
             self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
         self._curstatename = 'undefined'
         self._nextstatename = 'undefined'
+        self._prevstatename = 'undefined'
         self._curstate = None
         self._curexit = None
         self._nextstate = None
@@ -298,6 +299,10 @@ class fsmBase(object):
         #metodo exit del prossimo stato
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
+    def gotoPrevState(self):
+        if self._prevstatename:
+            self.gotoState(self._prevstatename)
+
     def log(self, lev, msg):
         whites = len(max(self._states, key=len)) - len(self._curstatename)
         self._logger.log(lev, '%s[%s] :%s %s' %(self._name, self._curstatename, " "*whites, msg))    
@@ -323,6 +328,7 @@ class fsmBase(object):
         while again: 
             if self._nextstate != self._curstate:
                 self.logD('%s => %s' % (self._curstatename, self._nextstatename))
+                self._prevstatename = self._curstatename
                 self._curstatename = self._nextstatename    
                 self._curstate = self._nextstate
                 self._curexit = self._nextexit
