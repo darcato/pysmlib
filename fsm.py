@@ -97,30 +97,34 @@ class fsmTimers(threading.Thread):
     def set(self, timer, timeout):
         #ottiene l'accesso esclusivo alla lista dei timer
         self._cond.acquire()
-        # imposta il tempo al quale scadrà il timer
-        timer.reset(timeout)
-        
-        # se il timer è già in lista significa che è stato reimpostato prima che scadesse, 
-        # quindi lo rimuovo e lo reimposto
-        if timer in self._timers:
-            self._timers.remove(timer)
-        i = 0    
-        for t in self._timers:
-            if t.expire > timer.expire:
-                # il timer all'indice 'i' scade dopo il timer che sto impostando, pertanto
-                # inserisco il nuovo timer in questa posizione 'i' e interrompo il ciclo
-                break
-            i += 1
-        self._timers.insert(i, timer)
-        if i == 0:
-            # CASO SPECIALE: se 'i'  == 0 significa che ho inserito in testa il nuovo timer oppure l'ho inserito
-            # in una lista vuota; nel primo caso devo svegliare il thread perche' il nuovo timer scadra' prima 
-            # del suo prossimo risveglio (impostato su quello che ora è il secondo timer in lista), nel secondo
-            # caso il thread sta dormendo per un tempo indefinito, quindi lo devo svegliare affinche reimposti 
-            # un tempo di sleep corretto
-            self._cond.notify()
-        #rilascia il lock
-        self._cond.release()
+        try:
+            # imposta il tempo al quale scadrà il timer
+            timer.reset(timeout)
+            
+            # se il timer è già in lista significa che è stato reimpostato prima che scadesse, 
+            # quindi lo rimuovo e lo reimposto
+            if timer in self._timers:
+                self._timers.remove(timer)
+            i = 0    
+            for t in self._timers:
+                if t.expire > timer.expire:
+                    # il timer all'indice 'i' scade dopo il timer che sto impostando, pertanto
+                    # inserisco il nuovo timer in questa posizione 'i' e interrompo il ciclo
+                    break
+                i += 1
+            self._timers.insert(i, timer)
+            if i == 0:
+                # CASO SPECIALE: se 'i'  == 0 significa che ho inserito in testa il nuovo timer oppure l'ho inserito
+                # in una lista vuota; nel primo caso devo svegliare il thread perche' il nuovo timer scadra' prima 
+                # del suo prossimo risveglio (impostato su quello che ora è il secondo timer in lista), nel secondo
+                # caso il thread sta dormendo per un tempo indefinito, quindi lo devo svegliare affinche reimposti 
+                # un tempo di sleep corretto
+                self._cond.notify()
+            #rilascia il lock
+        except Exception, e:
+            print e        
+        finally:
+            self._cond.release()
     
 #classe che rappresenta un ingresso per le macchine a stati
 class fsmIO(object):
@@ -377,6 +381,7 @@ class fsmBase(object):
         pass
 
     def tmrSet(self, name, timeout):
+        print timeout
         if not name in self._timers:
             self._timers[name] = fsmTimer(self, name)
         t = self._timers[name]
