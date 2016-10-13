@@ -135,7 +135,6 @@ class fsmIO(object):
         self.data = {}    # pv data
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
-        self._lck = threading.Lock()
         self.pval = None
         self._flgRising = False
         self._flgFalling = False
@@ -145,16 +144,13 @@ class fsmIO(object):
     
     #callback connessione    
     def concb(self, **args):
-        self.lock()
         self._lock()
         self.conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
         self._unlock()        
-        self.unlock()
     
     #callback aggiornamento
     def chgcb(self, **args):
-        self.lock()
         self._lock()
         self.data = args
         self.pval = self.val
@@ -163,15 +159,12 @@ class fsmIO(object):
         self.val=args.get('value', None)
         self.trigger(reason="changeCallback")
         self._unlock()        
-        self.unlock()
     
     #put callback
     def putcb(self, **args):
-        self.lock()
         self._lock()
         self.trigger(reason="putCallback")
-        self._unlock()
-        self.unlock()
+        self._unlock()        
     	pass
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
@@ -189,12 +182,6 @@ class fsmIO(object):
         for o in self._attached:
             o.unlock()
 
-    #ottiene l'accesso esclusivo a questo ingresso
-    def lock(self):
-        self._lck.acquire()
-
-    def unlock(self):
-        self._lck.release()
         
     def put(self, value):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
