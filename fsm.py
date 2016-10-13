@@ -42,9 +42,7 @@ class fsmTimer(object):
         
     def trigger(self):
         self._pending = False
-        self._fsm.lock()
         self._fsm.trigger(timername=self._name)
-        self._fsm.unlock()
         
     def expd(self):
         return not self._pending    
@@ -144,45 +142,27 @@ class fsmIO(object):
     
     #callback connessione    
     def concb(self, **args):
-        self._lock()
         self.conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
-        self._unlock()        
     
     #callback aggiornamento
     def chgcb(self, **args):
-        self._lock()
         self.data = args
         self.pval = self.val
         self._flgRising = True
         self._flgFalling = True
         self.val=args.get('value', None)
         self.trigger(reason="changeCallback")
-        self._unlock()        
     
     #put callback
     def putcb(self, **args):
-        self._lock()
         self.trigger(reason="putCallback")
-        self._unlock()        
-    	pass
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self, **args):
         for o in self._attached:
             o.trigger(inputname=self._name, reason=args['reason'])
 
-    # ottiene l'accesso esclusivo alle mmacchine a stati connesse a questo 
-    # ingresso
-    def _lock(self):
-        for o in self._attached:
-            o.lock()
-        
-    def _unlock(self):
-        for o in self._attached:
-            o.unlock()
-
-        
     def put(self, value):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
 
@@ -359,10 +339,12 @@ class fsmBase(object):
 
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
+        self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)
         if len(self._events):
             self._cond.notify()
+        self._cond.release()
 
     def _process_one_event(self):
         if len(self._events):
