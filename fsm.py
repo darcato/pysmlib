@@ -120,7 +120,7 @@ class fsmTimers(threading.Thread):
                 self._cond.notify()
             #rilascia il lock
         except Exception, e:
-            print e        
+            self.logE(repr(e))        
         finally:
             self._cond.release()
     
@@ -136,6 +136,7 @@ class fsmIO(object):
         self.pval = None
         self._flgRising = False
         self._flgFalling = False
+        self._flgChanged = False
     
     def attach(self, obj):
         self._attached.add(obj)
@@ -151,6 +152,7 @@ class fsmIO(object):
         self.pval = self.val
         self._flgRising = True
         self._flgFalling = True
+        self._flgChanged = True
         self.val=args.get('value', None)
         self.trigger(reason="changeCallback")
     
@@ -182,6 +184,13 @@ class fsmIO(object):
         	return True
     	else:
     		return False
+
+    def hasChanged(self):
+        if self._flgChanged:
+            self._flgChanged = False
+            return True
+        else:
+            return False
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
@@ -342,7 +351,7 @@ class fsmBase(object):
         self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)
-        if len(self._events):
+        if len(self._events) == 1:
             self._cond.notify()
         self._cond.release()
 
@@ -373,7 +382,6 @@ class fsmBase(object):
         pass
 
     def tmrSet(self, name, timeout):
-        print timeout
         if not name in self._timers:
             self._timers[name] = fsmTimer(self, name)
         t = self._timers[name]
@@ -389,6 +397,12 @@ class fsmBase(object):
             if not io.conn:
                 return False
         return True
+
+    def anyof(self, objs, method):
+        return any(getattr(io, method)() for io in objs)     
+
+    def allof(self, objs, method):
+        return all(getattr(io, method)() for io in objs)     
 
 ################################################################################
 
