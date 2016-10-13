@@ -279,6 +279,7 @@ class fsmBase(object):
         self._cursens = {}
         self._cond = threading.Condition()
     	self._myios = self._ios.getFsmIO(self)
+	self._events = []
 
 
     # ottiene accesso esclusivo a questo oggetto        
@@ -328,58 +329,70 @@ class fsmBase(object):
 
     #valuta la macchina a stati nello stato corrente
     def eval(self):
-        again = True
-        while again: 
-            if self._nextstate != self._curstate:
-                self.logD('%s => %s' % (self._curstatename, self._nextstatename))
-                self._prevstatename = self._curstatename
-                self._curstatename = self._nextstatename    
-                self._curstate = self._nextstate
-                self._curexit = self._nextexit
-                self._cursens = self._states.get(self._nextstatename, {})
-                self.commonEntry()
-                if self._nextentry:
-                    self.logD('executing %s_entry()' %(self._curstatename))
-                    self._nextentry()
-            
-            self.commonEval()                
-            self.logD('executing %s_eval()' %(self._nextstatename))
-            self._curstate()        
-            if self._nextstate != self._curstate:
-                # procede a valutare lo stato successivo, ma rilascia il lock per 100ms 
-                # in modo da permettere la ricezione di eventi che possono modificare lo stato
-                # degli ingressi
-                again = True
-                self._cond.wait(0.1) 
-                if self._curexit:
-                    self.logD('executing %s_exit()' %(self._curstatename))
-                    self._curexit()
-                self.commonExit()
-            else:
-                again = False        
+        changed = False
+        if self._nextstate != self._curstate:
+            self.logD('%s => %s' % (self._curstatename, self._nextstatename))
+            self._prevstatename = self._curstatename
+            self._curstatename = self._nextstatename
+            self._curstate = self._nextstate
+            self._curexit = self._nextexit
+            self._cursens = self._states.get(self._nextstatename, {})
+            self.commonEntry()
+            if self._nextentry:
+                self.logD('executing %s_entry()' %(self._curstatename))
+                self._nextentry()
+        self.commonEval()
+        self.logD('executing %s_eval()' %(self._curstatename))
+        self._curstate()
+        self.logD('end of %s_eval()' %(self._curstatename))
+        if self._nextstate != self._curstate:
+            changed = True
+            if self._curexit:
+                self.logD('executing %s_exit()' %(self._curstatename))
+                self._curexit()
+            self.commonExit()
+        return changed
     
     # valuta all'infinito la macchina a stati
     def eval_forever(self):
-        self.lock()
         while(1):
-            print ""
-            self.logD('awoken')
-            self.eval() # eval viene eseguito con l'accesso esclusivo su questa macchina
-            self._cond.wait() # la macchina va in sleep in attesa di un evento (da un ingresso)
+            changed = self.eval() # eval viene eseguito senza lock
+            self.lock() # blocca la coda degli eventi
+            if not changed and len(self._events) == 0:
+                self.logD("No events to process going to sleep")
+                self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
+                self.logD('awoken')
+            self._process_one_event()
+            self.unlock()
 
             
     def input(self, name):
         return self._ios.get(name)       
 
+
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
+        self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
+        self._events.append(args)
+        if len(self._events):
+            self._cond.notify()
+
+    def _process_one_event(self):
+        if len(self._events):
+            return self._process_event(**self._events.pop(0))
+        return False
+
+    def _process_event(self, **args):
+        self.logD('Consuming event %s %d' % (repr(args), len(self._events)))
         if 'inputname' in args and (self._cursens is None or args['inputname'] in self._cursens):
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
-            self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
+            #self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
+            return True
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
-            self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
-        	   
+            #self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
+            return True
+        return False
 
     def commonEval(self):
         pass
@@ -399,7 +412,14 @@ class fsmBase(object):
         self.logD("activating a timer: '%s', %.2fs" % (name, timeout))
     
     def tmrExp(self, name):
-        return not name in self._timers or self._timers[name].expd() 
+        return not name in self._timers or self._timers[name].expd()
+
+    def is_io_connected(self):
+        stateios = self._cursens if self._cursens is not None else self._myios
+        for io in stateios.values():
+            if not io.conn:
+                return False
+        return True
 
 ################################################################################
 
