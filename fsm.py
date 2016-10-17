@@ -129,12 +129,12 @@ class fsmTimers(threading.Thread):
 class fsmIO(object):
     def __init__(self, name):
         self._name = name
-        self.conn = False #pv connessa
-        self.val = None
-        self.data = {}    # pv data
+        self._conn = False #pv connessa
+        self._value = None
+        self._data = {}    # pv data
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
-        self.pval = None
+        self._pval = None
         self._flgRising = False
         self._flgFalling = False
         self._flgChanged = False
@@ -144,17 +144,17 @@ class fsmIO(object):
     
     #callback connessione    
     def concb(self, **args):
-        self.conn = args.get('conn', False)
+        self._conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
     
     #callback aggiornamento
     def chgcb(self, **args):
-        self.data = args
-        self.pval = self.val
+        self._data = args
+        self._pval = self._value
         self._flgRising = True
         self._flgFalling = True
         self._flgChanged = True
-        self.val=args.get('value', None)
+        self._value=args.get('value', None)
         self.trigger(reason="changeCallback")
     
     #put callback
@@ -173,14 +173,14 @@ class fsmIO(object):
     	return self._pv.put_complete
         
     def rising(self):
-       	if self._flgRising and self.pval < self.val and self.pval!=None:
+       	if self._flgRising and self._pval < self._value and self._pval!=None:
        		self._flgRising = False
         	return True
     	else: 
     		return False
 
     def falling(self):
-        if self._flgFalling and self.pval > self.val:
+        if self._flgFalling and self._pval > self._value:
         	self._flgFalling = False
         	return True
     	else:
@@ -194,10 +194,19 @@ class fsmIO(object):
             return False
 
     def initialized(self):
-        return self.conn and self.val!=None
+        return self._conn and self._value!=None
 
     def connected(self):
-        return self.conn
+        return self._conn
+
+    def val(self):
+        return self._value
+
+    def data(self, key):
+        if key in self._data.keys():
+            return self._data[key]
+        else:
+            return None
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
@@ -400,10 +409,7 @@ class fsmBase(object):
 
     def is_io_connected(self):
         stateios = self._cursens if self._cursens is not None else self._myios
-        for io in stateios.values():
-            if not io.conn:
-                return False
-        return True
+        return self.allof(stateios.values(), "connected")
 
     def anyof(self, objs, method):
         return any(getattr(io, method)() for io in objs)     
