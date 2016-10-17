@@ -173,7 +173,7 @@ class fsmIO(object):
     	return self._pv.put_complete
         
     def rising(self):
-       	if self._flgRising and self.pval < self.val:
+       	if self._flgRising and self.pval < self.val and self.pval!=None:
        		self._flgRising = False
         	return True
     	else: 
@@ -192,6 +192,12 @@ class fsmIO(object):
             return True
         else:
             return False
+
+    def initialized(self):
+        return self.conn and self.val!=None
+
+    def connected(self):
+        return self.conn
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
