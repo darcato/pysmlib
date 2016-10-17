@@ -96,13 +96,14 @@ class fsmTimers(threading.Thread):
         #ottiene l'accesso esclusivo alla lista dei timer
         self._cond.acquire()
         try:
-            # imposta il tempo al quale scadrà il timer
-            timer.reset(timeout)
-            
             # se il timer è già in lista significa che è stato reimpostato prima che scadesse, 
             # quindi lo rimuovo e lo reimposto
             if timer in self._timers:
                 self._timers.remove(timer)
+            
+            # imposta il tempo al quale scadrà il timer
+            timer.reset(timeout)
+
             i = 0    
             for t in self._timers:
                 if t.expire > timer.expire:
@@ -335,7 +336,7 @@ class fsmBase(object):
             changed = self.eval() # eval viene eseguito senza lock
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
-                self.logD("No events to process going to sleep")
+                self.logD("No events to process going to sleep\n")
                 self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
                 self.logD('awoken')
             self._process_one_event()
