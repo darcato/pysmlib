@@ -43,12 +43,11 @@ class zeroFreqFsm(fsmBase):
 
     #check all connections useful to the current state
     def generalCheck(self):
-        if self.enable.conn and self.enable.val==0:
+        if self.enable.connected() and self.enable.val==0:
             self.gotoState("end") 
-        for io in self._cursens:
-            if not self._cursens[io].conn:
-                self.gotoState("error")
-                self.logW(io + " not connected")
+        if not self.allof(self._cursens.values(), "connected"):
+            self.gotoState("error")
+            self.logW("not all pv connected")
 
     #write current state name, current operation and progress to pv
     def commonExit(self):
@@ -63,7 +62,7 @@ class zeroFreqFsm(fsmBase):
         self.stepsDone = 0
         
     def idle_eval(self):
-        if self.enable.val == 1:
+        if self.enable.rising():
             self.logTimeReset() #reset time of the logger, will print times relative to now
             self.acceleration.put(0.3)
             self.velocity.put(12800)
@@ -163,9 +162,10 @@ class zeroFreqFsm(fsmBase):
 
     def averaging_eval(self):
         self.generalCheck()
-        self.logD("triggered read ------> %.2f"%self.freqErr.val)
-        self.freqErrAvg += self.freqErr.val
-        self.nSamples += 1
+        if self.freqErr.hasChanged():
+            self.logD("triggered read ------> %.2f"%self.freqErr.val)
+            self.freqErrAvg += self.freqErr.val
+            self.nSamples += 1
         if self.nSamples>=5 or self.tmrExp("averaging"):
             self.freqErrAvg /= self.nSamples
             self.gotoState(self.returnState)
@@ -348,7 +348,7 @@ class zeroFreqFsm(fsmBase):
     #fail
     def error_eval(self):
         self.logD("ERROR: cannot complete frequency zeroing")
-        if self.enable.conn:
+        if self.enable.connected():
             self.enable.put(0);
             self.gotoState("idle")            
 
