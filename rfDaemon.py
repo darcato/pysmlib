@@ -1,9 +1,9 @@
 #! /usr/bin/python
 
-import threading
+from threading import Thread, enumerate
 import signal
-import sys
-import time
+from time import sleep
+import argparse
 
 from waves import waves
 from caraterize import caraterize
@@ -11,9 +11,9 @@ from pulseRf import pulseRf
 from zeroFreq import zeroFreq
 from fsm import fsmTimers
 
-class fsmThread(threading.Thread):
+class fsmThread(Thread):
 	def __init__(self, fsm):
-		threading.Thread.__init__(self)
+		Thread.__init__(self)
 		self.fsm = fsm
 
 	def run(self):
@@ -21,7 +21,14 @@ class fsmThread(threading.Thread):
 		self.fsm.eval_forever()
 		print("Stopped fsm: %s " % self.fsm.name())
 
-def main(**args):
+def main():
+	parser = argparse.ArgumentParser(description="rfDaemon - loads the required fsm to perform procedures")
+	parser.add_argument("configFile", help="the path of the configuration file", type=str)
+	parser.add_argument("-v", "--verbosity", help="set the debug level", default=0, type=int)
+	args = parser.parse_args()
+	print args
+
+
 
 	#create a thread for the timer manager
 	timerManager = fsmTimers()
@@ -38,8 +45,8 @@ def main(**args):
 		fsms[fsm]=newThread
 	print("All fsms started!")
 
-	time.sleep(0.1)
-	for i in threading.enumerate():
+	sleep(0.1)
+	for i in enumerate():
 		print(i)
 
 	def killAll(signum, frame):
