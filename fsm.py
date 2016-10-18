@@ -57,6 +57,7 @@ class fsmTimers(threading.Thread):
         #array con i timers attivi in ordine di scadenza
         # (indice 0 è il prossimo a scadere)
         self._timers = []
+        self._stop_thread = False
         
     # routine principale del thread.
     # Funziona in questo modo: il thread va in sleep per un periodo di tempo pari a quello che manca
@@ -69,7 +70,7 @@ class fsmTimers(threading.Thread):
         #acquisissce il lock, per avere accesso esclusivo alla lista dei timer
         self._cond.acquire()
         next = None
-        while True:
+        while not self._stop_thread:
             if len(self._timers): # se ci sono timers in pendenti
                 now = time.time() # tempo corrente
                 i = 0
@@ -124,6 +125,14 @@ class fsmTimers(threading.Thread):
             self.logE(repr(e))        
         finally:
             self._cond.release()
+
+    def kill(self):
+        self._cond.acquire()
+        self._stop_thread = True
+        self._cond.notify()
+        self._cond.release()
+        self.join()
+
     
 #classe che rappresenta un ingresso per le macchine a stati
 class fsmIO(object):
@@ -253,6 +262,8 @@ class fsmBase(object):
             self._tmgr.start()
         else:
             self._tmgr = args['tmgr']
+            if not self._tmgr.isAlive():
+                self._tmgr.start()
                 
         self._timers = {}
         self._ios = args.get('ios', fsmIOs())
@@ -271,8 +282,13 @@ class fsmBase(object):
         self._cursens = {}
         self._cond = threading.Condition()
     	self._myios = self._ios.getFsmIO(self)
-	self._events = []
+        self._stop_thread = False
+        self._events = []
 
+
+    #return the name of the class
+    def name(self):
+        return self._name
 
     # ottiene accesso esclusivo a questo oggetto        
     def lock(self):
@@ -347,7 +363,7 @@ class fsmBase(object):
     
     # valuta all'infinito la macchina a stati
     def eval_forever(self):
-        while(1):
+        while(not self._stop_thread):
             changed = self.eval() # eval viene eseguito senza lock
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
@@ -367,7 +383,9 @@ class fsmBase(object):
         self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)
-        if len(self._events) == 1:
+        if 'stop_fsm' in args:
+            self._stop_thread = True
+        if len(self._events) == 1 or self._stop_thread:
             self._cond.notify()
         self._cond.release()
 
