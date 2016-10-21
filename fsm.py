@@ -148,6 +148,9 @@ class fsmIO(object):
         self._flgFalling = False
         self._flgChanged = False
     
+    def ioname(self):
+        return self._name
+
     def attach(self, obj):
         self._attached.add(obj)
     
@@ -223,39 +226,83 @@ class fsmIOs(object):
     def __init__(self):
         self._ios = {}
     
-    # connette (crea se non esistono) gli ingressi names all'oggetto obj
-    def link(self, names, obj):
-        if names is None:
-            return None
-        ret = {}
-        for name in names:
-            if name not in self._ios:
-                self._ios[name] = fsmIO(name)
-            self._ios[name].attach(obj)
-            ret[name] = self._ios[name]
-        return ret
-
-    def get(self, name):
+    def get(self, name, fsm):
+        if name not in self._ios:
+            self._ios[name] =  fsmIO(name)
+        self._ios[name].attach(fsm)
         return self._ios[name]
     
     def getFsmIO(self, fsm):
     	ret = {}
     	for io in self._ios.values():
     		if fsm in io._attached:
-    			ret[io._name] = io
+    			ret[io.ioname()] = io
     	return ret
+
+
+class cavityPVs(fsmIOs):
     
+    def __init__(self):
+        super(cavityPVs, self).__init__()
+        self._map = {
+            "zeroEn"         : "zeroEn",
+            "caraterizeEn"   : "caraterizeEn",
+            "waveEn"         : "waveEn",
+            "pulseEn"        : "pulseEn",
+            "freqErr"        : "freqErr",
+            "motor.DMOV"     : "m1:motor.DMOV",
+            "motor.RBV"      : "m1:motor.RBV",
+            "moveRel"        : "m1:moveRel",
+            "motor.HLS"      : "m1:motor.HLS",
+            "motor.LLS"      : "m1:motor.LLS",
+            "stepFast"       : "m1:stepFast",
+            "stepSlow"       : "m1:stepSlow",
+            "motor.VELO"     : "m1:motor.VELO",
+            "motor.ACCL"     : "m1:motor.ACCL",
+            "motor.TWF"      : "m1:motor.TWF",
+            "motor.TWR"      : "m1:motor.TWR",
+            "motor.TWV"      : "m1:motor.TWV",
+            "fast"           : "m1:fast",
+            "freqErr2.PROC"  : "freqErr2.PROC",
+            "freqErr2.VALA"  : "freqErr2.VALA",
+            "pressure"       : "pressure",
+            "steps"          : "steps",
+            "freqs"          : "freqs",
+            "press"          : "press",
+            "fit_steps"      : "fit_steps",
+            "fit_freqs"      : "fit_freqs",
+            "quip"           : "quip",
+            "lopwEn"         : "lopwEn",
+            "period"         : "period",
+            "dutyCycle"      : "dutyCycle",
+            "maxPower"       : "maxPower",
+            "minPower"       : "minPower",
+            "shape"          : "shape",
+            "timeResolution" : "timeResolution",
+            "powers"         : "powers",
+            "powers.NELM"    : "powers.NELM",
+            "times"          : "times",
+            "avg"            : "avg"           
 
+        }
+        self.inv_map = {v: k for k, v in self._map.iteritems()}
 
+    def get(self, name, fsm):
+        pvname = "LiLlrfCryo%02dQwrs%02d:%s" % (fsm._targetCryostat, fsm._targetCavity, self._map[name])
+        return super(cavityPVs, self).get(pvname, fsm)
+
+    ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
+    #def getFsmIO(self, fsm):
+    #    iosDict = super(cavityPVs, self).getFsmIO(fsm)
+    #    pvsDict = {}
+    #    for key, value in iosDict.iteritems():
+    #        pvsDict[self.inv_map[key]] = value
+    #    return iosDict
 
 
 # classe base per la macchina a stati
 class fsmBase(object):
-    def __init__(self, name, stateDefs, **args):
-        
-        # stateDefs e un dizionario in cui la chiave e il nome dello stato e
-        # il valore un array di ingressi utilizzati dallo stato
-
+    def __init__(self, name, **args):
         self._name = name
         if not 'tmgr' in args:
             self._tmgr = fsmTimers()
@@ -268,9 +315,6 @@ class fsmBase(object):
         self._timers = {}
         self._ios = args.get('ios', fsmIOs())
         self._logger = args.get('logger', fsmLogger())
-        self._states = {}
-        for stateDef in stateDefs:
-            self._states[stateDef] = self._ios.link(stateDefs[stateDef], self)
         self._curstatename = 'undefined'
         self._nextstatename = 'undefined'
         self._prevstatename = 'undefined'
@@ -279,15 +323,25 @@ class fsmBase(object):
         self._nextstate = None
         self._nextentry = None
         self._nextexit = None
+        self._senslists = {}
         self._cursens = {}
         self._cond = threading.Condition()
     	self._myios = self._ios.getFsmIO(self)
         self._stop_thread = False
         self._events = []
 
+    #populate the sensityvity list for each state
+    def setSensLists(self, statesWithIos):
+        # statesWithIos e un dizionario in cui la chiave e il nome dello stato e
+        # il valore un array di ingressi utilizzati dallo stato
+        for state, iolist in statesWithIos.iteritems():
+            iodict = {}
+            for io in iolist:
+                iodict[io.ioname()] = io
+            self._senslists[state] = iodict
 
     #return the name of the class
-    def name(self):
+    def fsmname(self):
         return self._name
 
     # ottiene accesso esclusivo a questo oggetto        
@@ -317,8 +371,8 @@ class fsmBase(object):
             self.gotoState(self._prevstatename)
 
     def log(self, lev, msg):
-        whites = len(max(self._states, key=len)) - len(self._curstatename)
-        self._logger.log(lev, '%s[%s] :%s %s' %(self._name, self._curstatename, " "*whites, msg))    
+        #whites = len(max(self._senslists.keys(), key=len)) - len(self._curstatename)
+        self._logger.log(lev, '%s[%s] : %s' %(self._name, self._curstatename, msg))    
 
     def logE(self, msg):
         self.log(0, msg)
@@ -344,7 +398,7 @@ class fsmBase(object):
             self._curstatename = self._nextstatename
             self._curstate = self._nextstate
             self._curexit = self._nextexit
-            self._cursens = self._states.get(self._nextstatename, {})
+            self._cursens = self._senslists.get(self._nextstatename, {})
             self.commonEntry()
             if self._nextentry:
                 self.logD('executing %s_entry()' %(self._curstatename))
@@ -375,17 +429,20 @@ class fsmBase(object):
 
             
     def input(self, name):
-        return self._ios.get(name)       
+        return self._ios.get(name, self)
 
+    def kill(self):
+        self._cond.acquire()
+        self._stop_thread = True
+        self._cond.notify()
+        self._cond.release()
 
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
         self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)
-        if 'stop_fsm' in args:
-            self._stop_thread = True
-        if len(self._events) == 1 or self._stop_thread:
+        if len(self._events) == 1:
             self._cond.notify()
         self._cond.release()
 
