@@ -154,12 +154,20 @@ class fsmIO(object):
     def attach(self, obj):
         self._attached.add(obj)
     
-    #callback connessione    
+    #callback connessione - called on connections and disconnections
     def concb(self, **args):
         self._conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
+        #on connection or disconnection reset all previous values of the input
+        #in order not to access old values after disconnections
+        self._flgRising = False
+        self._flgFalling = False
+        self._flgChanged = False
+        self._pval = None
+        self._value = None
+        self._data = {}
     
-    #callback aggiornamento
+    #callback aggiornamento - value has changed or initial value after connection has arrived
     def chgcb(self, **args):
         self._data = args
         self._pval = self._value
@@ -169,7 +177,7 @@ class fsmIO(object):
         self._value=args.get('value', None)
         self.trigger(reason="changeCallback")
     
-    #put callback
+    #put callback - pv processing has been completed after being triggered by a put
     def putcb(self, **args):
         self.trigger(reason="putCallback")
 
@@ -178,12 +186,15 @@ class fsmIO(object):
         for o in self._attached:
             o.trigger(inputname=self._name, reason=args['reason'])
 
+    # caput and wait for pv processing to complete, then call putcb
     def put(self, value):
     	self._pv.put(value, callback=self.putcb, use_complete=True)
 
+    #returns wheter the pv processing after a put has been completed
     def putComplete(self):
     	return self._pv.put_complete
         
+    # returns wheter the input is connected and rising since last asked
     def rising(self):
        	if self._flgRising and self._pval < self._value and self._pval!=None:
        		self._flgRising = False
@@ -191,6 +202,7 @@ class fsmIO(object):
     	else: 
     		return False
 
+    # returns wheter the input is connected and falling since last asked
     def falling(self):
         if self._flgFalling and self._pval > self._value:
         	self._flgFalling = False
@@ -198,6 +210,7 @@ class fsmIO(object):
     	else:
     		return False
 
+    # returns wheter the input is connected and has changed its value since last asked
     def hasChanged(self):
         if self._flgChanged:
             self._flgChanged = False
@@ -205,15 +218,19 @@ class fsmIO(object):
         else:
             return False
 
+    # return whether the pv is connected and has received the initial value
     def initialized(self):
         return self._conn and self._value!=None
 
+    # returns wheter the pv is connected or not
     def connected(self):
         return self._conn
 
+    # return the pv value
     def val(self):
         return self._value
 
+    # return one element from pv data, choosen by key
     def data(self, key):
         if key in self._data.keys():
             return self._data[key]
@@ -239,11 +256,13 @@ class fsmIOs(object):
     			ret[io.ioname()] = io
     	return ret
 
-
+#performs the conversion from procedure internal namings of the inputs
+#and real pv names, base on naming convention and a map
 class cavityPVs(fsmIOs):
     
     def __init__(self):
         super(cavityPVs, self).__init__()
+        #converts the internal name to the ending of the pv name
         self._map = {
             "zeroEn"         : "zeroEn",
             "caraterizeEn"   : "caraterizeEn",
@@ -285,8 +304,11 @@ class cavityPVs(fsmIOs):
             "avg"            : "avg"           
 
         }
+        #inverse map, to perform back naming transformation
         self.inv_map = {v: k for k, v in self._map.iteritems()}
 
+    #call parent method to connect pvs with complete names
+    #reads from calling fsm the targets and creates base pv name with those infos
     def get(self, name, fsm):
         pvname = "LiLlrfCryo%02dQwrs%02d:%s" % (fsm._targetCryostat, fsm._targetCavity, self._map[name])
         return super(cavityPVs, self).get(pvname, fsm)
