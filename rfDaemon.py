@@ -9,6 +9,7 @@ from waves import waves
 from caraterize import caraterize
 from pulseRf import pulseRf
 from zeroFreq import zeroFreq
+from softTuner import softTuner
 from fsm import fsmTimers, cavityPVs, fsmLogger
 
 class fsmThread(Thread):
@@ -61,7 +62,8 @@ def main():
             c = caraterize(name+"CARA", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             z = zeroFreq(name+"ZRFR", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             p = pulseRf(name+"PULS", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
-            fsms.update({w:None, c:None, z:None, p:None})
+            s = softTuner(name+"SWTU", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+            fsms.update({w:None, c:None, z:None, p:None, s:None})
 
 
     for fsm in fsms.iterkeys():

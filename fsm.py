@@ -301,6 +301,12 @@ class cavityPVs(fsmIOs):
             "powers"         : "powers",
             "powers.NELM"    : "powers.NELM",
             "times"          : "times",
+            "phasErr"        : "phasErr",
+            "softTunerEn"    : "swtuEn",
+            "stGain"         : "stgaSt",
+            "stThreshold"    : "stthSt",
+            "tuningPolarity" : "tupoSt",
+            "cavityStatus"   : "stat",
             "avg"            : "avg"           
 
         }
