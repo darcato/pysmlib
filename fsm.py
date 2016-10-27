@@ -243,7 +243,7 @@ class fsmIOs(object):
     def __init__(self):
         self._ios = {}
     
-    def get(self, name, fsm):
+    def get(self, name, fsm, **args):
         if name not in self._ios:
             self._ios[name] =  fsmIO(name)
         self._ios[name].attach(fsm)
@@ -315,9 +315,9 @@ class cavityPVs(fsmIOs):
 
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
-    def get(self, name, fsm):
-        pvname = "LiLlrfCryo%02dQwrs%02d:%s" % (fsm._targetCryostat, fsm._targetCavity, self._map[name])
-        return super(cavityPVs, self).get(pvname, fsm)
+    def get(self, name, fsm, **args):
+        pvname = "LiLlrfCryo%02dQwrs%02d:%s" % (args['cry'], args['cav'], self._map[name])
+        return super(cavityPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
     #def getFsmIO(self, fsm):
@@ -456,8 +456,8 @@ class fsmBase(object):
             self.unlock()
 
             
-    def input(self, name):
-        return self._ios.get(name, self)
+    def input(self, name, **args):
+        return self._ios.get(name, self, **args)
 
     def kill(self):
         self._cond.acquire()
