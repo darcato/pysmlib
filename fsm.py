@@ -307,7 +307,12 @@ class cavityPVs(fsmIOs):
             "stThreshold"    : "stthSt",
             "tuningPolarity" : "tupoSt",
             "cavityStatus"   : "stat",
-            "avg"            : "avg"           
+            "avg"            : "avg",
+            "cConnWatchdog"  : "cconWd",
+            "pConnWatchdog"  : "pconWd",
+            "sConnWatchdog"  : "sconWd",
+            "zConnWatchdog"  : "zconWd",
+            "wConnWatchdog"  : "wconWd"
 
         }
         #inverse map, to perform back naming transformation

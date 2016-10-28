@@ -10,6 +10,7 @@ from caraterize import caraterize
 from pulseRf import pulseRf
 from zeroFreq import zeroFreq
 from softTuner import softTuner
+from reporter import reporter
 from fsm import fsmTimers, cavityPVs, fsmLogger
 
 class fsmThread(Thread):
@@ -72,6 +73,10 @@ def main():
         fsms[fsm]=newThread
     print("All fsms started!")
 
+    rep = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+    repoThread = fsmThread(rep)
+    repoThread.start()
+
     #sleep(0.1)
     #for i in enumerate():
     #   print(i)
@@ -88,6 +93,9 @@ def main():
         if timerManager.isAlive():  #if no fsm is loaded it won't be alive
             timerManager.kill()
         print("Killed the timer manager")
+        if repoThread.isAlive():
+            rep.kill()
+        print("Killed the reporter thread")
     
     signal.signal(signal.SIGINT, killAll)
     signal.pause()
