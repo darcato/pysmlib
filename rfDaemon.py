@@ -73,8 +73,9 @@ def main():
         fsms[fsm]=newThread
     print("All fsms started!")
 
-    rep = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
-    repoThread = fsmThread(rep)
+    #start another fsm to report if all the others are alive to epics db
+    repo = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+    repoThread = fsmThread(repo)
     repoThread.start()
 
     #sleep(0.1)
@@ -87,15 +88,18 @@ def main():
     def killAll(signum, frame):
         print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm, thread in fsms.iteritems():
-            fsm.kill()
-            thread.join()
+            if thread.isAlive():
+                fsm.kill()
+                thread.join()
         print("Killed all the fsms")
+        if repoThread.isAlive():  
+            repo.kill()
+            repoThread.join()
+        print("Killed the reporter thread")
         if timerManager.isAlive():  #if no fsm is loaded it won't be alive
             timerManager.kill()
         print("Killed the timer manager")
-        if repoThread.isAlive():
-            rep.kill()
-        print("Killed the reporter thread")
+        
     
     signal.signal(signal.SIGINT, killAll)
     signal.pause()

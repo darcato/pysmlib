@@ -263,57 +263,64 @@ class cavityPVs(fsmIOs):
     def __init__(self):
         super(cavityPVs, self).__init__()
         #converts the internal name to the ending of the pv name
+        obj = "Qwrs"
+        subapp = "Cryo"
         self._map = {
-            "zeroEn"         : "zeroEn",
-            "caraterizeEn"   : "caraterizeEn",
-            "waveEn"         : "waveEn",
-            "pulseEn"        : "pulseEn",
-            "freqErr"        : "freqErr",
-            "motor.DMOV"     : "m1:motor.DMOV",
-            "motor.RBV"      : "m1:motor.RBV",
-            "moveRel"        : "m1:moveRel",
-            "motor.HLS"      : "m1:motor.HLS",
-            "motor.LLS"      : "m1:motor.LLS",
-            "stepFast"       : "m1:stepFast",
-            "stepSlow"       : "m1:stepSlow",
-            "motor.VELO"     : "m1:motor.VELO",
-            "motor.ACCL"     : "m1:motor.ACCL",
-            "motor.TWF"      : "m1:motor.TWF",
-            "motor.TWR"      : "m1:motor.TWR",
-            "motor.TWV"      : "m1:motor.TWV",
-            "fast"           : "m1:fast",
-            "freqErr2.PROC"  : "freqErr2.PROC",
-            "freqErr2.VALA"  : "freqErr2.VALA",
-            "pressure"       : "pressure",
-            "steps"          : "steps",
-            "freqs"          : "freqs",
-            "press"          : "press",
-            "fit_steps"      : "fit_steps",
-            "fit_freqs"      : "fit_freqs",
-            "quip"           : "quip",
-            "lopwEn"         : "lopwEn",
-            "period"         : "period",
-            "dutyCycle"      : "dutyCycle",
-            "maxPower"       : "maxPower",
-            "minPower"       : "minPower",
-            "shape"          : "shape",
-            "timeResolution" : "timeResolution",
-            "powers"         : "powers",
-            "powers.NELM"    : "powers.NELM",
-            "times"          : "times",
-            "phasErr"        : "phasErr",
-            "softTunerEn"    : "swtuEn",
-            "stGain"         : "stgaSt",
-            "stThreshold"    : "stthSt",
-            "tuningPolarity" : "tupoSt",
-            "cavityStatus"   : "stat",
-            "avg"            : "avg",
-            "cConnWatchdog"  : "cconWd",
-            "pConnWatchdog"  : "pconWd",
-            "sConnWatchdog"  : "sconWd",
-            "zConnWatchdog"  : "zconWd",
-            "wConnWatchdog"  : "wconWd"
-
+            "zeroEn"         : [subapp, obj, ":", "zeroEn"],         #enable zeroFreq fsm
+            "caraterizeEn"   : [subapp, obj, ":", "crtzEn"],         #enable caraterize fsm
+            "waveEn"         : [subapp, obj, ":", "waveEn"],         #enable wave fsm
+            "pulseEn"        : [subapp, obj, ":", "pulsEn"],         #enable pulse fsm
+            "softTunerEn"    : [subapp, obj, ":", "swtuEn"],         #enable softTuner fsm
+            "freqErr"        : [subapp, obj, ":", "freqEr"],         #freq err reading
+            "freqMode"       : [subapp, obj, ":", "fesc"],           #choose to read Hz or kHz
+            "freqTrgFast"    : [subapp, obj, "_", "fscn.PROC"],      #current motor position
+            "freqTrgSlow"    : [subapp, obj, "_", "sscn.PROC"],      #move relative with backlash correction
+            "freqScanFast"   : [subapp, obj, "_", "fscn.SCAN"],      #high limit switch
+            "freqScanSlow"   : [subapp, obj, "_", "sscn.SCAN"],      #low limit switch
+            "motor.DMOV"     : [subapp, "Tune", ":", "motr.DMOV"],   #done moving flag
+            "motor.RBV"      : [subapp, "Tune", ":", "motr.RBV"],    #current motor position
+            "moveRel"        : [subapp, "Tune", ":", "mrel"],        #move relative with backlash correction
+            "motor.HLS"      : [subapp, "Tune", ":", "motr.HLS"],    #high limit switch
+            "motor.LLS"      : [subapp, "Tune", ":", "motr.LLS"],    #low limit switch
+            "stepFast"       : [subapp, "Tune", ":", "stfaSt"],      #how many steps when fast mode
+            "stepSlow"       : [subapp, "Tune", ":", "stslSt"],      #how many steps when slow mode
+            "motor.VELO"     : [subapp, "Tune", ":", "motr.VELO"],   #motor velocity
+            "motor.ACCL"     : [subapp, "Tune", ":", "motr.ACCL"],   #motor acceleration
+            "motor.TWF"      : [subapp, "Tune", ":", "motr.TWF"],    #move a step forward
+            "motor.TWR"      : [subapp, "Tune", ":", "motr.TWR"],    #move a step back
+            "motor.TWV"      : [subapp, "Tune", ":", "motr.TWV"],    #current step value inside record motor
+            "fast"           : [subapp, "Tune", ":", "fstmSt"],      #select fast or slow step mode
+            "pressure"       : [subapp, obj, ":", "presRd"],         #cryostate pressure readings
+            "steps"          : [subapp, obj, ":", "clst"],           #an array for live position visualization
+            "freqs"          : [subapp, obj, ":", "clfr"],           #an array for live freqErr visualization
+            "press"          : [subapp, obj, ":", "clpr"],           #an array for live pressure visualization
+            "fit_steps"      : [subapp, obj, ":", "cfst"],           #an array to show the position linear fit
+            "fit_freqs"      : [subapp, obj, ":", "cffr"],           #an array to show the freqErr linear fit
+            "fit_press"      : [subapp, obj, ":", "cfpr"],           #an array to show the pressure linear fit
+            "quip"           : [subapp, obj, ":", "quipSt"],         #quiescent power settings
+            "lopwEn"         : [subapp, obj, ":", "pwenSt"],         #loop power enable
+            "period"         : [subapp, obj, ":", "wprdSt"],         #period for the periodic fsms
+            "dutyCycle"      : [subapp, obj, ":", "wdtcSt"],         #dutycycle for the period fsms
+            "maxPower"       : [subapp, obj, ":", "wmxpSt"],         #max accepted average power in cavity
+            "minPower"       : [subapp, obj, ":", "wmnpSt"],         #minimun power to start self-excited loop
+            "shape"          : [subapp, obj, ":", "wshpSt"],         #to choose the kind of wave to do
+            "timeResolution" : [subapp, obj, ":", "wtirSt"],         #how much to approssimate waves steps
+            "powers"         : [subapp, obj, ":", "wlpo"],           #an array to show choosen wave (y)
+            "powers.NELM"    : [subapp, obj, ":", "wlpo.NELM"],      #full array lenght of powers and times
+            "times"          : [subapp, obj, ":", "wlti"],           #an array to show choosen wave (x)
+            "phasErr"        : [subapp, obj, ":", "phasEr"],         #phase error readings
+            "stGain"         : [subapp, obj, ":", "stgaSt"],         #soft tuner gain
+            "stThreshold"    : [subapp, obj, ":", "stthSt"],         #soft tuner threshold
+            "tuningPolarity" : [subapp, obj, ":", "tupoSt"],         #tuning polarity (sign)
+            "cavityStatus"   : [subapp, obj, ":", "stat"],           #cavity status
+            "waveAvgPow"     : [subapp, obj, ":", "wavg"],           #to report average wave power
+            "carAvgSmpl"     : [subapp, obj, ":", "cavgSt"],         #samples to be averaged each step
+            "carTop"         : [subapp, obj, ":", "ctopSt"],         #max Hz, then come back
+            "cConnWatchdog"  : [subapp, obj, ":", "cconWd"],         #to set caraterize watchdog         
+            "pConnWatchdog"  : [subapp, obj, ":", "pconWd"],         #to set pulse watchdog
+            "sConnWatchdog"  : [subapp, obj, ":", "sconWd"],         #to set softTuner watchdog
+            "zConnWatchdog"  : [subapp, obj, ":", "zconWd"],         #to set zeroFreq watchdog
+            "wConnWatchdog"  : [subapp, obj, ":", "wconWd"]          #to set wave watchdog
         }
         #inverse map, to perform back naming transformation
         self.inv_map = {v: k for k, v in self._map.iteritems()}
@@ -321,7 +328,7 @@ class cavityPVs(fsmIOs):
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
     def get(self, name, fsm, **args):
-        pvname = "LiLlrfCryo%02dQwrs%02d:%s" % (args['cry'], args['cav'], self._map[name])
+        pvname = "PaLlrf%.4s%02d_%.4s%02d%c%s" % (self._map[name][0], args['cry'], self._map[name][1], args['cav'], self._map[name][2], self._map[name][3])
         return super(cavityPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
