@@ -273,10 +273,10 @@ class cavityPVs(fsmIOs):
             "softTunerEn"    : [subapp, obj, ":", "swtuEn"],         #enable softTuner fsm
             "freqErr"        : [subapp, obj, ":", "freqEr"],         #freq err reading
             "freqMode"       : [subapp, obj, ":", "fesc"],           #choose to read Hz or kHz
-            "freqTrgFast"    : [subapp, obj, "_", "fscn.PROC"],      #current motor position
-            "freqTrgSlow"    : [subapp, obj, "_", "sscn.PROC"],      #move relative with backlash correction
-            "freqScanFast"   : [subapp, obj, "_", "fscn.SCAN"],      #high limit switch
-            "freqScanSlow"   : [subapp, obj, "_", "sscn.SCAN"],      #low limit switch
+            "freqTrgFast"    : [subapp, obj, "_", "fscn.PROC"],      #trigger a fast freqErr reading
+            "freqTrgSlow"    : [subapp, obj, "_", "sscn.PROC"],      #trigger a slow freqErr reading
+            "freqScanFast"   : [subapp, obj, "_", "fscn.SCAN"],      #the scan field of the fast freq reading
+            "freqScanSlow"   : [subapp, obj, "_", "sscn.SCAN"],      #the scan field of the slow freq reading
             "motor.DMOV"     : [subapp, "Tune", ":", "motr.DMOV"],   #done moving flag
             "motor.RBV"      : [subapp, "Tune", ":", "motr.RBV"],    #current motor position
             "moveRel"        : [subapp, "Tune", ":", "mrel"],        #move relative with backlash correction
