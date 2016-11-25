@@ -9,6 +9,7 @@ Created on 15 set 2016
 import epics
 import threading
 import time
+from datetime import datetime
 
 class fsmLogger(object):
     levstr = ['E','W','I','D']
@@ -16,16 +17,36 @@ class fsmLogger(object):
         self._level = lev
         self.startime = time.time()
         
-    def log(self, lev, msg):
+    def log(self, fsmname, lev, msg):
     	tm = time.time() - self.startime
         if lev <= self._level:
-            self.pushMsg('%8.2fs: %s - %s' %(tm, fsmLogger.levstr[lev], msg))
+            self.pushMsg('%8.2fs: %s - %s%s' %(tm, fsmLogger.levstr[lev], fsmname, msg))
             
     def pushMsg(self, msg):
         print msg
 
     def resetTime(self):
-    	self.startime = time.time()
+        self.startime = time.time()
+
+class fsmLoggerToFile(fsmLogger):
+    def __init__(self, lev=3, directory="logs/"):
+        super(fsmLoggerToFile, self).__init__(lev)
+        self.files = {}
+        self.dir = directory
+    
+    def log(self, fsmname, lev, msg):
+        if lev <= self._level:
+            if fsmname not in self.files.iterkeys():
+                self.files[fsmname] = open(self.dir+fsmname+".log", 'a')
+            tm = datetime.now()
+            self.pushMsg(self.files[fsmname], '%s: %s - %s\n' %(str(tm), fsmLogger.levstr[lev], msg))
+
+    def pushMsg(self, f, msg):
+        f.write(msg)
+        
+    def __exit__(self, exc_type, exc_value, traceback):
+        for f in self.files.iteritems():
+            f.close()
 
 
 #Classe timer, utilizzabile dalle macchine a stati
@@ -323,7 +344,7 @@ class cavityPVs(fsmIOs):
             "wConnWatchdog"  : [subapp, obj, ":", "wconWd"]          #to set wave watchdog
         }
         #inverse map, to perform back naming transformation
-        self.inv_map = {v: k for k, v in self._map.iteritems()}
+        #self.inv_map = {v: k for k, v in self._map.iteritems()}
 
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
@@ -412,7 +433,7 @@ class fsmBase(object):
 
     def log(self, lev, msg):
         #whites = len(max(self._senslists.keys(), key=len)) - len(self._curstatename)
-        self._logger.log(lev, '%s[%s] : %s' %(self._name, self._curstatename, msg))    
+        self._logger.log(self._name, lev, '[%15s] : %s' %(self._curstatename, msg))    
 
     def logE(self, msg):
         self.log(0, msg)

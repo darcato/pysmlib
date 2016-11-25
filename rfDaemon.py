@@ -11,7 +11,7 @@ from pulseRf import pulseRf
 from zeroFreq import zeroFreq
 from softTuner import softTuner
 from reporter import reporter
-from fsm import fsmTimers, cavityPVs, fsmLogger
+from fsm import fsmTimers, cavityPVs, fsmLoggerToFile
 
 class fsmThread(Thread):
     def __init__(self, fsm):
@@ -51,7 +51,7 @@ def main():
     #create a thread for the timer manager
     timerManager = fsmTimers()
     commonIos = cavityPVs()
-    commonLogger = fsmLogger(args.verbosity)
+    commonLogger = fsmLoggerToFile(args.verbosity)
     #timerManager.start()  #will be done automatically from first fsm loaded
 
     #a dictitonary containing fsm objects as keys and their thread (or None) as values
