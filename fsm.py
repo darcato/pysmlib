@@ -298,19 +298,47 @@ class cavityPVs(fsmIOs):
             "freqTrgSlow"    : [subapp, obj, "_", "sscn.PROC"],      #trigger a slow freqErr reading
             "freqScanFast"   : [subapp, obj, "_", "fscn.SCAN"],      #the scan field of the fast freq reading
             "freqScanSlow"   : [subapp, obj, "_", "sscn.SCAN"],      #the scan field of the slow freq reading
-            "motor.DMOV"     : [subapp, "Tune", ":", "motr.DMOV"],   #done moving flag
-            "motor.RBV"      : [subapp, "Tune", ":", "motr.RBV"],    #current motor position
-            "moveRel"        : [subapp, "Tune", ":", "mrel"],        #move relative with backlash correction
-            "motor.HLS"      : [subapp, "Tune", ":", "motr.HLS"],    #high limit switch
-            "motor.LLS"      : [subapp, "Tune", ":", "motr.LLS"],    #low limit switch
-            "stepFast"       : [subapp, "Tune", ":", "stfaSt"],      #how many steps when fast mode
-            "stepSlow"       : [subapp, "Tune", ":", "stslSt"],      #how many steps when slow mode
-            "motor.VELO"     : [subapp, "Tune", ":", "motr.VELO"],   #motor velocity
-            "motor.ACCL"     : [subapp, "Tune", ":", "motr.ACCL"],   #motor acceleration
-            "motor.TWF"      : [subapp, "Tune", ":", "motr.TWF"],    #move a step forward
-            "motor.TWR"      : [subapp, "Tune", ":", "motr.TWR"],    #move a step back
-            "motor.TWV"      : [subapp, "Tune", ":", "motr.TWV"],    #current step value inside record motor
-            "fast"           : [subapp, "Tune", ":", "fstmSt"],      #select fast or slow step mode
+#
+            "tuneDMOV"       : [subapp, "Tune", ":", "motr.DMOV"],   #done moving flag
+            "tuneRBV"        : [subapp, "Tune", ":", "motr.RBV"],    #current motor position
+            "tuneMoveRel"    : [subapp, "Tune", ":", "mrel"],        #move relative with backlash correction
+            "tuneHLS"        : [subapp, "Tune", ":", "motr.HLS"],    #high limit switch
+            "tuneLLS"        : [subapp, "Tune", ":", "motr.LLS"],    #low limit switch
+            "tuneStepFast"   : [subapp, "Tune", ":", "stfaSt"],      #how many steps when fast mode
+            "tuneStepSlow"   : [subapp, "Tune", ":", "stslSt"],      #how many steps when slow mode
+            "tuneStepMedium" : [subapp, "Tune", ":", "stmdSt"],      #how many steps when medium mode
+            "tuneVelo"       : [subapp, "Tune", ":", "motr.VELO"],   #motor velocity
+            "tuneAccl"       : [subapp, "Tune", ":", "motr.ACCL"],   #motor acceleration
+            "tuneBacl"       : [subapp, "Tune", ":", "motr.BACL"],   #motor backlash acceleration
+            "tuneTWF"        : [subapp, "Tune", ":", "motr.TWF"],    #move a step forward
+            "tuneTWR"        : [subapp, "Tune", ":", "motr.TWR"],    #move a step back
+            "tuneTWV"        : [subapp, "Tune", ":", "motr.TWV"],    #current step value inside record motor
+            "tuneStepMode"   : [subapp, "Tune", ":", "fstmSt"],      #select fast, medium or slow step mode
+            "tuneMaxVelo"    : [subapp, "Tune", ":", "motr.VMAX"],   #motor maximum velocity
+            "tuneBaseVelo"   : [subapp, "Tune", ":", "motr.VBAS"],   #motor minimum velocity 
+            "tuneHomeVelo"   : [subapp, "Tune", ":", "motr.HVEL"],   #motor homing velocity 
+            "tuneDir"        : [subapp, "Tune", ":", "motr.DIR"],    #motor direction bit
+#
+            "coupDMOV"       : [subapp, "Coup", ":", "motr.DMOV"],   #done moving flag
+            "coupRBV"        : [subapp, "Coup", ":", "motr.RBV"],    #current motor position
+            "coupMoveRel"    : [subapp, "Coup", ":", "mrel"],        #move relative with backlash correction
+            "coupHLS"        : [subapp, "Coup", ":", "motr.HLS"],    #high limit switch
+            "coupLLS"        : [subapp, "Coup", ":", "motr.LLS"],    #low limit switch
+            "coupStepFast"   : [subapp, "Coup", ":", "stfaSt"],      #how many steps when fast mode
+            "coupStepSlow"   : [subapp, "Coup", ":", "stslSt"],      #how many steps when slow mode
+            "coupStepMedium" : [subapp, "Coup", ":", "stmdSt"],      #how many steps when medium mode
+            "coupVelo"       : [subapp, "Coup", ":", "motr.VELO"],   #motor velocity
+            "coupAccl"       : [subapp, "Coup", ":", "motr.ACCL"],   #motor acceleration
+            "coupBacl"       : [subapp, "Coup", ":", "motr.BACL"],   #motor backlash acceleration
+            "coupTWF"        : [subapp, "Coup", ":", "motr.TWF"],    #move a step forward
+            "coupTWR"        : [subapp, "Coup", ":", "motr.TWR"],    #move a step back
+            "coupTWV"        : [subapp, "Coup", ":", "motr.TWV"],    #current step value inside record motor
+            "coupStepMode"   : [subapp, "Coup", ":", "fstmSt"],      #select fast, medium or slow step mode
+            "coupMaxVelo"    : [subapp, "Coup", ":", "motr.VMAX"],   #motor maximum velocity
+            "coupBaseVelo"   : [subapp, "Coup", ":", "motr.VBAS"],   #motor minimum velocity 
+            "coupHomeVelo"   : [subapp, "Coup", ":", "motr.HVEL"],   #motor homing velocity 
+            "coupDir"        : [subapp, "Coup", ":", "motr.DIR"],    #motor direction bit
+#
             "pressure"       : [subapp, obj, ":", "presRd"],         #cryostate pressure readings
             "steps"          : [subapp, obj, ":", "clst"],           #an array for live position visualization
             "freqs"          : [subapp, obj, ":", "clfr"],           #an array for live freqErr visualization
