@@ -5,57 +5,30 @@
 
 from fsm import fsmBase
 
-class reporter(fsmBase):
-    def __init__(self, name, fsms, **args):
+class staticDb(fsmBase):
+    def __init__(self, name, **args):
         fsmBase.__init__(self, name, **args)
 
-        file = open("config/cavCfgs.txt", "r")
+        file = open("config/cavCfgPvs.txt", "r")
+        pvs = file.readlines()
+        file.close()
 
+        self.configPvs = {}
+        for cryostat in range(4, 29):
+            for cavity in range(1, 5):
+                for pvname in pvs:
+                    pv = self.input(pvname, cry=cryostat, cav=cavity)
+                    self.configPvs[pvname] = pv       #should be unique :)
+        self.logI("Monitoring %d pvs" % len(self.configPvs))
 
-        #a dictionary with keys = inputs
-        #items = tuple with fsmObj and fsmThread corresponding to the input
-        self.watchdogs = {}
-        #connect input for each fsm
-        #the input is the pv where to write each second to say the fsm is alive (watchdog of 2 seconds)
-        for fsmObj, fsmThread in fsms.iteritems():
-        	firstletter = ""
-        	if isinstance(fsmObj, caraterize):
-        		firstletter = "c"
-        	elif isinstance(fsmObj, pulseRf):
-        		firstletter = "p"
-        	elif isinstance(fsmObj, softTuner):
-        		firstletter = "s"
-        	elif isinstance(fsmObj, zeroFreq):
-        		firstletter = "z"
-        	elif isinstance(fsmObj, waves):
-        		firstletter = "w"
-
-        	inp = self.input(firstletter+"ConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
-        	self.watchdogs[inp] = (fsmObj, fsmThread)
-
-		statesWithIOs = {
+        statesWithIOs = {
             "run" : []
         }
         self.setSensLists(statesWithIOs)
         self.gotoState('run')
-        
-        #a list of timers with timer name and input linked
-        self.timers = []
 
     def run_entry(self):
-    	for inp, objThr in self.watchdogs.iteritems():
-    		#start with a random delay not to write all pvs at the same instant
-    		randDelay = uniform(0, 1)
-    		tmrName = inp.ioname()
-    		self.timers.append((tmrName, inp))
-    		self.tmrSet(tmrName, randDelay)
-    	self.logD("set %d watchdogs" % len(self.timers))
+        pass
     
     def run_eval(self):
-    	for tmrName, inp in self.timers:
-    		if self.tmrExp(tmrName):
-    			#now write it each second
-    			self.tmrSet(tmrName, 1)
-    			if inp.connected():
-    				fsm, thread = self.watchdogs[inp]
-    				inp.put(int(thread.isAlive()))
+        pass
