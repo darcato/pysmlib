@@ -45,8 +45,10 @@ class fsmLoggerToFile(fsmLogger):
         f.write(msg)
         
     def __exit__(self, exc_type, exc_value, traceback):
-        for f in self.files.iteritems():
+        for name, f in self.files.iteritems():
+            print("Closing "+name+"\n")
             f.close()
+
 
 
 #Classe timer, utilizzabile dalle macchine a stati
@@ -168,6 +170,8 @@ class fsmIO(object):
         self._flgRising = False
         self._flgFalling = False
         self._flgChanged = False
+        self._flgConn = False
+        self._flgDisconn = False    
     
     def ioname(self):
         return self._name
@@ -179,6 +183,10 @@ class fsmIO(object):
     def concb(self, **args):
         self._conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
+        #set a flag to say whether there was a connection or a disconnection
+        #reset the other one if it was still true
+        self._flgConn = self._conn
+        self._flgDisconn = not self._conn
         #on connection or disconnection reset all previous values of the input
         #in order not to access old values after disconnections
         self._flgRising = False
@@ -239,6 +247,20 @@ class fsmIO(object):
         else:
             return False
 
+    def hasDisconnected(self):
+        if self._flgDisconn:
+            self._flgDisconn = False
+            return True
+        else:
+            return False
+
+    def hasConnected(self):
+        if self._flgConn and self._value!=None:
+            self._flgConn = False
+            return True
+        else:
+            return False
+
     # return whether the pv is connected and has received the initial value
     def initialized(self):
         return self._conn and self._value!=None
@@ -250,6 +272,10 @@ class fsmIO(object):
     # return the pv value
     def val(self):
         return self._value
+
+    # return the pv previuos value
+    def pval(self):
+        return self._pval
 
     # return one element from pv data, choosen by key
     def data(self, key):

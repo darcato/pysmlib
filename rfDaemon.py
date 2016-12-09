@@ -11,6 +11,7 @@ from pulseRf import pulseRf
 from zeroFreq import zeroFreq
 from softTuner import softTuner
 from reporter import reporter
+from store import store
 from fsm import fsmTimers, cavityPVs, fsmLoggerToFile
 
 class fsmThread(Thread):
@@ -78,6 +79,10 @@ def main():
     repoThread = fsmThread(repo)
     repoThread.start()
 
+    stor = store("STORE", tmgr=timerManager, ios=commonIos)
+    storThread = fsmThread(stor)
+    storThread.start()
+
     #sleep(0.1)
     #for i in enumerate():
     #   print(i)
@@ -96,6 +101,10 @@ def main():
             repo.kill()
             repoThread.join()
         print("Killed the reporter thread")
+        if storThread.isAlive():  
+            stor.kill()
+            storThread.join()
+        print("Killed the store thread")
         if timerManager.isAlive():  #if no fsm is loaded it won't be alive
             timerManager.kill()
         print("Killed the timer manager")
