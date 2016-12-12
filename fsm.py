@@ -335,7 +335,7 @@ class cavityPVs(fsmIOs):
             "tuneStepMedium" : [subapp, "Tune", ":", "stmdSt"],      #how many steps when medium mode
             "tuneVelo"       : [subapp, "Tune", ":", "motr.VELO"],   #motor velocity
             "tuneAccl"       : [subapp, "Tune", ":", "motr.ACCL"],   #motor acceleration
-            "tuneBacl"       : [subapp, "Tune", ":", "motr.BACL"],   #motor backlash acceleration
+            "tuneBacc"       : [subapp, "Tune", ":", "motr.BACC"],   #motor backlash acceleration
             "tuneTWF"        : [subapp, "Tune", ":", "motr.TWF"],    #move a step forward
             "tuneTWR"        : [subapp, "Tune", ":", "motr.TWR"],    #move a step back
             "tuneTWV"        : [subapp, "Tune", ":", "motr.TWV"],    #current step value inside record motor
@@ -355,7 +355,7 @@ class cavityPVs(fsmIOs):
             "coupStepMedium" : [subapp, "Coup", ":", "stmdSt"],      #how many steps when medium mode
             "coupVelo"       : [subapp, "Coup", ":", "motr.VELO"],   #motor velocity
             "coupAccl"       : [subapp, "Coup", ":", "motr.ACCL"],   #motor acceleration
-            "coupBacl"       : [subapp, "Coup", ":", "motr.BACL"],   #motor backlash acceleration
+            "coupBacc"       : [subapp, "Coup", ":", "motr.BACC"],   #motor backlash acceleration
             "coupTWF"        : [subapp, "Coup", ":", "motr.TWF"],    #move a step forward
             "coupTWR"        : [subapp, "Coup", ":", "motr.TWR"],    #move a step back
             "coupTWV"        : [subapp, "Coup", ":", "motr.TWV"],    #current step value inside record motor
