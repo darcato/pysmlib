@@ -79,16 +79,9 @@ def main():
     repoThread = fsmThread(repo)
     repoThread.start()
 
-    stor = store("STORE", tmgr=timerManager, ios=commonIos)
+    stor = store("STORE", tmgr=timerManager, ios=commonIos, logger=commonLogger)
     storThread = fsmThread(stor)
     storThread.start()
-
-    #sleep(0.1)
-    #for i in enumerate():
-    #   print(i)
-    #print targets
-    #for i in fsms:
-    #   print i
 
     def killAll(signum, frame):
         print("Signal: %d -> Going to kill all fsms" % signum)
