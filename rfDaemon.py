@@ -18,22 +18,33 @@ class fsmThread(Thread):
     def __init__(self, fsm):
         Thread.__init__(self)
         self.fsm = fsm
+        self._killRequested = False
 
     def run(self):
+        self._killRequested = False
         print("Starting fsm: %s " % self.fsm.fsmname())
-        try:
-            self.fsm.eval_forever()
-        except Exception, e:
-            print(repr(e)) 
+        while not self._killRequested:
+            try:
+                self.fsm.eval_forever()
+            except Exception, e:
+                print(repr(e))
+                print("WARNING: fsm %s crashed unexpectedly. Restarting..." % self.fsm.fsmname())
         print("Stopped fsm: %s " % self.fsm.fsmname())
+
+    def kill(self):
+        self._killRequested = True
+        self.fsm.kill()
+        self.join()
+
 
 def main():
     parser = argparse.ArgumentParser(description="rfDaemon - loads the required fsm to perform procedures")
-    parser.add_argument("configFile", help="the path of the configuration file", type=str)
+    parser.add_argument("machineSetup", help="the path of the machine setup file", type=str)
+    parser.add_argument("ioMap", help="the path of the io map file", type=str)
     parser.add_argument("-v", "--verbosity", help="set the debug level", default=2, type=int)
     args = parser.parse_args()
     
-    file = open(args.configFile, "r")
+    file = open(args.machineSetup, "r")
     lines = file.readlines()
     file.close()
 
@@ -51,7 +62,7 @@ def main():
 
     #create a thread for the timer manager
     timerManager = fsmTimers()
-    commonIos = cavityPVs()
+    commonIos = cavityPVs(args.ioMap)
     commonLogger = fsmLoggerToFile(args.verbosity)
     #timerManager.start()  #will be done automatically from first fsm loaded
 
@@ -87,16 +98,13 @@ def main():
         print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm, thread in fsms.iteritems():
             if thread.isAlive():
-                fsm.kill()
-                thread.join()
+                thread.kill()
         print("Killed all the fsms")
         if repoThread.isAlive():  
-            repo.kill()
-            repoThread.join()
+            repoThread.kill()
         print("Killed the reporter thread")
         if storThread.isAlive():  
-            stor.kill()
-            storThread.join()
+            storThread.kill()
         print("Killed the store thread")
         if timerManager.isAlive():  #if no fsm is loaded it won't be alive
             timerManager.kill()
