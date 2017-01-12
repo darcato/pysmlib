@@ -307,103 +307,46 @@ class fsmIOs(object):
 #and real pv names, base on naming convention and a map
 class cavityPVs(fsmIOs):
     
-    def __init__(self):
+    def __init__(self, mapFile):
         super(cavityPVs, self).__init__()
         #converts the internal name to the ending of the pv name
-        obj = "Qwrs"
-        subapp = "Cryo"
-        self._map = {
-            "zeroEn"         : [subapp, obj, ":", "zeroEn"],         #enable zeroFreq fsm
-            "caraterizeEn"   : [subapp, obj, ":", "crtzEn"],         #enable caraterize fsm
-            "waveEn"         : [subapp, obj, ":", "waveEn"],         #enable wave fsm
-            "pulseEn"        : [subapp, obj, ":", "pulsEn"],         #enable pulse fsm
-            "softTunerEn"    : [subapp, obj, ":", "swtuEn"],         #enable softTuner fsm
-            "freqErr"        : [subapp, obj, ":", "freqEr"],         #freq err reading
-            "freqMode"       : [subapp, obj, ":", "fesc"],           #choose to read Hz or kHz
-            "freqTrgFast"    : [subapp, obj, "_", "fscn.PROC"],      #trigger a fast freqErr reading
-            "freqTrgSlow"    : [subapp, obj, "_", "sscn.PROC"],      #trigger a slow freqErr reading
-            "freqScanFast"   : [subapp, obj, "_", "fscn.SCAN"],      #the scan field of the fast freq reading
-            "freqScanSlow"   : [subapp, obj, "_", "sscn.SCAN"],      #the scan field of the slow freq reading
-#
-            "tuneDMOV"       : [subapp, "Tune", ":", "motr.DMOV"],   #done moving flag
-            "tuneRBV"        : [subapp, "Tune", ":", "motr.RBV"],    #current motor position
-            "tuneMoveRel"    : [subapp, "Tune", ":", "mrel"],        #move relative with backlash correction
-            "tuneHLS"        : [subapp, "Tune", ":", "motr.HLS"],    #high limit switch
-            "tuneLLS"        : [subapp, "Tune", ":", "motr.LLS"],    #low limit switch
-            "tuneStepFast"   : [subapp, "Tune", ":", "stfaSt"],      #how many steps when fast mode
-            "tuneStepSlow"   : [subapp, "Tune", ":", "stslSt"],      #how many steps when slow mode
-            "tuneStepMedium" : [subapp, "Tune", ":", "stmdSt"],      #how many steps when medium mode
-            "tuneVelo"       : [subapp, "Tune", ":", "motr.VELO"],   #motor velocity
-            "tuneAccl"       : [subapp, "Tune", ":", "motr.ACCL"],   #motor acceleration
-            "tuneBacc"       : [subapp, "Tune", ":", "motr.BACC"],   #motor backlash acceleration
-            "tuneTWF"        : [subapp, "Tune", ":", "motr.TWF"],    #move a step forward
-            "tuneTWR"        : [subapp, "Tune", ":", "motr.TWR"],    #move a step back
-            "tuneTWV"        : [subapp, "Tune", ":", "motr.TWV"],    #current step value inside record motor
-            "tuneStepMode"   : [subapp, "Tune", ":", "fstmSt"],      #select fast, medium or slow step mode
-            "tuneMaxVelo"    : [subapp, "Tune", ":", "motr.VMAX"],   #motor maximum velocity
-            "tuneBaseVelo"   : [subapp, "Tune", ":", "motr.VBAS"],   #motor minimum velocity 
-            "tuneHomeVelo"   : [subapp, "Tune", ":", "motr.HVEL"],   #motor homing velocity 
-            "tuneDir"        : [subapp, "Tune", ":", "motr.DIR"],    #motor direction bit
-#
-            "coupDMOV"       : [subapp, "Coup", ":", "motr.DMOV"],   #done moving flag
-            "coupRBV"        : [subapp, "Coup", ":", "motr.RBV"],    #current motor position
-            "coupMoveRel"    : [subapp, "Coup", ":", "mrel"],        #move relative with backlash correction
-            "coupHLS"        : [subapp, "Coup", ":", "motr.HLS"],    #high limit switch
-            "coupLLS"        : [subapp, "Coup", ":", "motr.LLS"],    #low limit switch
-            "coupStepFast"   : [subapp, "Coup", ":", "stfaSt"],      #how many steps when fast mode
-            "coupStepSlow"   : [subapp, "Coup", ":", "stslSt"],      #how many steps when slow mode
-            "coupStepMedium" : [subapp, "Coup", ":", "stmdSt"],      #how many steps when medium mode
-            "coupVelo"       : [subapp, "Coup", ":", "motr.VELO"],   #motor velocity
-            "coupAccl"       : [subapp, "Coup", ":", "motr.ACCL"],   #motor acceleration
-            "coupBacc"       : [subapp, "Coup", ":", "motr.BACC"],   #motor backlash acceleration
-            "coupTWF"        : [subapp, "Coup", ":", "motr.TWF"],    #move a step forward
-            "coupTWR"        : [subapp, "Coup", ":", "motr.TWR"],    #move a step back
-            "coupTWV"        : [subapp, "Coup", ":", "motr.TWV"],    #current step value inside record motor
-            "coupStepMode"   : [subapp, "Coup", ":", "fstmSt"],      #select fast, medium or slow step mode
-            "coupMaxVelo"    : [subapp, "Coup", ":", "motr.VMAX"],   #motor maximum velocity
-            "coupBaseVelo"   : [subapp, "Coup", ":", "motr.VBAS"],   #motor minimum velocity 
-            "coupHomeVelo"   : [subapp, "Coup", ":", "motr.HVEL"],   #motor homing velocity 
-            "coupDir"        : [subapp, "Coup", ":", "motr.DIR"],    #motor direction bit
-#
-            "pressure"       : [subapp, obj, ":", "presRd"],         #cryostate pressure readings
-            "steps"          : [subapp, obj, ":", "clst"],           #an array for live position visualization
-            "freqs"          : [subapp, obj, ":", "clfr"],           #an array for live freqErr visualization
-            "press"          : [subapp, obj, ":", "clpr"],           #an array for live pressure visualization
-            "fit_steps"      : [subapp, obj, ":", "cfst"],           #an array to show the position linear fit
-            "fit_freqs"      : [subapp, obj, ":", "cffr"],           #an array to show the freqErr linear fit
-            "fit_press"      : [subapp, obj, ":", "cfpr"],           #an array to show the pressure linear fit
-            "quip"           : [subapp, obj, ":", "quipSt"],         #quiescent power settings
-            "lopwEn"         : [subapp, obj, ":", "pwenSt"],         #loop power enable
-            "period"         : [subapp, obj, ":", "wprdSt"],         #period for the periodic fsms
-            "dutyCycle"      : [subapp, obj, ":", "wdtcSt"],         #dutycycle for the period fsms
-            "maxPower"       : [subapp, obj, ":", "wmxpSt"],         #max accepted average power in cavity
-            "minPower"       : [subapp, obj, ":", "wmnpSt"],         #minimun power to start self-excited loop
-            "shape"          : [subapp, obj, ":", "wshpSt"],         #to choose the kind of wave to do
-            "timeResolution" : [subapp, obj, ":", "wtirSt"],         #how much to approssimate waves steps
-            "powers"         : [subapp, obj, ":", "wlpo"],           #an array to show choosen wave (y)
-            "powers.NELM"    : [subapp, obj, ":", "wlpo.NELM"],      #full array lenght of powers and times
-            "times"          : [subapp, obj, ":", "wlti"],           #an array to show choosen wave (x)
-            "phasErr"        : [subapp, obj, ":", "phasEr"],         #phase error readings
-            "stGain"         : [subapp, obj, ":", "stgaSt"],         #soft tuner gain
-            "stThreshold"    : [subapp, obj, ":", "stthSt"],         #soft tuner threshold
-            "tuningPolarity" : [subapp, obj, ":", "tupoSt"],         #tuning polarity (sign)
-            "cavityStatus"   : [subapp, obj, ":", "stat"],           #cavity status
-            "waveAvgPow"     : [subapp, obj, ":", "wavg"],           #to report average wave power
-            "carAvgSmpl"     : [subapp, obj, ":", "cavgSt"],         #samples to be averaged each step
-            "carTop"         : [subapp, obj, ":", "ctopSt"],         #max Hz, then come back
-            "cConnWatchdog"  : [subapp, obj, ":", "cconWd"],         #to set caraterize watchdog         
-            "pConnWatchdog"  : [subapp, obj, ":", "pconWd"],         #to set pulse watchdog
-            "sConnWatchdog"  : [subapp, obj, ":", "sconWd"],         #to set softTuner watchdog
-            "zConnWatchdog"  : [subapp, obj, ":", "zconWd"],         #to set zeroFreq watchdog
-            "wConnWatchdog"  : [subapp, obj, ":", "wconWd"]          #to set wave watchdog
-        }
+        
+        file = open(mapFile, "r")
+        lines = file.readlines()
+        file.close()
+
+        self._map = {}
+        replaces = {}
+        for line in lines:
+            if not line.startswith("#"):
+                line = line.split("#")[0].strip()
+                if line.startswith(">"):
+                    line = line[1:]
+                    el = line.split("=")
+                    if len(el)==2:
+                        replaces[el[0].strip().replace("\"", "")] = el[1].strip().replace("\"", "")
+                elif len(line)>3:
+                    el = line.split("=")
+                    if len(el)==2:
+                        key = el[0].strip().replace("\"", "")
+                        values = el[1].split(",")
+                        subkeys = ["fac", "app", "subapp", "obj", "type", "signal"]
+                        value = {}
+                        for k in range(len(subkeys)):
+                            candidate = values[k].strip().replace("\"", "")
+                            if candidate in replaces.iterkeys():
+                                candidate = replaces[candidate]
+                            value[subkeys[k]]=candidate
+                        self._map[key] = value
+            
         #inverse map, to perform back naming transformation
         #self.inv_map = {v: k for k, v in self._map.iteritems()}
 
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
     def get(self, name, fsm, **args):
-        pvname = "PaLlrf%.4s%02d_%.4s%02d%c%s" % (self._map[name][0], args['cry'], self._map[name][1], args['cav'], self._map[name][2], self._map[name][3])
+        cmap = self._map[name]
+        pvname = "%.2s%.4s%.4s%02d_%.4s%02d%c%s" % (cmap['fac'], cmap['app'], cmap['subapp'], args['cry'], cmap['obj'], args['cav'], cmap['type'], cmap['signal'])
         return super(cavityPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
