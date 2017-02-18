@@ -346,7 +346,12 @@ class cavityPVs(fsmIOs):
     #reads from calling fsm the targets and creates base pv name with those infos
     def get(self, name, fsm, **args):
         cmap = self._map[name]
-        pvname = "%.2s%.4s%.4s%02dA_%.4s%02d%c%s" % (cmap['fac'], cmap['app'], cmap['subapp'], args['cry'], cmap['obj'], args['cav'], cmap['type'], cmap['signal'])
+        pvname = "%.2s%.4s" % (cmap['fac'], cmap['app'])
+        if 'cry' in args:
+            pvname+="%.4s%02dA" % (cmap['subapp'], args['cry'])
+            if 'cav' in args:
+                pvname+="_%.4s%02d" % (cmap['obj'], args['cav'])
+        pvname+="%c%s" % (cmap['type'], cmap['signal'])
         return super(cavityPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm

@@ -8,6 +8,7 @@ from pulseRf import pulseRf
 from softTuner import softTuner
 from zeroFreq import zeroFreq
 from waves import waves
+from store import store
 from random import uniform
 
 class reporter(fsmBase):
@@ -20,20 +21,21 @@ class reporter(fsmBase):
         #connect input for each fsm
         #the input is the pv where to write each second to say the fsm is alive (watchdog of 2 seconds)
         for fsmObj, fsmThread in fsms.iteritems():
-        	firstletter = ""
+        	inp = None
         	if isinstance(fsmObj, caraterize):
-        		firstletter = "c"
+        		inp = self.input("cConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
         	elif isinstance(fsmObj, pulseRf):
-        		firstletter = "p"
+        		inp = self.input("pConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
         	elif isinstance(fsmObj, softTuner):
-        		firstletter = "s"
+        		inp = self.input("sConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
         	elif isinstance(fsmObj, zeroFreq):
-        		firstletter = "z"
+        		inp = self.input("zConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
         	elif isinstance(fsmObj, waves):
-        		firstletter = "w"
-
-        	inp = self.input(firstletter+"ConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
-        	self.watchdogs[inp] = (fsmObj, fsmThread)
+        		inp = self.input("wConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        	elif isinstance(fsmObj, store):
+        		inp = self.input("storeConnWd")
+        	if inp!=None:
+        		self.watchdogs[inp] = (fsmObj, fsmThread)
 
 		statesWithIOs = {
             "run" : []

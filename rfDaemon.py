@@ -85,14 +85,15 @@ def main():
         fsms[fsm]=newThread
     print("All fsms started!")
 
+    stor = store("STORE", tmgr=timerManager, ios=commonIos, logger=commonLogger)
+    storThread = fsmThread(stor)
+    storThread.start()
+    fsms[stor]=storThread
+
     #start another fsm to report if all the others are alive to epics db
     repo = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
     repoThread = fsmThread(repo)
     repoThread.start()
-
-    stor = store("STORE", tmgr=timerManager, ios=commonIos, logger=commonLogger)
-    storThread = fsmThread(stor)
-    storThread.start()
 
     def killAll(signum, frame):
         print("Signal: %d -> Going to kill all fsms" % signum)
