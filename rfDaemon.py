@@ -1,4 +1,8 @@
 #! /usr/bin/python
+'''
+Created on Oct 2016
+@author: davide.marcato@lnl.infn.it
+'''
 
 from threading import Thread, enumerate
 import signal
@@ -113,6 +117,7 @@ def main():
         
     
     signal.signal(signal.SIGINT, killAll)
+    signal.signal(signal.SIGKILL, killAll)
     signal.pause()
 
 

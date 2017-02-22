@@ -1,4 +1,8 @@
 #! /usr/bin/python
+'''
+Created on Oct 2016
+@author: davide.marcato@lnl.infn.it
+'''
 
 #reporter thread to write to PV the status of each fsm
 
