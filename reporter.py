@@ -2,7 +2,7 @@
 
 #reporter thread to write to PV the status of each fsm
 
-from fsm import fsmBase, cavityPVs
+from fsm import fsmBase, lnlPVs
 from caraterize import caraterize
 from pulseRf import pulseRf
 from softTuner import softTuner
@@ -23,15 +23,15 @@ class reporter(fsmBase):
         for fsmObj, fsmThread in fsms.iteritems():
         	inp = None
         	if isinstance(fsmObj, caraterize):
-        		inp = self.input("cConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        		inp = self.input("cConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
         	elif isinstance(fsmObj, pulseRf):
-        		inp = self.input("pConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        		inp = self.input("pConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
         	elif isinstance(fsmObj, softTuner):
-        		inp = self.input("sConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        		inp = self.input("sConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
         	elif isinstance(fsmObj, zeroFreq):
-        		inp = self.input("zConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        		inp = self.input("zConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
         	elif isinstance(fsmObj, waves):
-        		inp = self.input("wConnWatchdog", cry=fsmObj._cryostat, cav=fsmObj._cavity)
+        		inp = self.input("wConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
         	elif isinstance(fsmObj, store):
         		inp = self.input("storeConnWd")
         	if inp!=None:

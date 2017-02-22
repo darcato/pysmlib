@@ -305,10 +305,10 @@ class fsmIOs(object):
 
 #performs the conversion from procedure internal namings of the inputs
 #and real pv names, base on naming convention and a map
-class cavityPVs(fsmIOs):
+class lnlPVs(fsmIOs):
     
     def __init__(self, mapFile):
-        super(cavityPVs, self).__init__()
+        super(lnlPVs, self).__init__()
         #converts the internal name to the ending of the pv name
         
         file = open(mapFile, "r")
@@ -347,16 +347,19 @@ class cavityPVs(fsmIOs):
     def get(self, name, fsm, **args):
         cmap = self._map[name]
         pvname = "%.2s%.4s" % (cmap['fac'], cmap['app'])
-        if 'cry' in args:
-            pvname+="%.4s%02dA" % (cmap['subapp'], args['cry'])
-            if 'cav' in args:
-                pvname+="_%.4s%02d" % (cmap['obj'], args['cav'])
+        if 'nsap' in args:
+            charid = 'A'
+            if 'csap' in args and args['csap']!=None:
+                charid = args['csap'].upper()[0]
+            pvname+="%.4s%02d%c" % (cmap['subapp'], args['nsap'], charid)
+            if 'nobj' in args:
+                pvname+="_%.4s%02d" % (cmap['obj'], args['nobj'])
         pvname+="%c%s" % (cmap['type'], cmap['signal'])
-        return super(cavityPVs, self).get(pvname, fsm, **args)
+        return super(lnlPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
     #def getFsmIO(self, fsm):
-    #    iosDict = super(cavityPVs, self).getFsmIO(fsm)
+    #    iosDict = super(lnlPVs, self).getFsmIO(fsm)
     #    pvsDict = {}
     #    for key, value in iosDict.iteritems():
     #        pvsDict[self.inv_map[key]] = value

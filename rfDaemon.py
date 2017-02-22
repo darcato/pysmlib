@@ -12,7 +12,7 @@ from zeroFreq import zeroFreq
 from softTuner import softTuner
 from reporter import reporter
 from store import store
-from fsm import fsmTimers, cavityPVs, fsmLoggerToFile
+from fsm import fsmTimers, lnlPVs, fsmLoggerToFile
 
 class fsmThread(Thread):
     def __init__(self, fsm):
@@ -62,7 +62,7 @@ def main():
 
     #create a thread for the timer manager
     timerManager = fsmTimers()
-    commonIos = cavityPVs(args.ioMap)
+    commonIos = lnlPVs(args.ioMap)
     commonLogger = fsmLoggerToFile(args.verbosity)
     #timerManager.start()  #will be done automatically from first fsm loaded
 
