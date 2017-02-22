@@ -28,15 +28,16 @@ class fsmLogger(object):
         self.startime = time.time()
 
 class fsmLoggerToFile(fsmLogger):
-    def __init__(self, lev=3, directory="logs/"):
+    def __init__(self, lev=3, directory="logs/", prefix=""):
         super(fsmLoggerToFile, self).__init__(lev)
         self.files = {}
         self.dir = directory
+        self.prefix = prefix
     
     def log(self, fsmname, lev, msg):
         if lev <= self._level:
             if fsmname not in self.files.iterkeys():
-                self.files[fsmname] = open(self.dir+fsmname+".log", 'a')
+                self.files[fsmname] = open(self.dir+"/"+self.prefix+"."+fsmname+".log", 'a')
             tm = datetime.now()
             self.pushMsg(self.files[fsmname], '%s: %s - %s\n' %(str(tm), fsmLogger.levstr[lev], msg))
 

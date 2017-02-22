@@ -26,14 +26,12 @@ class fsmThread(Thread):
 
     def run(self):
         self._killRequested = False
-        print("Starting fsm: %s " % self.fsm.fsmname())
         while not self._killRequested:
             try:
                 self.fsm.eval_forever()
             except Exception, e:
                 print(repr(e))
                 print("WARNING: fsm %s crashed unexpectedly. Restarting..." % self.fsm.fsmname())
-        print("Stopped fsm: %s " % self.fsm.fsmname())
 
     def kill(self):
         self._killRequested = True
@@ -45,7 +43,13 @@ def main():
     parser = argparse.ArgumentParser(description="rfDaemon - loads the required fsm to perform procedures")
     parser.add_argument("machineSetup", help="the path of the machine setup file", type=str)
     parser.add_argument("ioMap", help="the path of the io map file", type=str)
+    parser.add_argument("pvsToStoreFile", help="the path of the file defining pvs to be stored", type=str)
+
     parser.add_argument("-v", "--verbosity", help="set the debug level", default=2, type=int)
+    parser.add_argument("-ld", "--logDirectory", help="the path of the logging directory", default="logs/", type=str)
+    parser.add_argument("-lp", "--logPrefix", help="the prefix for log files", default="daemon", type=str)
+    parser.add_argument("-dp", "--databasePath", help="the path of the database file", default="db/", type=str)
+    parser.add_argument("-dn", "--databaseName", help="the name of the database file", default="datas", type=str)
     args = parser.parse_args()
     
     file = open(args.machineSetup, "r")
@@ -67,7 +71,7 @@ def main():
     #create a thread for the timer manager
     timerManager = fsmTimers()
     commonIos = lnlPVs(args.ioMap)
-    commonLogger = fsmLoggerToFile(args.verbosity)
+    commonLogger = fsmLoggerToFile(args.verbosity, args.logDirectory, args.logPrefix)
     #timerManager.start()  #will be done automatically from first fsm loaded
 
     #a dictitonary containing fsm objects as keys and their thread (or None) as values
@@ -89,7 +93,7 @@ def main():
         fsms[fsm]=newThread
     print("All fsms started!")
 
-    stor = store("STORE", tmgr=timerManager, ios=commonIos, logger=commonLogger)
+    stor = store("STORE", args.pvsToStoreFile, dbPath=args.databasePath, dbName=args.databaseName, tmgr=timerManager, ios=commonIos, logger=commonLogger)
     storThread = fsmThread(stor)
     storThread.start()
     fsms[stor]=storThread
@@ -117,7 +121,6 @@ def main():
         
     
     signal.signal(signal.SIGINT, killAll)
-    signal.signal(signal.SIGKILL, killAll)
     signal.pause()
 
 
