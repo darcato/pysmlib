@@ -44,11 +44,11 @@ class fsmLoggerToFile(fsmLogger):
     def pushMsg(self, f, msg):
         f.write(msg)
         
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __del__(self):
         for name, f in self.files.iteritems():
-            print("Closing "+name+"\n")
-            f.close()
-
+            if not f.closed:
+                print("Closing "+name+"\n")
+                f.close()
 
 
 #Classe timer, utilizzabile dalle macchine a stati
