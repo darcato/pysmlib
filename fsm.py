@@ -65,7 +65,7 @@ class fsmTimer(object):
         
     def trigger(self):
         self._pending = False
-        self._fsm.trigger(timername=self._name)
+        self._fsm.trigger(tmrobj=self, timername=self._name)
         
     def expd(self):
         return not self._pending    
@@ -161,18 +161,12 @@ class fsmTimers(threading.Thread):
 class fsmIO(object):
     def __init__(self, name):
         self._name = name
-        self._conn = False #pv connessa
-        self._value = None
-        self._data = {}    # pv data
+        self._data = {}
+        self._conn = False
+
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
-        self._pval = None
-        self._flgRising = False
-        self._flgFalling = False
-        self._flgChanged = False
-        self._flgConn = False
-        self._flgDisconn = False    
-    
+
     def ioname(self):
         return self._name
 
@@ -183,106 +177,37 @@ class fsmIO(object):
     def concb(self, **args):
         self._conn = args.get('conn', False)
         self.trigger(reason="connectionCallback")
-        #set a flag to say whether there was a connection or a disconnection
-        #reset the other one if it was still true
-        self._flgConn = self._conn
-        self._flgDisconn = not self._conn
-        #on connection or disconnection reset all previous values of the input
-        #in order not to access old values after disconnections
-        self._flgRising = False
-        self._flgFalling = False
-        self._flgChanged = False
-        self._pval = None
-        self._value = None
-        self._data = {}
     
     #callback aggiornamento - value has changed or initial value after connection has arrived
     def chgcb(self, **args):
         self._data = args
-        self._pval = self._value
-        self._flgRising = True
-        self._flgFalling = True
-        self._flgChanged = True
-        self._value=args.get('value', None)
         self.trigger(reason="changeCallback")
     
     #put callback - pv processing has been completed after being triggered by a put
     def putcb(self, **args):
-        self.trigger(reason="putCallback")
+        self.trigger(reason="putCallback", caller=args["callback_data"])
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self, **args):
-        for o in self._attached:
-            o.trigger(inputname=self._name, reason=args['reason'])
+        for fsm in self._attached:
+            fsm.trigger(iobj=self, inputname=self._name, reason=args['reason'])
 
     # caput and wait for pv processing to complete, then call putcb
-    def put(self, value):
-    	self._pv.put(value, callback=self.putcb, use_complete=True)
+    def put(self, value, caller):
+        #will pass to cb the object responsible for the put
+    	self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=caller) 
 
-    #returns wheter the pv processing after a put has been completed
+    #whether the most recent put() has completed.
     def putComplete(self):
-    	return self._pv.put_complete
-        
-    # returns wheter the input is connected and rising since last asked
-    def rising(self):
-       	if self._flgRising and self._pval < self._value and self._pval!=None:
-       		self._flgRising = False
-        	return True
-    	else: 
-    		return False
+        return self._pv.put_complete
 
-    # returns wheter the input is connected and falling since last asked
-    def falling(self):
-        if self._flgFalling and self._pval > self._value:
-        	self._flgFalling = False
-        	return True
-    	else:
-    		return False
-
-    # returns wheter the input is connected and has changed its value since last asked
-    def hasChanged(self):
-        if self._flgChanged:
-            self._flgChanged = False
-            return True
-        else:
-            return False
-
-    def hasDisconnected(self):
-        if self._flgDisconn:
-            self._flgDisconn = False
-            return True
-        else:
-            return False
-
-    def hasConnected(self):
-        if self._flgConn and self._value!=None:
-            self._flgConn = False
-            return True
-        else:
-            return False
-
-    # return whether the pv is connected and has received the initial value
-    def initialized(self):
-        return self._conn and self._value!=None
+    #return pv data dictionary
+    def data(self):
+        return self._data
 
     # returns wheter the pv is connected or not
     def connected(self):
         return self._conn
-
-    # return the pv value
-    def val(self):
-        return self._value
-
-    # return the pv previuos value
-    def pval(self):
-        return self._pval
-
-    # return one element from pv data, choosen by key
-    def data(self, key):
-        if key in self._data.keys():
-            return self._data[key]
-        else:
-            return None
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
@@ -364,6 +289,134 @@ class lnlPVs(fsmIOs):
     #    for key, value in iosDict.iteritems():
     #        pvsDict[self.inv_map[key]] = value
     #    return iosDict
+
+
+#an io which changes only between evaluation of the fsm, due to progressive effect of the event queque
+#it reflects the changes of an fsmIO, one change per cycle
+#it implements flags to detect changes, edges, connections and disconnections
+#there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently 
+class mirrorIO(object):
+    def __init__(self, io):
+        self._reflectedIO = io    #the io to mirror here
+        self._name = self._reflectedIO.ioname()
+
+        self._conn = False  #pv connected or not
+        self._value = None  #pv value
+        self._data = {}     #whole pv data
+        self._pval = None   #pv previous value
+
+        self._flgRising = False
+        self._flgFalling = False
+        self._flgChanged = False
+        self._flgConn = False
+        self._flgDisconn = False
+        self._flgPutComplete = False
+
+    def sync(self, reason, **args):
+        if reason=='changeCallback':
+            self._data = self._reflectedIO.data()
+            self._pval = self._value
+            self._flgRising = True
+            self._flgFalling = True
+            self._flgChanged = True
+            self._value=self._data.get('value', None)
+        
+        elif reason=='connectionCallback':
+            self._conn = self._reflectedIO.connected()
+            #set a flag to say whether there was a connection or a disconnection
+            #reset the other one if it was still true
+            self._flgConn = self._conn
+            self._flgDisconn = not self._conn
+            #on connection or disconnection reset all previous values of the input
+            #in order not to access old values after disconnections
+            self._flgRising = False
+            self._flgFalling = False
+            self._flgChanged = False
+            self._pval = None
+            self._value = None
+            self._data = {}
+
+        #if a put complete callback arrives, the flag must be set true only if
+        #the callback was called due to a put made by this object
+        elif reason=='putCallback' and 'caller' in args and args['caller']==self:
+            self._flgPutComplete = True
+
+    def ioname(self):
+        return self._name
+    
+    #make a put, specifying the object making the put
+    def put(self, value):
+        self._flgPutComplete = False
+        self._reflectedIO.put(value, self)
+    
+    #returns wheter the pv processing after a put has been completed
+    def putComplete(self):
+        if self._flgPutComplete:
+            self._flgPutComplete = False
+            return True
+        else:
+            return False
+        
+    # returns wheter the input is connected and rising since last asked
+    def rising(self):
+        if self._flgRising and self._pval < self._value and self._pval!=None:
+            self._flgRising = False
+            return True
+        else: 
+            return False
+
+    # returns wheter the input is connected and falling since last asked
+    def falling(self):
+        if self._flgFalling and self._pval > self._value:
+            self._flgFalling = False
+            return True
+        else:
+            return False
+
+    # returns wheter the input is connected and has changed its value since last asked
+    def hasChanged(self):
+        if self._flgChanged:
+            self._flgChanged = False
+            return True
+        else:
+            return False
+
+    def hasDisconnected(self):
+        if self._flgDisconn:
+            self._flgDisconn = False
+            return True
+        else:
+            return False
+
+    def hasConnected(self):
+        if self._flgConn and self._value!=None:
+            self._flgConn = False
+            return True
+        else:
+            return False
+
+    # return whether the pv is connected and has received the initial value
+    def initialized(self):
+        return self._conn and self._value!=None
+
+    # returns wheter the pv is connected or not
+    def connected(self):
+        return self._conn
+
+    # return the pv value
+    def val(self):
+        return self._value
+
+    # return the pv previuos value
+    def pval(self):
+        return self._pval
+
+    # return one element from pv data, choosen by key
+    def data(self, key):
+        if key in self._data.keys():
+            return self._data[key]
+        else:
+            return None
 
 
 # classe base per la macchina a stati
@@ -519,13 +572,16 @@ class fsmBase(object):
 
     def _process_event(self, **args):
         self.logD('Consuming event %s %d' % (repr(args), len(self._events)))
+        
+
+
+
+
         if 'inputname' in args and (self._cursens is None or args['inputname'] in self._cursens):
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
-            #self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
             return True
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
-            #self._cond.notify() #sveglia la macchina solo se quell'ingresso e' nella sensitivity list dello stato corrente
             return True
         return False
 
