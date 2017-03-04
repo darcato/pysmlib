@@ -538,14 +538,17 @@ class fsmBase(object):
     
     # valuta all'infinito la macchina a stati
     def eval_forever(self):
+        toBeProcessed = True
         while(not self._stop_thread):
-            changed = self.eval() # eval viene eseguito senza lock
+            if toBeProcessed:
+                changed = self.eval() # eval viene eseguito senza lock
+            else changed = False
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
                 self.logD("No events to process going to sleep\n")
                 self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
                 self.logD('awoken')
-            self._process_one_event()
+            toBeProcessed = self._process_one_event()
             self.unlock()
 
             
@@ -576,15 +579,15 @@ class fsmBase(object):
         return False
 
     def _process_event(self, **args):
-        self.logD('Consuming event %s %d' % (repr(args), len(self._events)))
-        
-
-
-
-
+        self.logD('Consuming event n° %d' % (len(self._events)))
         if 'inputname' in args and (self._cursens is None or args['inputname'] in self._cursens):
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
-            return True
+            fsmIOobj = args['iobj']
+            mirrorIOobj = self._mirrors.get(fsmIOobj, None)
+            if mirrorIOobj:
+                mirrorIOobj.sync(args['reason'])
+                return True
+        return False
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
             return True
