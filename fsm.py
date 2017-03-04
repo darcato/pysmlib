@@ -450,7 +450,7 @@ class fsmBase(object):
         self._stop_thread = False
         self._events = []
         self._mirrors = {} #a dict to keep the mirrorIOs of this fsm, with keys the fsmIO
-        self._awaker = None
+        self._awaker = None                #WHAT FOR FIRST RUN??
         self._awakerType = ""
 
     #populate the sensityvity list for each state
@@ -544,13 +544,14 @@ class fsmBase(object):
         while(not self._stop_thread):
             if toBeProcessed:
                 changed = self.eval() # eval viene eseguito senza lock
-            else changed = False
+            else:
+                changed = False
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
                 self.logD("No events to process going to sleep\n")
                 self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
                 self.logD('awoken')
-            toBeProcessed = self._process_one_event()
+            toBeProcessed = self._process_one_event()   #depends on cursens!!!
             self.unlock()
 
             
@@ -591,8 +592,7 @@ class fsmBase(object):
                 self._awaker = mirrorIOobj
                 self._awakerType = 'io'
                 return True
-            return False
-        if 'timername' in args:
+        elif 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
             self._awaker = args['tmrobj']
             self._awakerType = 'tmr'
