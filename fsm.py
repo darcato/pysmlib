@@ -300,10 +300,11 @@ class mirrorIO(object):
         self._reflectedIO = io    #the io to mirror here
         self._name = self._reflectedIO.ioname()
 
-        self._conn = False  #pv connected or not
-        self._value = None  #pv value
-        self._data = {}     #whole pv data
-        self._pval = None   #pv previous value
+        self._conn = self._reflectedIO.connected()  #pv connected or not
+        self._data = self._reflectedIO.data()                                 #OR WITH EMPTY VALUES??
+        self._value = self._data.get('value', None)  #pv value
+            #whole pv data
+        self._pval = None   #pv previous value                            #HERE??
 
         self._flgRising = False
         self._flgFalling = False
@@ -321,7 +322,7 @@ class mirrorIO(object):
             self._flgChanged = True
             self._value=self._data.get('value', None)
         
-        elif reason=='connectionCallback':
+        elif reason=='connectionCallback':                    #HOW TO HANDLE WHEN INPUT HAS ALREADY A STATUS (eg: conn)??
             self._conn = self._reflectedIO.connected()
             #set a flag to say whether there was a connection or a disconnection
             #reset the other one if it was still true
@@ -609,10 +610,10 @@ class fsmBase(object):
         return self.allof(stateios.values(), "connected")
 
     def anyof(self, objs, method):
-        return any(getattr(io, method)() for io in objs)     
+        return any(getattr(io, method)() for io in objs)
 
     def allof(self, objs, method):
-        return all(getattr(io, method)() for io in objs)     
+        return all(getattr(io, method)() for io in objs)
 
 ################################################################################
 
