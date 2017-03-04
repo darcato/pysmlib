@@ -587,7 +587,7 @@ class fsmBase(object):
             if mirrorIOobj:
                 mirrorIOobj.sync(args['reason'])
                 return True
-        return False
+            return False
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
             return True
