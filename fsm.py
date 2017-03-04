@@ -450,6 +450,8 @@ class fsmBase(object):
         self._stop_thread = False
         self._events = []
         self._mirrors = {} #a dict to keep the mirrorIOs of this fsm, with keys the fsmIO
+        self._awaker = None
+        self._awakerType = ""
 
     #populate the sensityvity list for each state
     def setSensLists(self, statesWithIos):
@@ -586,10 +588,14 @@ class fsmBase(object):
             mirrorIOobj = self._mirrors.get(fsmIOobj, None)
             if mirrorIOobj:
                 mirrorIOobj.sync(args['reason'])
+                self._awaker = mirrorIOobj
+                self._awakerType = 'io'
                 return True
             return False
         if 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
+            self._awaker = args['tmrobj']
+            self._awakerType = 'tmr'
             return True
         return False
 
@@ -621,6 +627,9 @@ class fsmBase(object):
 
     def allof(self, objs, method):
         return all(getattr(io, method)() for io in objs)
+
+    def whoWokeMe(self):
+        return (self._awaker, self._awakerType)
 
 ################################################################################
 
