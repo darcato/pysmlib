@@ -449,6 +449,7 @@ class fsmBase(object):
     	self._myios = self._ios.getFsmIO(self)
         self._stop_thread = False
         self._events = []
+        self._mirrors = {} #a dict to keep the mirrorIOs of this fsm, with keys the fsmIO
 
     #populate the sensityvity list for each state
     def setSensLists(self, statesWithIos):
@@ -549,7 +550,10 @@ class fsmBase(object):
 
             
     def input(self, name, **args):
-        return self._ios.get(name, self, **args)
+        epicsIO = self._ios.get(name, self, **args)
+        myMirrorIO = mirrorIO(epicsIO)
+        self._mirrors[epicsIO]= myMirrorIO
+        return myMirrorIO
 
     def kill(self):
         self._cond.acquire()
@@ -606,7 +610,7 @@ class fsmBase(object):
         return not name in self._timers or self._timers[name].expd()
 
     def is_io_connected(self):
-        stateios = self._cursens if self._cursens is not None else self._myios
+        stateios = self._cursens if self._cursens is not None else self._mirrors.itervalues()
         return self.allof(stateios.values(), "connected")
 
     def anyof(self, objs, method):
