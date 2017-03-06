@@ -542,16 +542,13 @@ class fsmBase(object):
     def eval_forever(self):
         toBeProcessed = True
         while(not self._stop_thread):
-            if toBeProcessed:
                 changed = self.eval() # eval viene eseguito senza lock
-            else:
-                changed = False
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
                 self.logD("No events to process going to sleep\n")
                 self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
                 self.logD('awoken')
-            toBeProcessed = self._process_one_event()   #depends on cursens!!!
+            self._process_one_event()
             self.unlock()
 
             
@@ -571,7 +568,7 @@ class fsmBase(object):
     def trigger(self, **args):
         self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
-        self._events.append(args)
+        self._events.append(args)  #append here also the shapshot of all ios
         if len(self._events) == 1:
             self._cond.notify()
         self._cond.release()
