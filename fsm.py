@@ -184,23 +184,28 @@ class fsmIO(object):
     
     #callback connessione - called on connections and disconnections
     def concb(self, **args):
+        self.lock()
         self._conn = args.get('conn', False)
         self._data = {} #not to keep old values after disconnection
+        self.unlock()
         self.trigger("conn", args)
     
     #callback aggiornamento - value has changed or initial value after connection has arrived
     def chgcb(self, **args):
+        self.lock()
         self._data = args
+        self.unlock()
         self.trigger("change", args)
     
     #put callback - pv processing has been completed after being triggered by a put
     def putcb(self, **args):
-        self.trigger("putcomp", args)
+        if 'fsm' in args:
+            args['fsm'].trigger(iobj=self, inputname=self._name, reason="putcomp")
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
     def trigger(self, cbname, cbdata):
         for fsm in self._attached:
-            fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)  #DATA MUST BE A STATIC COPY
+            fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)
 
     # caput and wait for pv processing to complete, then call putcb
     def put(self, value, cbdata):
@@ -228,6 +233,7 @@ class fsmIOs(object):
     def get(self, name, fsm, **args):
         if name not in self._ios:
             self._ios[name] =  fsmIO(name)
+        self._ios[name].lock()
         self._ios[name].attach(fsm)                #CREATE HERE THE MIRROR IO - should have lock or not?
         return self._ios[name]
     
@@ -306,7 +312,15 @@ class lnlPVs(fsmIOs):
 #it implements flags to detect changes, edges, connections and disconnections
 #there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently 
 class mirrorIO(object):
-    def __init__(self, io):
+    def __init__(self, fsm, io):
+        self._fsm = fsm
+        
+
+        self._value = self._data.get('value', None)  #pv value
+        self._pval = None   #pv previous value
+        self._lastcb = None
+
+    def initialize(self, io):
         self._reflectedIO = io    #the io to mirror here
         self._name = io.ioname()
 
@@ -314,10 +328,6 @@ class mirrorIO(object):
         self._conn = io.connected()  #pv connected or not
         self._data = io.data()  #whole pv data
         io.unlock()
-
-        self._value = self._data.get('value', None)  #pv value
-        self._pval = None   #pv previous value
-        self._lastcb = None
 
     def update(self, reason, cbdata):
         if reason=='change':
@@ -337,7 +347,7 @@ class mirrorIO(object):
 
         #if a put complete callback arrives, the flag must be set true only if
         #the callback was called due to a put made by this object
-        elif reason=='putcomp' and cbdata.get('caller', None)==self:
+        elif reason=='putcomp':
             self._lastcb = reason
         else:
             self._lastcb = ""  #a callback which does not modify this input (eg: putcb for other io)
@@ -347,7 +357,7 @@ class mirrorIO(object):
     
     #make a put, specifying the object making the put
     def put(self, value):
-        cbdata = { "caller" : self }
+        cbdata = { "fsm" : self._fsm }
         self._reflectedIO.put(value, cbdata)
     
     #returns wheter the pv processing after a put has been completed
@@ -525,9 +535,12 @@ class fsmBase(object):
 
             
     def input(self, name, **args):
-        epicsIO = self._ios.get(name, self, **args)        
-        myMirrorIO = mirrorIO(epicsIO)
+        myMirrorIO = mirrorIO(self)
+        epicsIO = self._ios.get(name, self, **args)
+        myMirrorIO.initialize(epicsIO)
         self._mirrors[epicsIO]= myMirrorIO
+        epicsIO.unlock()
+        
         return myMirrorIO
 
     def kill(self):
