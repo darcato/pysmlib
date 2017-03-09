@@ -161,41 +161,51 @@ class fsmTimers(threading.Thread):
 class fsmIO(object):
     def __init__(self, name):
         self._name = name
-        self._data = {}
-        self._conn = False
+        self._data = {}     #keep all infos arriving with change callback
+        self._conn = False  #keeps all infos arriving with connection callback
 
         self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
+        self._cond = threading.Condition()
 
     def ioname(self):
         return self._name
 
     def attach(self, obj):
         self._attached.add(obj)
+
+    #obtain exclusive access on io
+    def lock(self):
+        self._cond.acquire()
+
+    #release exclusive access on io
+    def unlock(self):
+        self._cond.release()
     
     #callback connessione - called on connections and disconnections
     def concb(self, **args):
         self._conn = args.get('conn', False)
-        self.trigger(reason="connectionCallback")
+        self._data = {} #not to keep old values after disconnection
+        self.trigger("conn", args)
     
     #callback aggiornamento - value has changed or initial value after connection has arrived
     def chgcb(self, **args):
         self._data = args
-        self.trigger(reason="changeCallback")
+        self.trigger("change", args)
     
     #put callback - pv processing has been completed after being triggered by a put
     def putcb(self, **args):
-        self.trigger(reason="putCallback", caller=args["callback_data"])
+        self.trigger("putcomp", args)
 
     # "sveglia" le macchine a stati connesse a questo ingresso    
-    def trigger(self, **args):
+    def trigger(self, cbname, cbdata):
         for fsm in self._attached:
-            fsm.trigger(iobj=self, inputname=self._name, reason=args['reason'])
+            fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)  #DATA MUST BE A STATIC COPY
 
     # caput and wait for pv processing to complete, then call putcb
-    def put(self, value, caller):
+    def put(self, value, cbdata):
         #will pass to cb the object responsible for the put
-    	self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=caller) 
+    	self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
 
     #whether the most recent put() has completed.
     def putComplete(self):
@@ -218,7 +228,7 @@ class fsmIOs(object):
     def get(self, name, fsm, **args):
         if name not in self._ios:
             self._ios[name] =  fsmIO(name)
-        self._ios[name].attach(fsm)
+        self._ios[name].attach(fsm)                #CREATE HERE THE MIRROR IO - should have lock or not?
         return self._ios[name]
     
     def getFsmIO(self, fsm):
@@ -298,103 +308,69 @@ class lnlPVs(fsmIOs):
 class mirrorIO(object):
     def __init__(self, io):
         self._reflectedIO = io    #the io to mirror here
-        self._name = self._reflectedIO.ioname()
+        self._name = io.ioname()
 
-        self._conn = self._reflectedIO.connected()  #pv connected or not
-        self._data = self._reflectedIO.data()                                 #OR WITH EMPTY VALUES??
+        io.lock()
+        self._conn = io.connected()  #pv connected or not
+        self._data = io.data()  #whole pv data
+        io.unlock()
+
         self._value = self._data.get('value', None)  #pv value
-            #whole pv data
-        self._pval = None   #pv previous value                            #HERE??
+        self._pval = None   #pv previous value
+        self._lastcb = None
 
-        self._flgRising = False
-        self._flgFalling = False
-        self._flgChanged = False
-        self._flgConn = False
-        self._flgDisconn = False
-        self._flgPutComplete = False
-
-    def sync(self, reason, **args):
-        if reason=='changeCallback':
-            self._data = self._reflectedIO.data()
+    def update(self, reason, cbdata):
+        if reason=='change':
+            self._lastcb = reason
+            self._data = cbdata
             self._pval = self._value
-            self._flgRising = True
-            self._flgFalling = True
-            self._flgChanged = True
-            self._value=self._data.get('value', None)
+            self._value = self._data.get('value', None)
         
-        elif reason=='connectionCallback':                    #HOW TO HANDLE WHEN INPUT HAS ALREADY A STATUS (eg: conn)??
-            self._conn = self._reflectedIO.connected()
-            #set a flag to say whether there was a connection or a disconnection
-            #reset the other one if it was still true
-            self._flgConn = self._conn
-            self._flgDisconn = not self._conn
+        elif reason=='conn':
+            self._lastcb = reason
+            self._conn = cbdata.get('conn', False)
             #on connection or disconnection reset all previous values of the input
             #in order not to access old values after disconnections
-            self._flgRising = False
-            self._flgFalling = False
-            self._flgChanged = False
             self._pval = None
             self._value = None
             self._data = {}
 
         #if a put complete callback arrives, the flag must be set true only if
         #the callback was called due to a put made by this object
-        elif reason=='putCallback' and 'caller' in args and args['caller']==self:
-            self._flgPutComplete = True
+        elif reason=='putcomp' and cbdata.get('caller', None)==self:
+            self._lastcb = reason
+        else:
+            self._lastcb = ""  #a callback which does not modify this input (eg: putcb for other io)
 
     def ioname(self):
         return self._name
     
     #make a put, specifying the object making the put
     def put(self, value):
-        self._flgPutComplete = False
-        self._reflectedIO.put(value, self)
+        cbdata = { "caller" : self }
+        self._reflectedIO.put(value, cbdata)
     
     #returns wheter the pv processing after a put has been completed
     def putComplete(self):
-        if self._flgPutComplete:
-            self._flgPutComplete = False
-            return True
-        else:
-            return False
+        return self._lastcb == 'putcomp'
         
     # returns wheter the input is connected and rising since last asked
     def rising(self):
-        if self._flgRising and self._pval < self._value and self._pval!=None:
-            self._flgRising = False
-            return True
-        else: 
-            return False
+        return self._lastcb == 'change' and self._pval!=None and self._value > self._pval
 
     # returns wheter the input is connected and falling since last asked
     def falling(self):
-        if self._flgFalling and self._pval > self._value:
-            self._flgFalling = False
-            return True
-        else:
-            return False
+        return self._lastcb == 'change' and self._pval!=None and self._value < self._pval
 
     # returns wheter the input is connected and has changed its value since last asked
     def hasChanged(self):
-        if self._flgChanged:
-            self._flgChanged = False
-            return True
-        else:
-            return False
+        return self._lastcb == 'change'
 
     def hasDisconnected(self):
-        if self._flgDisconn:
-            self._flgDisconn = False
-            return True
-        else:
-            return False
+        return self._lastcb == 'conn' and not self._conn
 
     def hasConnected(self):
-        if self._flgConn and self._value!=None:
-            self._flgConn = False
-            return True
-        else:
-            return False
+        return self._lastcb == 'conn' and self._conn
 
     # return whether the pv is connected and has received the initial value
     def initialized(self):
@@ -414,10 +390,7 @@ class mirrorIO(object):
 
     # return one element from pv data, choosen by key
     def data(self, key):
-        if key in self._data.keys():
-            return self._data[key]
-        else:
-            return None
+        return self._data.get(key, None)
 
 
 # classe base per la macchina a stati
@@ -540,23 +513,19 @@ class fsmBase(object):
     
     # valuta all'infinito la macchina a stati
     def eval_forever(self):
-        toBeProcessed = True
         while(not self._stop_thread):
-            if toBeProcessed:
-                changed = self.eval() # eval viene eseguito senza lock
-            else:
-                changed = False
+            changed = self.eval() # eval viene eseguito senza lock
             self.lock() # blocca la coda degli eventi
             if not changed and len(self._events) == 0:
                 self.logD("No events to process going to sleep\n")
                 self._cond.wait() # la macchina va in sleep in attesa di un evento (da un IO, timer...)
                 self.logD('awoken')
-            toBeProcessed = self._process_one_event()   #depends on cursens!!!
+            self._process_one_event()   #PROCESS ONLY IF RETURN TRUE?
             self.unlock()
 
             
     def input(self, name, **args):
-        epicsIO = self._ios.get(name, self, **args)
+        epicsIO = self._ios.get(name, self, **args)        
         myMirrorIO = mirrorIO(epicsIO)
         self._mirrors[epicsIO]= myMirrorIO
         return myMirrorIO
@@ -588,7 +557,7 @@ class fsmBase(object):
             fsmIOobj = args['iobj']
             mirrorIOobj = self._mirrors.get(fsmIOobj, None)
             if mirrorIOobj:
-                mirrorIOobj.sync(args['reason'])
+                mirrorIOobj.update(args['reason'], args['cbdata'])
                 self._awaker = mirrorIOobj
                 self._awakerType = 'io'
                 return True
