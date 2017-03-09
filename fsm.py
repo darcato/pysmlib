@@ -540,7 +540,7 @@ class fsmBase(object):
     def trigger(self, **args):
         self._cond.acquire()
         self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
-        self._events.append(args)
+        self._events.append(args)  #append here also the shapshot of all ios
         if len(self._events) == 1:
             self._cond.notify()
         self._cond.release()
