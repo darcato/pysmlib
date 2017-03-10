@@ -20,7 +20,7 @@ from fsm import fsmTimers, lnlPVs, fsmLoggerToFile
 
 class fsmThread(Thread):
     def __init__(self, fsm):
-        Thread.__init__(self)
+        Thread.__init__(self, name=fsm.fsmname())
         self.fsm = fsm
         self._killRequested = False
 
@@ -31,7 +31,8 @@ class fsmThread(Thread):
                 self.fsm.eval_forever()
             except Exception, e:
                 print(repr(e))
-                print("WARNING: fsm %s crashed unexpectedly. Restarting..." % self.fsm.fsmname())
+                print("WARNING: fsm %s crashed unexpectedly. Restarting...\n\n" % self.fsm.fsmname())
+                sleep(2)
 
     def kill(self):
         self._killRequested = True
@@ -97,7 +98,7 @@ def main():
     storThread = fsmThread(stor)
     storThread.start()
     fsms[stor]=storThread
-
+    
     #start another fsm to report if all the others are alive to epics db
     repo = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
     repoThread = fsmThread(repo)

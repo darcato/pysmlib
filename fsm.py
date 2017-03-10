@@ -187,15 +187,15 @@ class fsmIO(object):
         self.lock()
         self._conn = args.get('conn', False)
         self._data = {} #not to keep old values after disconnection
-        self.unlock()
         self.trigger("conn", args)
+        self.unlock()
     
     #callback aggiornamento - value has changed or initial value after connection has arrived
     def chgcb(self, **args):
         self.lock()
         self._data = args
-        self.unlock()
         self.trigger("change", args)
+        self.unlock()
     
     #put callback - pv processing has been completed after being triggered by a put
     def putcb(self, **args):
@@ -312,11 +312,11 @@ class lnlPVs(fsmIOs):
 #it implements flags to detect changes, edges, connections and disconnections
 #there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently 
 class mirrorIO(object):
-    def __init__(self, fsm, io):
+    def __init__(self, fsm):
         self._fsm = fsm
         
-
-        self._value = self._data.get('value', None)  #pv value
+        self._name = None
+        self._value = None  #pv value
         self._pval = None   #pv previous value
         self._lastcb = None
 
@@ -328,6 +328,10 @@ class mirrorIO(object):
         self._conn = io.connected()  #pv connected or not
         self._data = io.data()  #whole pv data
         io.unlock()
+        
+        self._value = self._data.get('value', None)  #pv value
+        self._pval = None   #pv previous value
+        self._lastcb = None
 
     def update(self, reason, cbdata):
         if reason=='change':
@@ -381,6 +385,10 @@ class mirrorIO(object):
 
     def hasConnected(self):
         return self._lastcb == 'conn' and self._conn
+    
+    #say if the input has changed and this is the first value it got
+    def hasFirstValue(self):
+        return self._lastcb == 'change' and self._pval==None
 
     # return whether the pv is connected and has received the initial value
     def initialized(self):
@@ -565,12 +573,12 @@ class fsmBase(object):
 
     def _process_event(self, **args):
         self.logD('Consuming event n° %d' % (len(self._events)))
-        if 'inputname' in args and (self._cursens is None or args['inputname'] in self._cursens):
+        if 'inputname' in args and (not self._cursens or args['inputname'] in self._cursens):
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
             fsmIOobj = args['iobj']
             mirrorIOobj = self._mirrors.get(fsmIOobj, None)
             if mirrorIOobj:
-                mirrorIOobj.update(args['reason'], args['cbdata'])
+                mirrorIOobj.update(args.get('reason', ""), args.get('cbdata', None))
                 self._awaker = mirrorIOobj
                 self._awakerType = 'io'
                 return True
