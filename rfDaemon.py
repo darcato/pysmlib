@@ -31,8 +31,8 @@ class fsmThread(Thread):
                 self.fsm.eval_forever()
             except Exception, e:
                 print(repr(e))
-                print("WARNING: fsm %s crashed unexpectedly. Restarting...\n\n" % self.fsm.fsmname())
-                sleep(2)
+                print("\nWARNING: fsm %s crashed unexpectedly. Restarting...\n" % self.fsm.fsmname())
+                sleep(5)    #should RESET fsm status before restarting.. or boot loop!
 
     def kill(self):
         self._killRequested = True
