@@ -573,7 +573,7 @@ class fsmBase(object):
 
     def _process_event(self, **args):
         self.logD('Consuming event n° %d' % (len(self._events)))
-        if 'inputname' in args and (not self._cursens or args['inputname'] in self._cursens):
+        if 'inputname' in args:
             self.logD("input " + repr(args['inputname']) +" is triggering " + self._curstatename + " - " + args['reason'])
             fsmIOobj = args['iobj']
             mirrorIOobj = self._mirrors.get(fsmIOobj, None)
