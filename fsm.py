@@ -355,6 +355,9 @@ class mirrorIO(object):
             self._lastcb = reason
         else:
             self._lastcb = ""  #a callback which does not modify this input (eg: putcb for other io)
+            
+    def reset(self):
+        self._lastcb = ""
 
     def ioname(self):
         return self._name
@@ -363,6 +366,8 @@ class mirrorIO(object):
     def put(self, value):
         cbdata = { "fsm" : self._fsm }
         self._reflectedIO.put(value, cbdata)
+    
+    #----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------ 
     
     #returns wheter the pv processing after a put has been completed
     def putComplete(self):
@@ -389,7 +394,9 @@ class mirrorIO(object):
     #say if the input has changed and this is the first value it got
     def hasFirstValue(self):
         return self._lastcb == 'change' and self._pval==None
-
+    
+    #------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------
+    
     # return whether the pv is connected and has received the initial value
     def initialized(self):
         return self._conn and self._value!=None
@@ -567,6 +574,8 @@ class fsmBase(object):
         self._cond.release()
 
     def _process_one_event(self):
+        if self._awaker and self._awakerType == 'io':
+            self._awaker.reset()   #reset io to catch changements only on the eval triggered by the same changement
         if len(self._events):
             return self._process_event(**self._events.pop(0))
         return False
