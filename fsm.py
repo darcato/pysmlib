@@ -318,7 +318,8 @@ class mirrorIO(object):
         self._name = None
         self._value = None  #pv value
         self._pval = None   #pv previous value
-        self._lastcb = None
+        self._currcb = None #current callback
+        self._putComplete = False  #keep track of put completement
 
     def initialize(self, io):
         self._reflectedIO = io    #the io to mirror here
@@ -331,17 +332,18 @@ class mirrorIO(object):
         
         self._value = self._data.get('value', None)  #pv value
         self._pval = None   #pv previous value
-        self._lastcb = None
+        self._currcb = None
+        self._putComplete = False #even if the io has True, it was not triggered by a put of this mirror
 
     def update(self, reason, cbdata):
         if reason=='change':
-            self._lastcb = reason
+            self._currcb = reason
             self._data = cbdata
             self._pval = self._value
             self._value = self._data.get('value', None)
         
         elif reason=='conn':
-            self._lastcb = reason
+            self._currcb = reason
             self._conn = cbdata.get('conn', False)
             #on connection or disconnection reset all previous values of the input
             #in order not to access old values after disconnections
@@ -352,50 +354,59 @@ class mirrorIO(object):
         #if a put complete callback arrives, the flag must be set true only if
         #the callback was called due to a put made by this object
         elif reason=='putcomp':
-            self._lastcb = reason
+            self._currcb = reason
+            self._putComplete = True
         else:
-            self._lastcb = ""  #a callback which does not modify this input (eg: putcb for other io)
+            self._currcb = ""  #a callback which does not modify this input (eg: putcb for other io)
             
     def reset(self):
-        self._lastcb = ""
+        self._currcb = ""
 
     def ioname(self):
         return self._name
     
     #make a put, specifying the object making the put
     def put(self, value):
+        self._putComplete = False
         cbdata = { "fsm" : self._fsm }
         self._reflectedIO.put(value, cbdata)
     
-    #----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------ 
+    #----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------
+    #----- They return True if the fsm was woken up by this changement in this cycle
     
-    #returns wheter the pv processing after a put has been completed
-    def putComplete(self):
-        return self._lastcb == 'putcomp'
-        
-    # returns wheter the input is connected and rising since last asked
+    # hasPutCompleted: current awakening callback is a put callback
+    def hasPutCompleted(self):
+        return self._currcb == 'putcomp'       
+    
+    # Rising = connected and received at least 2 values, with the last > precedent
     def rising(self):
-        return self._lastcb == 'change' and self._pval!=None and self._value > self._pval
+        return self._currcb == 'change' and self._pval!=None and self._value > self._pval
 
-    # returns wheter the input is connected and falling since last asked
+    # Falling = connected and received at least 2 values, with the last < precedent
     def falling(self):
-        return self._lastcb == 'change' and self._pval!=None and self._value < self._pval
+        return self._currcb == 'change' and self._pval!=None and self._value < self._pval
 
-    # returns wheter the input is connected and has changed its value since last asked
+    # hasChanged = last callback was a change callback
     def hasChanged(self):
-        return self._lastcb == 'change'
+        return self._currcb == 'change'
 
+    # hasDisconnected = last callback was a connection callback due to disconnection
     def hasDisconnected(self):
-        return self._lastcb == 'conn' and not self._conn
-
-    def hasConnected(self):
-        return self._lastcb == 'conn' and self._conn
+        return self._currcb == 'conn' and not self._conn
     
-    #say if the input has changed and this is the first value it got
+    # hasConnected = last callback was a connection callback due to connection
+    def hasConnected(self):
+        return self._currcb == 'conn' and self._conn
+    
+    # hasFirstValue: the input has changed and this is the first value it got
     def hasFirstValue(self):
-        return self._lastcb == 'change' and self._pval==None
+        return self._currcb == 'change' and self._pval==None
     
     #------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------
+    
+    #returns wheter the pv processing after the last put has been completed
+    def putComplete(self):
+        return self._putComplete
     
     # return whether the pv is connected and has received the initial value
     def initialized(self):
