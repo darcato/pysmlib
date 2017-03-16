@@ -22,20 +22,20 @@ class fsmThread(Thread):
     def __init__(self, fsm):
         Thread.__init__(self, name=fsm.fsmname())
         self.fsm = fsm
-        self._killRequested = False
+        #self._killRequested = False
 
     def run(self):
-        self._killRequested = False
-        while not self._killRequested:
-            try:
-                self.fsm.eval_forever()
-            except Exception, e:
-                print(repr(e))
-                print("\nWARNING: fsm %s crashed unexpectedly. Restarting...\n" % self.fsm.fsmname())
-                sleep(5)    #should RESET fsm status before restarting.. or boot loop!
+        #self._killRequested = False
+        #while not self._killRequested:
+        try:
+            self.fsm.eval_forever()
+        except Exception, e:
+            print(repr(e))
+            print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
+            #sleep(5)    #should RESET fsm status before restarting.. or boot loop!
 
     def kill(self):
-        self._killRequested = True
+        #self._killRequested = True
         self.fsm.kill()
         self.join()
 
