@@ -319,7 +319,7 @@ class mirrorIO(object):
         self._value = None  #pv value
         self._pval = None   #pv previous value
         self._currcb = None #current callback
-        self._putComplete = False  #keep track of put completement
+        self._putComplete = True  #keep track of put completement
 
     def initialize(self, io):
         self._reflectedIO = io    #the io to mirror here
@@ -333,7 +333,7 @@ class mirrorIO(object):
         self._value = self._data.get('value', None)  #pv value
         self._pval = None   #pv previous value
         self._currcb = None
-        self._putComplete = False #even if the io has True, it was not triggered by a put of this mirror
+        self._putComplete = True #even if the io has False, it was not triggered by a put of this mirror
 
     def update(self, reason, cbdata):
         if reason=='change':
