@@ -17,7 +17,7 @@ class fsmLogger(object):
         self.startime = time.time()
         
     def log(self, fsmname, lev, msg):
-    	tm = time.time() - self.startime
+        tm = time.time() - self.startime
         if lev <= self._level:
             self.pushMsg('%8.2fs: %s - %s%s' %(tm, fsmLogger.levstr[lev], fsmname, msg))
             
@@ -210,7 +210,7 @@ class fsmIO(object):
     # caput and wait for pv processing to complete, then call putcb
     def put(self, value, cbdata):
         #will pass to cb the object responsible for the put
-    	self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+        self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
 
     #whether the most recent put() has completed.
     def putComplete(self):
@@ -238,11 +238,11 @@ class fsmIOs(object):
         return self._ios[name]
     
     def getFsmIO(self, fsm):
-    	ret = {}
-    	for io in self._ios.values():
-    		if fsm in io._attached:
-    			ret[io.ioname()] = io
-    	return ret
+        ret = {}
+        for io in self._ios.values():
+            if fsm in io._attached:
+                ret[io.ioname()] = io
+        return ret
 
 #performs the conversion from procedure internal namings of the inputs
 #and real pv names, base on naming convention and a map
@@ -455,7 +455,7 @@ class fsmBase(object):
         self._senslists = {}
         self._cursens = {}
         self._cond = threading.Condition()
-    	self._myios = self._ios.getFsmIO(self)
+        self._myios = self._ios.getFsmIO(self)
         self._stop_thread = False
         self._events = []
         self._mirrors = {} #a dict to keep the mirrorIOs of this fsm, with keys the fsmIO
@@ -519,7 +519,7 @@ class fsmBase(object):
         self.log(3, msg)
 
     def logTimeReset(self):
-    	self._logger.resetTime()
+        self._logger.resetTime()
 
     #valuta la macchina a stati nello stato corrente
     def eval(self):

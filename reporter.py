@@ -25,23 +25,23 @@ class reporter(fsmBase):
         #connect input for each fsm
         #the input is the pv where to write each second to say the fsm is alive (watchdog of 2 seconds)
         for fsmObj, fsmThread in fsms.iteritems():
-        	inp = None
-        	if isinstance(fsmObj, caraterize):
-        		inp = self.input("cConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-        	elif isinstance(fsmObj, pulseRf):
-        		inp = self.input("pConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-        	elif isinstance(fsmObj, softTuner):
-        		inp = self.input("sConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-        	elif isinstance(fsmObj, zeroFreq):
-        		inp = self.input("zConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-        	elif isinstance(fsmObj, waves):
-        		inp = self.input("wConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-        	elif isinstance(fsmObj, store):
-        		inp = self.input("storeConnWd")
-        	if inp!=None:
-        		self.watchdogs[inp] = (fsmObj, fsmThread)
+            inp = None
+            if isinstance(fsmObj, caraterize):
+                inp = self.input("cConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
+            elif isinstance(fsmObj, pulseRf):
+                inp = self.input("pConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
+            elif isinstance(fsmObj, softTuner):
+                inp = self.input("sConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
+            elif isinstance(fsmObj, zeroFreq):
+                inp = self.input("zConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
+            elif isinstance(fsmObj, waves):
+                inp = self.input("wConnWatchdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
+            elif isinstance(fsmObj, store):
+                inp = self.input("storeConnWd")
+            if inp!=None:
+                self.watchdogs[inp] = (fsmObj, fsmThread)
 
-		statesWithIOs = {
+        statesWithIOs = {
             "run" : []
         }
         self.setSensLists(statesWithIOs)
@@ -51,19 +51,19 @@ class reporter(fsmBase):
         self.timers = []
 
     def run_entry(self):
-    	for inp, objThr in self.watchdogs.iteritems():
-    		#start with a random delay not to write all pvs at the same instant
-    		randDelay = uniform(0, 1)
-    		tmrName = inp.ioname()
-    		self.timers.append((tmrName, inp))
-    		self.tmrSet(tmrName, randDelay)
-    	self.logD("set %d watchdogs" % len(self.timers))
+        for inp, objThr in self.watchdogs.iteritems():
+            #start with a random delay not to write all pvs at the same instant
+            randDelay = uniform(0, 1)
+            tmrName = inp.ioname()
+            self.timers.append((tmrName, inp))
+            self.tmrSet(tmrName, randDelay)
+        self.logD("set %d watchdogs" % len(self.timers))
     
     def run_eval(self):
-    	for tmrName, inp in self.timers:
-    		if self.tmrExp(tmrName):
-    			#now write it each second
-    			self.tmrSet(tmrName, 1)
-    			if inp.connected():
-    				fsm, thread = self.watchdogs[inp]
-    				inp.put(int(thread.isAlive()))
+        for tmrName, inp in self.timers:
+            if self.tmrExp(tmrName):
+                #now write it each second
+                self.tmrSet(tmrName, 1)
+                if inp.connected():
+                    fsm, thread = self.watchdogs[inp]; 
+                    inp.put(int(thread.isAlive()))
