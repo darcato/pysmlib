@@ -105,7 +105,7 @@ def main():
     repoThread.start()
 
     def killAll(signum, frame):
-        print("Signal: %d -> Going to kill all fsms" % signum)
+        #print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm, thread in fsms.iteritems():
             if thread.isAlive():
                 thread.kill()
