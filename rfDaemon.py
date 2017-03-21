@@ -20,21 +20,22 @@ from fsm import fsmTimers, lnlPVs, fsmLoggerToFile
 
 class fsmThread(Thread):
     def __init__(self, fsm):
-        Thread.__init__(self)
+        Thread.__init__(self, name=fsm.fsmname())
         self.fsm = fsm
-        self._killRequested = False
+        #self._killRequested = False
 
     def run(self):
-        self._killRequested = False
-        while not self._killRequested:
-            try:
-                self.fsm.eval_forever()
-            except Exception, e:
-                print(repr(e))
-                print("WARNING: fsm %s crashed unexpectedly. Restarting..." % self.fsm.fsmname())
+        #self._killRequested = False
+        #while not self._killRequested:
+        try:
+            self.fsm.eval_forever()
+        except Exception, e:
+            print(repr(e))
+            print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
+            #sleep(5)    #should RESET fsm status before restarting.. or boot loop!
 
     def kill(self):
-        self._killRequested = True
+        #self._killRequested = True
         self.fsm.kill()
         self.join()
 
@@ -97,14 +98,14 @@ def main():
     storThread = fsmThread(stor)
     storThread.start()
     fsms[stor]=storThread
-
+    
     #start another fsm to report if all the others are alive to epics db
     repo = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
     repoThread = fsmThread(repo)
     repoThread.start()
 
     def killAll(signum, frame):
-        print("Signal: %d -> Going to kill all fsms" % signum)
+        #print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm, thread in fsms.iteritems():
             if thread.isAlive():
                 thread.kill()
