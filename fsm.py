@@ -43,6 +43,7 @@ class fsmLoggerToFile(fsmLogger):
 
     def pushMsg(self, f, msg):
         f.write(msg)
+        f.flush()  #to empty buffer after every message!
         
     def __del__(self):
         for name, f in self.files.iteritems():
