@@ -53,7 +53,7 @@ class reporter(fsmBase):
     def run_entry(self):
         for inp, objThr in self.watchdogs.iteritems():
             #start with a random delay not to write all pvs at the same instant
-            randDelay = uniform(0, 1)
+            randDelay = uniform(0, 10)
             tmrName = inp.ioname()
             self.timers.append((tmrName, inp))
             self.tmrSet(tmrName, randDelay)
@@ -62,8 +62,8 @@ class reporter(fsmBase):
     def run_eval(self):
         for tmrName, inp in self.timers:
             if self.tmrExp(tmrName):
-                #now write it each second
-                self.tmrSet(tmrName, 1)
+                #now write it each 10 second
+                self.tmrSet(tmrName, 10)
                 if inp.connected():
                     fsm, thread = self.watchdogs[inp]; 
                     inp.put(int(thread.isAlive()))
