@@ -209,10 +209,16 @@ class fsmIO(object):
             fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)
 
     # caput and wait for pv processing to complete, then call putcb
-    def put(self, value, cbdata):
-        #will pass to cb the object responsible for the put
-        self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
-
+    def put(self, value, caller_fsm):
+        #cbdata contains the fsm obj to wake up when putCompleted 
+        cbdata = { "fsm" : caller_fsm }
+        try:
+            self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+        except Exception as e:
+            caller_fsm.logE("FAILED putting to pv %s  -- exception: %s" % (self._name, str(e)))
+            return False
+        return True
+            
     #whether the most recent put() has completed.
     def putComplete(self):
         return self._pv.put_complete
@@ -369,8 +375,7 @@ class mirrorIO(object):
     #make a put, specifying the object making the put
     def put(self, value):
         self._putComplete = False
-        cbdata = { "fsm" : self._fsm }
-        self._reflectedIO.put(value, cbdata)
+        return self._reflectedIO.put(value, self._fsm)
     
     #----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------
     #----- They return True if the fsm was woken up by this changement in this cycle
