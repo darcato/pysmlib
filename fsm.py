@@ -66,7 +66,7 @@ class fsmTimer(object):
         
     def trigger(self):
         self._pending = False
-        self._fsm.trigger(tmrobj=self, timername=self._name)
+        self._fsm.trigger(tmrobj=self, timername=self._name, reason="expired")
         
     def expd(self):
         return not self._pending    
@@ -174,6 +174,9 @@ class fsmIO(object):
 
     def attach(self, obj):
         self._attached.add(obj)
+        
+    def isAttached(self, obj):
+        return obj in self._attached
 
     #obtain exclusive access on io
     def lock(self):
@@ -238,16 +241,26 @@ class fsmIOs(object):
         self._ios = {}
     
     def get(self, name, fsm, **args):
+        #first time this input was requested: we create and attach it
         if name not in self._ios:
             self._ios[name] =  fsmIO(name)
-        self._ios[name].lock()
-        self._ios[name].attach(fsm)                #CREATE HERE THE MIRROR IO - should have lock or not?
+            
+        #input already created: if not already attached to the fsm, trigger some fake events to init fsm
+        if not self._ios[name].isAttached(fsm):
+            io = self._ios[name]
+            io.lock()
+            fsm.trigger(iobj=io, inputname=name, reason="conn", cbdata={'conn':io.connected(), 'pvname':name})
+            if io.data():
+                fsm.trigger(iobj=io, inputname=name, reason="change", cbdata=io.data())
+            io.attach(fsm)
+            io.unlock()
+        
         return self._ios[name]
     
     def getFsmIO(self, fsm):
         ret = {}
         for io in self._ios.values():
-            if fsm in io._attached:
+            if io.isAttached(fsm):
                 ret[io.ioname()] = io
         return ret
 
@@ -319,7 +332,7 @@ class lnlPVs(fsmIOs):
 #it implements flags to detect changes, edges, connections and disconnections
 #there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently 
 class mirrorIO(object):
-    def __init__(self, fsm):
+    def __init__(self, fsm, io):
         self._fsm = fsm
         
         self._name = None
@@ -328,19 +341,10 @@ class mirrorIO(object):
         self._currcb = None #current callback
         self._putComplete = True  #keep track of put completement
 
-    def initialize(self, io):
         self._reflectedIO = io    #the io to mirror here
         self._name = io.ioname()
-
-        io.lock()
-        self._conn = io.connected()  #pv connected or not
-        self._data = io.data()  #whole pv data
-        io.unlock()
-        
-        self._value = self._data.get('value', None)  #pv value
-        self._pval = None   #pv previous value
-        self._currcb = None
-        self._putComplete = True #even if the io has False, it was not triggered by a put of this mirror
+        self._conn = False  #pv connected or not
+        self._data = {}  #whole pv data
 
     def update(self, reason, cbdata):
         if reason=='change':
@@ -467,6 +471,7 @@ class fsmBase(object):
         self._mirrors = {} #a dict to keep the mirrorIOs of this fsm, with keys the fsmIO
         self._awaker = None                #WHAT FOR FIRST RUN??
         self._awakerType = ""
+        self._awakerReason = ""
 
     #populate the sensityvity list for each state
     def setSensLists(self, statesWithIos):
@@ -567,13 +572,12 @@ class fsmBase(object):
 
             
     def input(self, name, **args):
-        myMirrorIO = mirrorIO(self)
-        epicsIO = self._ios.get(name, self, **args)
-        myMirrorIO.initialize(epicsIO)
-        self._mirrors[epicsIO]= myMirrorIO
-        epicsIO.unlock()
+        thisFsmIO = self._ios.get(name, self, **args)
+        if not thisFsmIO in self._mirrors:
+            thisMirrorIO = mirrorIO(self, thisFsmIO)
+            self._mirrors[thisFsmIO]= thisMirrorIO
         
-        return myMirrorIO
+        return thisMirrorIO
 
     def kill(self):
         self._cond.acquire()
@@ -593,6 +597,7 @@ class fsmBase(object):
     def _process_one_event(self):
         if self._awaker and self._awakerType == 'io':
             self._awaker.reset()   #reset io to catch changements only on the eval triggered by the same changement
+        self.resetAwaker()
         if len(self._events):
             return self._process_event(**self._events.pop(0))
         return False
@@ -605,13 +610,11 @@ class fsmBase(object):
             mirrorIOobj = self._mirrors.get(fsmIOobj, None)
             if mirrorIOobj:
                 mirrorIOobj.update(args.get('reason', ""), args.get('cbdata', None))
-                self._awaker = mirrorIOobj
-                self._awakerType = 'io'
+                self.setAwaker(mirrorIOobj, 'io', args.get('reason', "unknownInput"))
                 return True
         elif 'timername' in args:
             self.logD("timer " + repr(args['timername']) +" is triggering " + self._curstatename)
-            self._awaker = args['tmrobj']
-            self._awakerType = 'tmr'
+            self.setAwaker(args['tmrobj'], 'tmr', args.get('reason', "unknownTimer"))
             return True
         return False
 
@@ -646,6 +649,19 @@ class fsmBase(object):
 
     def whoWokeMe(self):
         return (self._awaker, self._awakerType)
+    
+    def whyWhokeMe(self):
+        return self._awakerReason
+    
+    def setAwaker(self, obj, type, reason):
+        self._awaker = obj
+        self._awakerType = str(type)
+        self._awakerReason = str(reason)
+        
+    def resetAwaker(self):
+        self._awaker = None
+        self._awakerType = ""
+        self._awakerReason = ""
 
 ################################################################################
 
