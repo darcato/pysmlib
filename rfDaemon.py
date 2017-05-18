@@ -16,29 +16,7 @@ from zeroFreq import zeroFreq
 from softTuner import softTuner
 from reporter import reporter
 from store import store
-from fsm import fsmTimers, lnlPVs, fsmLoggerToFile
-
-class fsmThread(Thread):
-    def __init__(self, fsm):
-        Thread.__init__(self, name=fsm.fsmname())
-        self.fsm = fsm
-        #self._killRequested = False
-
-    def run(self):
-        #self._killRequested = False
-        #while not self._killRequested:
-        try:
-            self.fsm.eval_forever()
-        except Exception, e:
-            print(repr(e))
-            print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
-            #sleep(5)    #should RESET fsm status before restarting.. or boot loop!
-
-    def kill(self):
-        #self._killRequested = True
-        self.fsm.kill()
-        self.join()
-
+from fsm import fsmTimers, lnlPVs, fsmLoggerToFile, fsmThread
 
 def main():
     parser = argparse.ArgumentParser(description="rfDaemon - loads the required fsm to perform procedures")
