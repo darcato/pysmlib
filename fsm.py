@@ -10,6 +10,10 @@ import threading
 import time
 from datetime import datetime
 
+#ioMap parsing
+import re
+from collections import OrderedDict
+
 class fsmLogger(object):
     levstr = ['E','W','I','D']
     def __init__(self, lev=3):
@@ -255,6 +259,7 @@ class fsmIOs(object):
             io.attach(fsm)
             io.unlock()
         
+        fsm.logI("Connecting to PV: {:s}".format(name))
         return self._ios[name]
     
     def getFsmIO(self, fsm):
@@ -277,28 +282,66 @@ class lnlPVs(fsmIOs):
         file.close()
 
         self._map = {}
-        replaces = {}
+        replaces = {} #a dict with macro substitutions
+        pattern = OrderedDict()
+        strgen = ""
         for line in lines:
             if not line.startswith("#"):
-                line = line.split("#")[0].strip()
-                if line.startswith(">"):
-                    line = line[1:]
-                    el = line.split("=")
+                line_uncomment = line.split("#")[0].strip()
+                if line_uncomment.startswith(">"):
+                    el = line_uncomment[1:].split("=")
                     if len(el)==2:
-                        replaces[el[0].strip().replace("\"", "")] = el[1].strip().replace("\"", "")
-                elif len(line)>3:
-                    el = line.split("=")
-                    if len(el)==2:
-                        key = el[0].strip().replace("\"", "")
-                        values = el[1].split(",")
-                        subkeys = ["fac", "app", "subapp", "obj", "type", "signal"]
-                        value = {}
-                        for k in range(len(subkeys)):
-                            candidate = values[k].strip().replace("\"", "")
-                            if candidate in replaces.iterkeys():
-                                candidate = replaces[candidate]
-                            value[subkeys[k]]=candidate
-                        self._map[key] = value
+                        cmd = el[0].strip().replace("\"", "")
+                        expression = el[1].strip().replace("\"", "")
+                        if cmd == "pattern":  #keywords of the config file
+                            pattern = OrderedDict()  #will contain the naming convention elements, with each its format
+                            strgen = ""   #will contain the whole string formats
+                            m = re.match(" *\((.*)\) *\((.*)\) *", expression)
+                            if m:
+                                strgen = m.group(1).strip().replace(" ","").replace("\"", "") #first part between {} = string definition
+                                strelm = re.findall("[^{}]*{([^{}]*)}[^{}]*", strgen) #parse all the single parts
+                                patterns = m.group(2).split(",") #second part between {} = naming convention elements
+                                if not strelm or len(strelm)!=len(patterns):
+                                    raise ValueError("inputMap ERROR, line {}: Failed to parse pattern elements".format(lines.index(line)))
+                                for k in range(len(patterns)): 
+                                    p = patterns[k].strip().replace(" ","").replace("\"", "")
+                                    if p!="":
+                                        if p not in pattern:
+                                            pattern[p]=strelm[k]  #populate pattern
+                                        else:
+                                            raise ValueError("inputMap ERROR, line {}: Redeclaration of pattern element".format(lines.index(line)))
+                                if len(pattern)==0:
+                                    raise ValueError("inputMap ERROR, line {}: Pattern empty")
+                            else:
+                                raise ValueError("inputMap ERROR, line {}: Pattern syntax error".format(lines.index(line)))
+                        else:  #macro definitions
+                            replaces[el[0].strip().replace("\"", "")] = el[1].strip().replace("\"", "")
+                    elif len(el)>2:
+                        raise ValueError("inputMap ERROR, line {}: Multiple or no assignations in line".format(lines.index(line)))
+                elif len(line_uncomment)>3:  #input definition
+                    if len(pattern)!=0 and len(strgen)!=0:  #if a pattern has already been defined
+                        el = line_uncomment.split("=")
+                        if len(el)==2:  #if there is an assignation
+                            key = el[0].strip().replace("\"", "")   #input name inside fsm
+                            values = el[1].split(",")   #info to create pv name elements
+                            if len(values)!=len(pattern):  #must respect the pattern
+                                raise ValueError("inputMap ERROR, line {}: Pattern lenght differs from input declaration".format(lines.index(line)))
+                            cmap = OrderedDict() #map of this input: for each element of pattern there is a value
+                            for k in range(len(pattern)):
+                                candidate = values[k].strip().replace("\"", "") #parse from file
+                                m = re.match(" *\$\((.*)\) *", candidate)  #$(MACRO)
+                                if m:  #if this is a macro to be replaced
+                                    candidate = m.group(1)  #get the macro name
+                                    if candidate.upper() in map(str.upper, replaces.iterkeys()): #if there is a replacement for the macro in replaces
+                                        candidate = replaces.get(candidate.upper(), "") + replaces.get(candidate.lower(), "")  #use the replacement
+                                    else:
+                                        raise ValueError("inputMap ERROR, line {}: Cannot find macro substitutions for: {}".format(lines.index(line), candidate))
+                                cmap[pattern.items()[k]]=candidate   #the map of this input has a tuple as key (pattern, strelm) and the parsed candidate as value
+                            self._map[key] = (cmap, strgen) #add the current map (of this input) and the whole strgen to the general map (all inputs)
+                        else:
+                            ValueError("inputMap ERROR, line {}: Multiple or no assignations in line".format(lines.index(line)))
+                    else:
+                        raise ValueError("inputMap ERROR, line {}: Declaring an input without first defining a pattern!".format(lines.index(line)))
             
         #inverse map, to perform back naming transformation
         #self.inv_map = {v: k for k, v in self._map.iteritems()}
@@ -306,16 +349,30 @@ class lnlPVs(fsmIOs):
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
     def get(self, name, fsm, **args):
-        cmap = self._map[name]
-        pvname = "%.2s%.4s" % (cmap['fac'], cmap['app'])
-        if 'nsap' in args:
-            charid = 'A'
-            if 'csap' in args and args['csap']!=None:
-                charid = args['csap'].upper()[0]
-            pvname+="%.4s%02d%c" % (cmap['subapp'], args['nsap'], charid)
-            if 'nobj' in args:
-                pvname+="_%.4s%02d" % (cmap['obj'], args['nobj'])
-        pvname+="%c%s" % (cmap['type'], cmap['signal'])
+        cmap, strgen = self._map[name]
+
+        substitutions = ()  # a tuple containing the parts of pv name in order
+        cstrgen = strgen # copy the string containing the format of each part
+        for pattern, v in cmap.iteritems():
+            m = re.match(" *<(.*)> *", v)   #these are parameters to be passed runtime
+            if m:
+                v = m.group(1)
+                if v in args and args[v]!=None:
+                    v = args[v] #get the value from args
+                else:
+                    raise ValueError("Cannot find the arg: %s in the input creation, as required by input map" % v)
+            key, keydef = pattern
+            if keydef.endswith("d"):  #if we are dealing with an int value, let's format it now and then use it as a string
+                if v!="":             #this is done so that if we get a number as string doesn't crash
+                    v = ("{"+keydef+"}").format(int(v))  #now the number is a string with the correct format
+                cstrgen = cstrgen.replace(keydef, ":s", 1)  #so we change the expected format to %s (replace the first occurence, going from first to last)
+            elif keydef==":c":          #this is a char, let's convert it to a string of lenght 1
+                v = ("{:.1s}").format(str(v))
+                cstrgen = cstrgen.replace(keydef, ":s", 1)
+            substitutions+= (v,)   #add the updated v to the tuple pv name parts 
+
+        pvname = cstrgen.format(*substitutions)  #actually compose pv name
+        print pvname
         return super(lnlPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
@@ -595,10 +652,9 @@ class fsmBase(object):
     def input(self, name, **args):
         thisFsmIO = self._ios.get(name, self, **args)
         if not thisFsmIO in self._mirrors:
-            thisMirrorIO = mirrorIO(self, thisFsmIO)
-            self._mirrors[thisFsmIO]= thisMirrorIO
+            self._mirrors[thisFsmIO]= mirrorIO(self, thisFsmIO)
         
-        return thisMirrorIO
+        return self._mirrors[thisFsmIO]
 
     def kill(self):
         self._cond.acquire()
