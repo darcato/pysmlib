@@ -315,7 +315,7 @@ class lnlPVs(fsmIOs):
                             else:
                                 raise ValueError("inputMap ERROR, line {}: Pattern syntax error".format(lines.index(line)))
                         else:  #macro definitions
-                            replaces[el[0].strip().replace("\"", "")] = el[1].strip().replace("\"", "")
+                            replaces[el[0].strip().replace("\"", "").upper()] = el[1].strip().replace("\"", "")
                     elif len(el)>2:
                         raise ValueError("inputMap ERROR, line {}: Multiple or no assignations in line".format(lines.index(line)))
                 elif len(line_uncomment)>3:  #input definition
@@ -332,8 +332,8 @@ class lnlPVs(fsmIOs):
                                 m = re.match(" *\$\((.*)\) *", candidate)  #$(MACRO)
                                 if m:  #if this is a macro to be replaced
                                     candidate = m.group(1)  #get the macro name
-                                    if candidate.upper() in map(str.upper, replaces.iterkeys()): #if there is a replacement for the macro in replaces
-                                        candidate = replaces.get(candidate.upper(), "") + replaces.get(candidate.lower(), "")  #use the replacement
+                                    if candidate.upper() in replaces: #if there is a replacement for the macro in replaces
+                                        candidate = replaces[candidate.upper()]  #use the replacement
                                     else:
                                         raise ValueError("inputMap ERROR, line {}: Cannot find macro substitutions for: {}".format(lines.index(line), candidate))
                                 cmap[pattern.items()[k]]=candidate   #the map of this input has a tuple as key (pattern, strelm) and the parsed candidate as value
