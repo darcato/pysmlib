@@ -372,7 +372,6 @@ class lnlPVs(fsmIOs):
             substitutions+= (v,)   #add the updated v to the tuple pv name parts 
 
         pvname = cstrgen.format(*substitutions)  #actually compose pv name
-        print pvname
         return super(lnlPVs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
