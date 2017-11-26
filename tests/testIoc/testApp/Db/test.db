@@ -1,0 +1,12 @@
+
+record(ai, "testinput") {
+	field(DTYP, "Soft Channel")
+}
+
+record(calc, "testcounter") {
+	field(CALC, "(A==10)?0:A+1")
+    field(INPA, "testcounter")
+    field(SCAN, "2 second")
+    field(VAL, "0")
+    field(PINI, "1")
+}
