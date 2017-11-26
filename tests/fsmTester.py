@@ -17,33 +17,52 @@ from fsm import fsmBase
 class fsmTest(fsmBase):
     def __init__(self, name, **args):
         fsmBase.__init__(self, name)
-        self.loopPower = self.input("lopwEn")
+        self.counter = self.input("testcounter")
         statesWithIOs = {
-            "uno" : [],
-            "due" : []
+            "uno" : [self.counter],
+            "due" : [self.counter],
+            "tre" : [self.counter],
+            "quattro" : [self.counter],
+            "cinque" : [self.counter],
+            "sei" : [self.counter],
+            "sette" : [self.counter]
         }
         self.setSensLists(statesWithIOs)
         self.gotoState('uno')
-    
-    def uno_entry(self):
-        self.logI("uno entry")
-        self.loopPower.put(0)
-        self.tmrSet('t1',5)
-        
+        print self._mirrors
 
-    def due_entry(self):
-        self.logI("due entry")
-        self.tmrSet('t2',7)
-            
     def uno_eval(self):
-        self.logD('waiting for t1')
-        if self.tmrExp('t1'):
-            self.gotoState('due')
-        
+        if self.counter.val() == 0:
+            self.gotoState("due")    
+
     def due_eval(self):
-        self.logD('waiting for t2')
-        if self.tmrExp('t2'):
-            self.gotoState('uno')
+        if self.counter.val() == 1:
+            self.gotoState("tre")    
+            
+    def tre_eval(self):
+        if self.counter.val() == 2:
+            self.gotoState("quattro")    
+        
+    def quattro_eval(self):
+        if self.counter.val() == 3:
+            self.gotoState("cinque")    
+ 
+    def cinque_eval(self):
+        if self.counter.val() == 4:
+            self.gotoState("sei")    
+ 
+    def sei_eval(self):
+        if self.counter.val() == 5:
+            self.gotoState("sette")    
+ 
+    def sette_eval(self):
+        if self.counter.val() == 6:
+            self.gotoState("uno")    
+ 
+    def common_eval(self):
+        if self.tmrExp("timer"):
+            self.logI("Timer expired")
+            self.gotoState("uno")    
  
             
             
