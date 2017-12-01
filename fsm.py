@@ -121,13 +121,17 @@ class fsmTimers(threading.Thread):
             self._cond.wait(next)
     
     # imposta un timer     
-    def set(self, timer, timeout):
+    def set(self, timer, timeout, reset=True):
         #ottiene l'accesso esclusivo alla lista dei timer
         self._cond.acquire()
         try:
             # se il timer è già in lista significa che è stato reimpostato prima che scadesse, 
             # quindi lo rimuovo e lo reimposto
             if timer in self._timers:
+                if not reset:
+                    # timer già settato e non è richiesto reset, ritorno (il release() della
+                    # condizione è in finally:
+                    return
                 self._timers.remove(timer)
             
             # imposta il tempo al quale scadrà il timer
@@ -504,11 +508,11 @@ class fsmThread(threading.Thread):
     def run(self):
         #self._killRequested = False
         #while not self._killRequested:
-        try:
-            self.fsm.eval_forever()
-        except Exception, e:
-            print(repr(e))
-            print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
+        #try:
+        self.fsm.eval_forever()
+        #except Exception, e:
+        #    print(repr(e))
+        #    print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
             #sleep(5)    #should RESET fsm status before restarting.. or boot loop!
 
     def kill(self):
@@ -573,6 +577,7 @@ class fsmBase(object):
 
     #cambia stato
     def gotoState(self, state):
+        self.logD('going to state -> %s' % state)
         if (self._nextstate != self._curstate):
             self.logI('gotoState() called twice, ignoring subsequent calls')
             return
@@ -703,11 +708,11 @@ class fsmBase(object):
     def commonEntry(self):
         pass
 
-    def tmrSet(self, name, timeout):
+    def tmrSet(self, name, timeout, reset=True):
         if not name in self._timers:
             self._timers[name] = fsmTimer(self, name)
         t = self._timers[name]
-        self._tmgr.set(t, timeout)
+        self._tmgr.set(t, timeout, reset)
         self.logD("activating a timer: '%s', %.2fs" % (name, timeout))
     
     def tmrExp(self, name):
