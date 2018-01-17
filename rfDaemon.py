@@ -16,7 +16,6 @@ from zeroFreq import zeroFreq
 from softTuner import softTuner
 from cavityOn import cavityOn
 from reporter import reporter
-from store import store
 from fsm import fsmTimers, lnlPVs, fsmLoggerToFile, fsmThread
 
 def main():
@@ -75,11 +74,6 @@ def main():
         fsms[fsm]=newThread
     print("All fsms started!")
 
-    stor = store("STORE", args.pvsToStoreFile, dbPath=args.databasePath, dbName=args.databaseName, tmgr=timerManager, ios=commonIos, logger=commonLogger)
-    storThread = fsmThread(stor)
-    storThread.start()
-    fsms[stor]=storThread
-    
     #start another fsm to report if all the others are alive to epics db
     repo = reporter("REPORT", fsms, tmgr=timerManager, ios=commonIos, logger=commonLogger)
     repoThread = fsmThread(repo)
@@ -94,9 +88,6 @@ def main():
         if repoThread.isAlive():  
             repoThread.kill()
         print("Killed the reporter thread")
-        if storThread.isAlive():  
-            storThread.kill()
-        print("Killed the store thread")
         if timerManager.isAlive():  #if no fsm is loaded it won't be alive
             timerManager.kill()
         print("Killed the timer manager")
