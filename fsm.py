@@ -13,6 +13,8 @@ from datetime import datetime
 #ioMap parsing
 import re
 from collections import OrderedDict
+import numpy as np
+
 
 class fsmLogger(object):
     levstr = ['E','W','I','D']
@@ -405,6 +407,13 @@ class mirrorIO(object):
         self._name = io.ioname()
         self._conn = False  #pv connected or not
         self._data = {}  #whole pv data
+        self.setBufSize(0)
+
+    def setBufSize(self, s):
+        if s == 0:
+             self._avbuf = None        
+        else:
+            self._avbuf = np.array([0.0]*s)
 
     def update(self, reason, cbdata):
         if reason=='change':
@@ -412,7 +421,10 @@ class mirrorIO(object):
             self._data = cbdata
             self._pval = self._value
             self._value = self._data.get('value', None)
-        
+            if self._value is not None and self._avbuf is not None:
+                self._avbuf = np.roll(self._avbuf,1)
+                self._avbuf[0] = self._value
+
         elif reason=='conn':
             self._currcb = reason
             self._conn = cbdata.get('conn', False)
@@ -489,6 +501,23 @@ class mirrorIO(object):
     # return the pv value
     def val(self):
         return self._value
+
+    def valAvg(self):
+        return self._value if self._avbuf is None else self._avbuf.mean()
+
+    def valStd(self):
+        return self._value if self._avbuf is None else self._avbuf.std()
+
+    def valTrend(self):
+        if self._avbuf is None:
+            return 0
+        s = self._avbuf.std()
+        d = self._avbuf[0] - self._avbuf[-1] 
+        if d > s:
+            return 1
+        if d < -s:
+            return -1
+        return 0
 
     # return the pv previuos value
     def pval(self):
@@ -669,7 +698,7 @@ class fsmBase(object):
     #chiamata dagli ingressi quando arrivano eventi
     def trigger(self, **args):
         self._cond.acquire()
-        self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
+#        self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)  #append here also the shapshot of all ios
         if len(self._events) == 1:
             self._cond.notify()
