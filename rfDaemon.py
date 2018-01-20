@@ -15,6 +15,7 @@ from pulseRf import pulseRf
 from zeroFreq import zeroFreq
 from softTuner import softTuner
 from cavityOn import cavityOn
+from lockUp import lockUp
 from reporter import reporter
 from fsm import fsmTimers, lnlPVs, fsmLoggerToFile, fsmThread
 
@@ -64,8 +65,9 @@ def main():
             p = pulseRf(name+"PULS", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             s = softTuner(name+"SWTU", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             o = cavityOn(name+"CVON", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+            l = lockUp(name+"CVLK", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
 	
-            fsms.update({w:None, c:None, z:None, p:None, s:None, o:None})
+            fsms.update({w:None, c:None, z:None, p:None, s:None, o:None, l:None})
 
 
     for fsm in fsms.iterkeys():
