@@ -65,15 +65,15 @@ def main():
             p = pulseRf(name+"PULS", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             s = softTuner(name+"SWTU", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             o = cavityOn(name+"CVON", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
-            l = lockUp(name+"CVLK", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+            l = lockUp(name+"LOCK", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
 	
-            fsms.update({w:None, c:None, z:None, p:None, s:None, o:None, l:None})
+            fsms.update({w:"Wave", c:"Cara", z:"Zrfr", p:"Puls", s:"Swtn", o:"Cvon", l:"Lock"})
 
 
-    for fsm in fsms.iterkeys():
+    for fsm, name in fsms.iteritems():
         newThread = fsmThread(fsm)
         newThread.start()
-        fsms[fsm]=newThread
+        fsms[fsm]=(newThread, name)
     print("All fsms started!")
 
     #start another fsm to report if all the others are alive to epics db
