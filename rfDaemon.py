@@ -16,7 +16,9 @@ from zeroFreq import zeroFreq
 from softTuner import softTuner
 from cavityOn import cavityOn
 from lockUp import lockUp
+from cavityLk import cavityLk
 from reporter import reporter
+from cavityStatus import cavityStatus
 from fsm import fsmTimers, lnlPVs, fsmLoggerToFile, fsmThread
 
 def main():
@@ -66,8 +68,10 @@ def main():
             s = softTuner(name+"SWTU", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             o = cavityOn(name+"CVON", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
             l = lockUp(name+"LOCK", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
-	
-            fsms.update({w:"Wave", c:"Cara", z:"Zrfr", p:"Puls", s:"Swtn", o:"Cvon", l:"Lock"})
+            al = cavityLk(name+"CVLK", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+            st = cavityStatus(name+"STAT", cryostat, cavity, tmgr=timerManager, ios=commonIos, logger=commonLogger)
+
+            fsms.update({w:"Wave", c:"Cara", z:"Zrfr", p:"Puls", s:"Swtn", o:"Cvon", l:"Lock", al:"Cvlk", st: "Stat"})
 
 
     for fsm, name in fsms.iteritems():
