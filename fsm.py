@@ -274,6 +274,10 @@ class fsmIOs(object):
             if io.isAttached(fsm):
                 ret[io.ioname()] = io
         return ret
+    
+    def getAll(self):
+        return self._ios.values()
+        
 
 #performs the conversion from procedure internal namings of the inputs
 #and real pv names, base on naming convention and a map

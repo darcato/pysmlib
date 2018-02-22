@@ -98,8 +98,18 @@ def main():
             timerManager.kill()
         print("Killed the timer manager")
         
+    def printUnconnectedIOs(signum, frame):
+        ios = commonIos.getAll()
+        s = 0
+        print "DISCONNECTED INPUTS:"
+        for i in ios:
+            if not i.connected():
+                print i.ioname()
+                s+=1
+        print "Total unconnected inputs: %d" % s
     
     signal.signal(signal.SIGINT, killAll)
+    signal.signal(signal.SIGUSR1, printUnconnectedIOs)
     signal.pause()
 
 
