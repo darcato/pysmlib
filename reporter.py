@@ -6,15 +6,8 @@ Created on Oct 2016
 
 #reporter thread to write to PV the status of each fsm
 
-from fsm import fsmBase, lnlPVs
-from caraterize import caraterize
-from pulseRf import pulseRf
-from softTuner import softTuner
-from zeroFreq import zeroFreq
-from waves import waves
+from fsm import fsmBase
 from random import uniform
-from cavityOn import cavityOn
-from lockUp import lockUp
 
 class reporter(fsmBase):
     def __init__(self, name, fsms, **args):
@@ -25,10 +18,10 @@ class reporter(fsmBase):
         self.watchdogs = {}
         #connect input for each fsm
         #the input is the pv where to write each second to say the fsm is alive (watchdog of 2 seconds)
-        for fsmObj, x in fsms.iteritems():
-            fsmThread, name = x
-            inp = self.input(name+"Wdog", nsap=fsmObj._cryostat, nobj=fsmObj._cavity)
-            self.watchdogs[inp] = (fsmObj, fsmThread)
+        for fsmObj, fsmThread in fsms.iteritems():
+            inp = fsmObj.getReportInput()
+            if inp!=None:
+                self.watchdogs[inp] = (fsmObj, fsmThread)
 
         statesWithIOs = {
             "run" : []

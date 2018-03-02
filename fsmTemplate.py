@@ -35,7 +35,7 @@ class fsmTemplate(fsmBase):
         if self.tmrExp('_tmrwait'):
             self.gotoState(self._retstate)
 
-    def setErrorStaus(self, errCod, errMsg):
+    def setErrorStatus(self, errCod, errMsg):
         if self._errc:
             self._errc.put(errCod)
         if self._errm:

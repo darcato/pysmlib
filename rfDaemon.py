@@ -87,7 +87,8 @@ def main():
 
     def killAll(signum, frame):
         #print("Signal: %d -> Going to kill all fsms" % signum)
-        for fsm, thread in fsms.iteritems():
+        for fsm, val in fsms.iteritems():
+            thread, name = val
             if thread.isAlive():
                 thread.kill()
         print("Killed all the fsms")
@@ -106,7 +107,7 @@ def main():
             if not i.connected():
                 print i.ioname()
                 s+=1
-        print "Total unconnected inputs: %d" % s
+        print "Total unconnected inputs: %d out of %d" % (s, len(ios))
     
     signal.signal(signal.SIGINT, killAll)
     signal.signal(signal.SIGUSR1, printUnconnectedIOs)

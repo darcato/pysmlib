@@ -33,6 +33,9 @@ class fsmLogger(object):
     def resetTime(self):
         self.startime = time.time()
 
+    def changeLevel(self, newlevel):
+        self._level = newlevel
+
 class fsmLoggerToFile(fsmLogger):
     def __init__(self, lev=3, directory="logs/", prefix=""):
         super(fsmLoggerToFile, self).__init__(lev)
@@ -586,6 +589,7 @@ class fsmBase(object):
         self._awaker = None                #WHAT FOR FIRST RUN??
         self._awakerType = ""
         self._awakerReason = ""
+        self._reportInput = None
 
     #populate the sensityvity list for each state
     def setSensLists(self, statesWithIos):
@@ -776,6 +780,13 @@ class fsmBase(object):
         self._awaker = None
         self._awakerType = ""
         self._awakerReason = ""
+
+    def setReportInput(self, inp):
+        if isinstance(inp, mirrorIO):
+            self._reportInput = inp
+
+    def getReportInput(self):
+        return self._reportInput
 
 ################################################################################
 
