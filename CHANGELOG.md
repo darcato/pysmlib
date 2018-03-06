@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-###Added
+### Added
 - Packaging
 - New name
 - New fsmLoader to simplify the loading scripts, incorporating common stuff.
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Usage Documentation
 - Developer Documentation
 
-###Changed
+### Changed
 - Moving to a single repository for the library
 - Using Queque to handle multithreading
 - New interface to access IO via fsmBase methods
