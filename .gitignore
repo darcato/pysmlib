@@ -1,3 +1,10 @@
 *.pyc
 *.project
 *.pydevproject
+*O.*
+*db/
+*dbd/
+*bin/
+*configure/RELEASE
+*envPaths
+*.egg-info/
