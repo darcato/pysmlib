@@ -8,3 +8,4 @@
 *configure/RELEASE
 *envPaths
 *.egg-info/
+.vscode*
