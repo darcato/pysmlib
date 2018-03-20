@@ -8,5 +8,5 @@ setup(name='pysmlib',
       author_email='davide.marcato@lnl.infn.it',
       license='GPLv3',
       packages=['smlib'],
-      install_requires=['pyepics'],
+      install_requires=['pyepics', 'numpy'],
       zip_safe=False)
