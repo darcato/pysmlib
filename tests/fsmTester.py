@@ -5,7 +5,9 @@ Created on 15 set 2016
 '''
 
 
-from fsm import fsmBase, fsmLogger, fsmTimer, fsmTimers, fsmIO
+from smlib import fsmBase, fsmLogger, fsmTimers
+from smlib.fsm import fsmTimer
+from smlib.fsm import fsmIO
 from time import sleep
 import unittest
 import StringIO

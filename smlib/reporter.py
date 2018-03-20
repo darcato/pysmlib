@@ -6,7 +6,7 @@ Created on Oct 2016
 
 #reporter thread to write to PV the status of each fsm
 
-from fsm import fsmBase
+from . import fsmBase
 from random import uniform
 
 class reporter(fsmBase):
