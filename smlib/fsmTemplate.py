@@ -7,7 +7,7 @@ FSM that implements common operation for other machines.
 
 '''
 
-from fsm import fsmBase
+from . import fsmBase
 
 class fsmTemplate(fsmBase):
     def __init__(self, name, **va):
@@ -48,6 +48,6 @@ class fsmTemplate(fsmBase):
                 
     def gotoError(self, errCod, errMsg='default error message'):
         self.logI("Error: %s" % errMsg)
-        self.setErrorStaus(errCod, errMsg)
+        self.setErrorStatus(errCod, errMsg)
         self.gotoState(self._errst)
 
