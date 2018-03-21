@@ -568,7 +568,7 @@ class fsmBase(threading.Thread):
         self._awaker = None                #WHAT FOR FIRST RUN??
         self._awakerType = ""
         self._awakerReason = ""
-        self._reportInput = None
+        self._watchdog = None
 
     #populate the sensityvity list for each state
     def setSensLists(self, statesWithIos):
@@ -758,7 +758,7 @@ class fsmBase(threading.Thread):
     def whoWokeMe(self):
         return (self._awaker, self._awakerType)
     
-    def whyWhokeMe(self):
+    def whyWokeMe(self):
         return self._awakerReason
     
     def setAwaker(self, obj, type, reason):
@@ -771,10 +771,12 @@ class fsmBase(threading.Thread):
         self._awakerType = ""
         self._awakerReason = ""
 
-    def setReportInput(self, inp):
-        if isinstance(inp, mirrorIO):
-            self._reportInput = inp
+    def setWatchdogInput(self, inp, mode="on-off", interval=1):
+        if isinstance(inp, mirrorIO) and mode in ["off", "on", "on-off"]:
+            self._watchdog = (inp, mode, interval)
+        else:
+            raise ValueError("Unrecognized input type or mode")
 
-    def getReportInput(self):
-        return self._reportInput
+    def getWatchdogInput(self):
+        return self._watchdog
 

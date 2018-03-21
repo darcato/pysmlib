@@ -10,3 +10,7 @@ record(calc, "testcounter") {
     field(VAL, "0")
     field(PINI, "1")
 }
+
+record(ai, "testwdog") {
+	field(DTYP, "Soft Channel")
+}
