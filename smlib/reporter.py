@@ -18,10 +18,10 @@ class reporter(fsmBase):
         self.watchdogs = {}
         #connect input for each fsm
         #the input is the pv where to write each second to say the fsm is alive (watchdog of 2 seconds)
-        for fsmObj, fsmThread in fsms.iteritems():
-            inp = fsmObj.getReportInput()
+        for fsm in fsms:
+            inp = fsm.getReportInput()
             if inp!=None:
-                self.watchdogs[inp] = (fsmObj, fsmThread)
+                self.watchdogs[inp] = fsm
 
         statesWithIOs = {
             "run" : []
