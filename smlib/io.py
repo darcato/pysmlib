@@ -3,8 +3,8 @@
 Input - Output objects for finite state machines.
 
 @date: March 26, 2018
-@authors: Davide Marcato, Damiamo Bortolato
-@email: davide.marcato@lnl.infn.it - damiano.bortolato@lnl.infn.it
+@authors: Damiamo Bortolato, Davide Marcato 
+@email: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it 
 '''
 
 import threading
