@@ -22,7 +22,7 @@ __doc__ = """
 """
 
 from .fsm import fsmBase
-from .logger import fsmLogger, fsmLoggerToFile
+from .logger import fsmLogger, fsmFileLogger
 from .timer import fsmTimers
 from .io import fsmIOs, mappedIOs
 from .fsmTemplate import fsmTemplate

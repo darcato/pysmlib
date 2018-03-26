@@ -8,7 +8,7 @@ on different threads and sharing resources.
 @email: davide.marcato@lnl.infn.it
 '''
 
-from . import fsmLoggerToFile, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog
+from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog
 from threading import Thread
 import signal
 
@@ -28,7 +28,7 @@ def setVerbosity(n):
     __logger.changeLevel(n)
 
 def logToFile(path, prefix):
-    __logger = fsmLoggerToFile(__verbosity, path, prefix)
+    __logger = fsmFileLogger(__verbosity, path, prefix)
     
 def setIoMap(iomap):
     __ioMap = iomap

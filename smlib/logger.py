@@ -30,9 +30,9 @@ class fsmLogger(object):
     def changeLevel(self, newlevel):
         self._level = newlevel
 
-class fsmLoggerToFile(fsmLogger):
+class fsmFileLogger(fsmLogger):
     def __init__(self, lev=3, directory="logs/", prefix=""):
-        super(fsmLoggerToFile, self).__init__(lev)
+        super(fsmFileLogger, self).__init__(lev)
         self.files = {}
         self.dir = directory
         self.prefix = prefix
@@ -53,3 +53,5 @@ class fsmLoggerToFile(fsmLogger):
             if not f.closed:
                 print("Closing "+name+"\n")
                 f.close()
+
+#TODO: add fsmSysLogger class
