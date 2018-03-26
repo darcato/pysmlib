@@ -1,8 +1,12 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
+'''
+An example of a startup script to load a pysmlib daemon
 
-# Davide Marcato 03/2018
-# An example of a startup script to load a pysmlib daemon
-
+@date: March 2018
+@author: Davide Marcato
+@email: davide.marcato@lnl.infn.it
+'''
 
 from smlib import loader
 from myfsm import myfsm

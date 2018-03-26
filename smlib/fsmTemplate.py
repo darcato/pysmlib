@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
 '''
-Created on Jan 20, 2018
-
-@author: damiano.bortolato@lnl.infn.it
-
 FSM that implements common operation for other machines.
 
+@date: Jan 20, 2018
+@author: Damiamo Bortolato
+@email: damiano.bortolato@lnl.infn.it
 '''
 
 from . import fsmBase

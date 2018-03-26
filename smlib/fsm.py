@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 '''
-Created on 15 set 2016
-@author: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it
+The base class of a fsm, which handles stream of execution and provides
+user interface to access all the functionalities of io, timers, logger etc.
+
+@date: September 15, 2016
+@authors: Damiamo Bortolato, Davide Marcato, 
+@email: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it
 '''
 
 

@@ -1,4 +1,12 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
+'''
+An example of a finite state machine developed with pysmlib
+
+@date: March 2018
+@authors: Davide Marcato, Damiamo Bortolato
+@email: davide.marcato@lnl.infn.it - damiano.bortolato@lnl.infn.it
+'''
 
 from smlib import fsmBase
 

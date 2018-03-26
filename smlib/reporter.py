@@ -1,9 +1,12 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
 '''
-Created on Oct 2016
-@author: davide.marcato@lnl.infn.it
+Implementing watchdogs for others fsm.
+
+@date: Oct 2016
+@author: Davide Marcato
+@email: davide.marcato@lnl.infn.it
 '''
-#reporter thread to write to PV the status of each fsm
 
 from . import fsmBase
 from random import uniform

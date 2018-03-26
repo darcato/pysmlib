@@ -1,7 +1,11 @@
 #! /usr/bin/python
 '''
-Created on Feb 2018
-@author: davide.marcato@lnl.infn.it
+A loader to simplify the creation of a daemon of various fsm running
+on different threads and sharing resources.
+
+@date: February 2018
+@authors: Davide Marcato 
+@email: davide.marcato@lnl.infn.it
 '''
 
 from . import fsmLoggerToFile, fsmLogger, lnlPVs, fsmIOs, fsmTimers
