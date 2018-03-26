@@ -21,7 +21,10 @@ __doc__ = """
     - Possibility to apply a configurable naming convention on I/O.
 """
 
-from .fsm import fsmBase, fsmLogger, fsmLoggerToFile, fsmTimers, fsmIOs, lnlPVs
+from .fsm import fsmBase
+from .logger import fsmLogger, fsmLoggerToFile
+from .timer import fsmTimers
+from .io import fsmIOs, lnlPVs
 from .fsmTemplate import fsmTemplate
 import fsmLoader as loader
 
