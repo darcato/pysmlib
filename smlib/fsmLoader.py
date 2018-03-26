@@ -8,7 +8,7 @@ on different threads and sharing resources.
 @email: davide.marcato@lnl.infn.it
 '''
 
-from . import fsmLoggerToFile, fsmLogger, lnlPVs, fsmIOs, fsmTimers, fsmWatchdog
+from . import fsmLoggerToFile, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog
 from threading import Thread
 import signal
 
@@ -32,7 +32,7 @@ def logToFile(path, prefix):
     
 def setIoMap(iomap):
     __ioMap = iomap
-    __ioManager = lnlPVs(__ioMap)
+    __ioManager = mappedIOs(__ioMap)
 
 def load(fsmClass, name, *args, **kwargs):
     kwargs["tmgr"] = __timerManager

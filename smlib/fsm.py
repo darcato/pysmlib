@@ -13,7 +13,7 @@ from .io import fsmIOs, mirrorIO
 from .logger import fsmLogger
 import threading
 
-# base class for a finiste state machine running in a separate thread
+# base class for a finite state machine running in a separate thread
 class fsmBase(threading.Thread):
     def __init__(self, name, **args):
         super(fsmBase, self).__init__(name=name)

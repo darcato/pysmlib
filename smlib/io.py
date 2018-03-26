@@ -14,7 +14,7 @@ from collections import OrderedDict
 import numpy as np
 
 #classe che rappresenta un ingresso per le macchine a stati
-class fsmIO(object):
+class epicsIO(object):
     def __init__(self, name):
         self._name = name
         self._data = {}     #keep all infos arriving with change callback
@@ -91,14 +91,13 @@ class fsmIO(object):
 
 #rappresenta una lista di oggetti input
 class fsmIOs(object):
-
     def __init__(self):
         self._ios = {}
     
     def get(self, name, fsm, **args):
         #first time this input was requested: we create and attach it
         if name not in self._ios:
-            self._ios[name] =  fsmIO(name)
+            self._ios[name] =  epicsIO(name)
             
         #input already created: if not already attached to the fsm, trigger some fake events to init fsm
         if not self._ios[name].isAttached(fsm):
@@ -126,10 +125,9 @@ class fsmIOs(object):
 
 #performs the conversion from procedure internal namings of the inputs
 #and real pv names, base on naming convention and a map
-class lnlPVs(fsmIOs):
-    
+class mappedIOs(fsmIOs):    
     def __init__(self, mapFile):
-        super(lnlPVs, self).__init__()
+        super(mappedIOs, self).__init__()
         #converts the internal name to the ending of the pv name
         
         file = open(mapFile, "r")
@@ -227,7 +225,7 @@ class lnlPVs(fsmIOs):
             substitutions+= (v,)   #add the updated v to the tuple pv name parts 
 
         pvname = cstrgen.format(*substitutions)  #actually compose pv name
-        return super(lnlPVs, self).get(pvname, fsm, **args)
+        return super(mappedIOs, self).get(pvname, fsm, **args)
 
     ##return a dictionary with the orinal (before mapping) names of the ios and ios objs of one fsm
     #def getFsmIO(self, fsm):
