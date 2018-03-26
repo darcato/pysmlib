@@ -26,5 +26,6 @@ from .logger import fsmLogger, fsmLoggerToFile
 from .timer import fsmTimers
 from .io import fsmIOs, lnlPVs
 from .fsmTemplate import fsmTemplate
+from .fsmWatchdog import fsmWatchdog
 import fsmLoader as loader
 

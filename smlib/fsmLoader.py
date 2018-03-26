@@ -8,9 +8,7 @@ on different threads and sharing resources.
 @email: davide.marcato@lnl.infn.it
 '''
 
-from . import fsmLoggerToFile, fsmLogger, lnlPVs, fsmIOs, fsmTimers
-from .reporter import reporter
-
+from . import fsmLoggerToFile, fsmLogger, lnlPVs, fsmIOs, fsmTimers, fsmWatchdog
 from threading import Thread
 import signal
 
@@ -66,7 +64,7 @@ def printUnconnectedIOs(signum, frame):
 
 def start():
     #start another fsm to report if all the others are alive to epics db
-    repo = reporter("REPORT", __fsmsList, tmgr=__timerManager, ios=__ioManager, logger=__logger)
+    repo = fsmWatchdog("REPORT", __fsmsList, tmgr=__timerManager, ios=__ioManager, logger=__logger)
     __fsmsList.append(repo)
 
     for thread in __fsmsList:

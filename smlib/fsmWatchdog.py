@@ -11,9 +11,9 @@ Implementing watchdogs for others fsm.
 from . import fsmBase
 from random import uniform
 
-class reporter(fsmBase):
+class fsmWatchdog(fsmBase):
     def __init__(self, name, fsms, **args):
-        super(reporter, self).__init__(name, **args)
+        super(fsmWatchdog, self).__init__(name, **args)
 
         #a list of timers with timer name and input linked
         self.timers = {}
