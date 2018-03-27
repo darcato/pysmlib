@@ -240,7 +240,7 @@ class mappedIOs(fsmIOs):
 #it reflects the changes of an fsmIO, one change per cycle
 #it implements flags to detect changes, edges, connections and disconnections
 #there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently 
-class mirrorIO(object):
+class fsmIO(object):
     def __init__(self, fsm, io):
         self._fsm = fsm
         
@@ -304,7 +304,7 @@ class mirrorIO(object):
     #----- They return True if the fsm was woken up by this changement in this cycle
     
     # hasPutCompleted: current awakening callback is a put callback
-    def hasPutCompleted(self):
+    def putCompleting(self):
         return self._currcb == 'putcomp'       
     
     # Rising = connected and received at least 2 values, with the last > precedent
@@ -316,19 +316,19 @@ class mirrorIO(object):
         return self._currcb == 'change' and self._pval!=None and self._value < self._pval
 
     # hasChanged = last callback was a change callback
-    def hasChanged(self):
+    def changing(self):
         return self._currcb == 'change'
 
     # hasDisconnected = last callback was a connection callback due to disconnection
-    def hasDisconnected(self):
+    def disconnecting(self):
         return self._currcb == 'conn' and not self._conn
     
     # hasConnected = last callback was a connection callback due to connection
-    def hasConnected(self):
+    def connecting(self):
         return self._currcb == 'conn' and self._conn
     
     # hasFirstValue: the input has changed and this is the first value it got
-    def hasFirstValue(self):
+    def initializing(self):
         return self._currcb == 'change' and self._pval==None
     
     #------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------

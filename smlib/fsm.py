@@ -9,7 +9,7 @@ user interface to access all the functionalities of io, timers, logger etc.
 '''
 
 from .timer import fsmTimers, fsmTimer
-from .io import fsmIOs, mirrorIO
+from .io import fsmIOs, fsmIO
 from .logger import fsmLogger
 import threading
 
@@ -151,7 +151,7 @@ class fsmBase(threading.Thread):
     def input(self, name, **args):
         thisFsmIO = self._ios.get(name, self, **args)
         if not thisFsmIO in self._mirrors:
-            self._mirrors[thisFsmIO]= mirrorIO(self, thisFsmIO)
+            self._mirrors[thisFsmIO]= fsmIO(self, thisFsmIO)
         
         return self._mirrors[thisFsmIO]
 
@@ -251,7 +251,7 @@ class fsmBase(threading.Thread):
         self._awakerReason = ""
 
     def setWatchdogInput(self, inp, mode="on-off", interval=1):
-        if isinstance(inp, mirrorIO) and mode in ["off", "on", "on-off"]:
+        if isinstance(inp, fsmIO) and mode in ["off", "on", "on-off"]:
             self._watchdog = (inp, mode, interval)
         else:
             raise ValueError("Unrecognized input type or mode")
