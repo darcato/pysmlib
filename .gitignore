@@ -9,3 +9,4 @@
 *envPaths
 *.egg-info/
 .vscode*
+_build*
