@@ -3,8 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pysmlib's documentation!
-===================================
+Python Finite State Machines for EPICS
+======================================
+
+
 
 .. toctree::
    :maxdepth: 2
@@ -20,11 +22,3 @@ Welcome to pysmlib's documentation!
    watchdog
    advanced
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

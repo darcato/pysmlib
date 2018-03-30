@@ -15,6 +15,10 @@ import threading
 
 # base class for a finite state machine running in a separate thread
 class fsmBase(threading.Thread):
+    '''
+    fsmBase class which handles fsm execution flow
+    '''
+    
     def __init__(self, name, **args):
         super(fsmBase, self).__init__(name=name)
         self._name = name

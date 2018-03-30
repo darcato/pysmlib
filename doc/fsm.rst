@@ -2,5 +2,4 @@
 Finite State Machine development
 ===============================================
 
-.. automodule:: smlib
-   :members:
+.. automodule:: smlib.fsm
