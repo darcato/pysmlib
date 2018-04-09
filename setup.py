@@ -1,7 +1,8 @@
 from setuptools import setup
+import versioneer
 
 setup(name='pysmlib',
-      version='2.0.0rc1',
+      version=versioneer.get_version(),
       description='A library to create event driven finite state machines for EPICS, running as daemons and sharing resources',
       url='https://baltig.infn.it/epicscs/pysmlib',
       author='Damiano Bortolato - Davide Marcato',

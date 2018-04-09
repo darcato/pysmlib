@@ -23,11 +23,26 @@ project = u'pysmlib'
 copyright = u'2018, Davide Marcato'
 author = u'Davide Marcato, Damiano Bortolato'
 
-# The short X.Y version
-version = u'2.0'
-# The full version, including alpha/beta/rc tags
-release = u'2.0.0'
+# version = The short X.Y version
+# release = The full version, including alpha/beta/rc tags
+try:
+    import smlib
+    release = smlib.__version__
+    version = release
+    if '-' in release:
+        a, b = release.split('-', 1)
+        version = a
+    if '_' in release:
+        a, b = release.split('_', 1)
+        version = a
+    if '+' in release:
+        a, b = release.split('+', 1)
+        version = a
+except ImportError:
+    release = u'unknown'
+    version = u'unknown'
 
+print 'Building Docs for PYSMLIB version %s / Python version %s ' % (release, sys.version)
 
 # -- General configuration ---------------------------------------------------
 
