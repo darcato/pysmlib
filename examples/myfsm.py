@@ -14,8 +14,8 @@ class myfsm(fsmBase):
     def __init__(self, name, *args, **kwargs):
         super(myfsm, self).__init__(name, **kwargs)
         
-        self.counter = self.input("testcounter")
-        self.wdog = self.input("testwdog")
+        self.counter = self.connect("testcounter")
+        self.wdog = self.connect("testwdog")
         self.setWatchdogInput(self.wdog, mode="on-off", interval=3)
         statesWithIOs = {
             "uno" : [self.counter],

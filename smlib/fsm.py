@@ -152,7 +152,7 @@ class fsmBase(threading.Thread):
             self.unlock()
 
             
-    def input(self, name, **args):
+    def connect(self, name, **args):
         thisFsmIO = self._ios.get(name, self, **args)
         if not thisFsmIO in self._mirrors:
             self._mirrors[thisFsmIO]= fsmIO(self, thisFsmIO)
