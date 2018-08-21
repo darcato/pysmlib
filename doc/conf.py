@@ -63,7 +63,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+#templates_path = []
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -96,9 +96,7 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 
-html_theme_path = ['sphinx/theme']
-html_theme = 'epicsdoc'
-#html_theme = 'nature'
+html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -114,6 +112,23 @@ html_short_title = 'PySmlib'
 # documentation.
 #
 # html_theme_options = {}
+html_theme_options = {
+    'canonical_url': '',
+    'analytics_id': '',
+    'logo_only': True,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': False,
+    #'vcs_pageview_mode': '',
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 2,
+    'includehidden': True,
+    'titles_only': False
+}
+
+html_logo = '_static/logo/pysmlib_logo.png'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -129,7 +144,7 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-html_sidebars = {'index': ['indexsidebar.html','searchbox.html']}
+html_sidebars = {'index': ['searchbox.html']}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
