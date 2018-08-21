@@ -1,3 +1,5 @@
+.. _Download-and-Installation:
+
 ====================================
 Download and Installation
 ====================================
@@ -14,9 +16,9 @@ Prerequisites
 This package requires Python version 2.7, while the support for newer version is
 still in development. Two modules are mandatory: `numpy`_ for
 the internal handling of vectors and `PyEpics`_ which provides the EPICS Channel
-Access support. Both are automatically installed when using pip, but you may have
-to install the EPICS base on your system and configure `PyEpics`_ to locate 
-``libca``. See `PyEpics`_ documentation for further details.
+Access support. Both are automatically installed when using pip, but you may 
+have to install the EPICS base on your system and configure `PyEpics`_ to 
+locate ``libca``. See `PyEpics`_ documentation for further details.
 
 `Sphinx`_ and its theme `Read the Docs`_ are required to build this 
 documentation.
