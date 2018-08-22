@@ -43,7 +43,7 @@ def load(fsmClass, name, *args, **kwargs):
     __fsmsList.append(fsm)
 
 def killAll(signum, frame):
-    print("Signal: %d -> Going to kill all fsms" % signum)
+    #print("Signal: %d -> Going to kill all fsms" % signum)
     for fsm in __fsmsList:
         if fsm.isAlive():
             fsm.kill()
