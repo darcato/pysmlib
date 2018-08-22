@@ -11,7 +11,7 @@ explained in detail in the following sections of this documentation.
 
 Define your FSM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-``pysmlib`` lets you create finite state machines, so the first step is
+Pysmlib lets you create finite state machines, so the first step is
 to adapt your algorithm to a fsm design. This means identifying all
 the states required and the conditions that trigger a transition from
 one state to another. Furthermore, all the required input and outputs
@@ -19,6 +19,9 @@ must be identified: the input are usually needed to determine the
 current state and receive events, while the outputs are used to
 perform actions on the external world.
 
+The library is designed to be connected to EPICS PVs, so EPICS IOCs must be
+running with the required PVs, otherwise the FSM will sleep waiting for the PVs
+to connect.
 
 General structure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -88,7 +91,7 @@ Then other states can be defined, for example::
     def mirroring_eval(self):
         if self.enable.falling() == 0:
             self.gotoState("idle")
-        else if self.mirror.hasChanged():
+        elif self.mirror.hasChanged():
             readValue = self.mirror.val()
             self.mirror.put(readValue)
 
@@ -115,13 +118,12 @@ For a complete description of the available methods see :ref:`accessing-io`.
 
 Load and execute the FSM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Pysmlib has been developed with modularity in mind, so usually each
-FSM is loaded multiple times with different parameters. For example,
-imagine a FSM which executes a PID control on a power supply: you may
-have multiple identical power supplies, so the code should be
-parametric and multiple instances of the same FSM should be executed, one
-for each power supply. This enables greater efficiency, in particular
-over the network communications, because common inputs are shared.
+The best approach with FSMs is to keep them simple and with a specific goal, so
+multiple instances of the same machine may have to be run with different
+parameters, or even multiple different machine can be loaded to implement
+multiple algorithms. Pysmlib has been design to offer greater efficiency when
+multiple FSMs are loaded together on the same executable, because some resources
+can be shared (eg: common inputs).
 
 For these reasons a convenient loader is available. The ``loader.load()``
 function lets you load an instance of your FSM with specific
@@ -140,17 +142,23 @@ parameters. At the end the execution begins with the function
     ## -------------------
     loader.start()
 
+Now you can execute the FSM simply launching::
+
+    python exampleFsm.py
+
 From this moment all the finite state machines will be running until a
 kill signal is received (Ctrl-C). This creates an always-on daemon:
-for this reason at the end of its algorithm the FSM should not exit
+for this reason at the end of its algorithm an FSM should not exit
 but simply go back to an idle state.
 
 More options can be found at :ref:`loader`.
+
 
 Complete example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here is the complete example described in this section::
 
+    #! /usr/bin/python
     from smlib import fsmBase, loader
 
     # FSM definition
@@ -173,7 +181,7 @@ Here is the complete example described in this section::
         def mirroring_eval(self):
             if self.enable.falling() == 0:
                 self.gotoState("idle")
-            else if self.mirror.hasChanged():
+            elif self.mirror.hasChanged():
                 readValue = self.mirror.val()
                 self.mirror.put(readValue)
 
@@ -186,3 +194,5 @@ Here is the complete example described in this section::
     # start execution
     ## -------------------
     loader.start()
+
+This code is also available in the examples folder.
