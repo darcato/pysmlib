@@ -15,10 +15,6 @@ import threading
 
 # base class for a finite state machine running in a separate thread
 class fsmBase(threading.Thread):
-    '''
-    fsmBase class which handles fsm execution flow
-    '''
-    
     def __init__(self, name, **args):
         super(fsmBase, self).__init__(name=name)
         self._name = name
@@ -228,7 +224,7 @@ class fsmBase(threading.Thread):
     def tmrExp(self, name):
         return not name in self._timers or self._timers[name].expd()
 
-    def is_io_connected(self):
+    def isIoConnected(self):
         stateios = self._cursens if self._cursens is not None else self._mirrors.itervalues()
         return self.allof(stateios.values(), "connected")
 
