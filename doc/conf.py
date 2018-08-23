@@ -128,8 +128,8 @@ html_theme_options = {
     'titles_only': False
 }
 
-html_logo = '_static/logo/pysmlib_logo.png'
-html_favicon = '_static/logo/pysmlib_smalllogo.png'
+html_logo = '_static/images/pysmlib_logo.png'
+html_favicon = '_static/images/pysmlib_smalllogo.png'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -181,7 +181,7 @@ latex_documents = [
      u'Davide Marcato', 'manual'),
 ]
 
-latex_logo = '_static/logo/pysmlib_logo.png'
+latex_logo = '_static/images/pysmlib_logo.png'
 
 
 # -- Options for manual page output ------------------------------------------
