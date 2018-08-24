@@ -96,6 +96,9 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 
+def setup(app):
+    app.add_stylesheet('my_theme.css')
+
 html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
