@@ -118,7 +118,7 @@ The first three events described above are defined by Channel Access but it can
 be important to understand exactly their behaviour, to avoid getting strange
 results in edge conditions.
 
-When the user call the method :method:`connect`, the library will look on the
+When the user call the method :meth:`connect`, the library will look on the
 local network and search (via UDP broadcasts) for any IOC declaring a PV with
 the desired name. This may take a small amount of time. After that a TCP
 connection is created with the IOC, if not already available. In fact, the same
@@ -136,7 +136,7 @@ This means that it is not sufficient to wait for the connection to be able to
 read an input, but the first change event must have arrived. In cases where
 multiple inputs are connected at the same time, it can arrive multiple events
 later. For this reason there is a specific method to check the availability
-of the first value after a connection: :method:`initialized`. This will return
+of the first value after a connection: :meth:`initialized`. This will return
 ``True`` if an input is connected and has received its first value.
 
 Pysmlib has been designed so that the status of an input does not change while
@@ -167,9 +167,9 @@ evaluated. For this reason it is important to keep the states simple and non-blo
     :type logger: :class:`fsmLogger` instance
 
     The optional arguments let you pass shared objects. When they are omitted,
-    they are automatically created by ``fsmBase`` from default classes, while
-    derivate ones can be passed. Usually just one instance of the three classes
-    is shared between all the FSMs on an executable. The :ref:`loader`
+    they are automatically created by :class:`fsmBase` from default classes,
+    while derivate ones can be passed. Usually just one instance of the three
+    classes is shared between all the FSMs on an executable. The :ref:`loader`
     automatically takes care of these arguments.
 
 .. method:: gotoState (stateName)
@@ -193,27 +193,39 @@ evaluated. For this reason it is important to keep the states simple and non-blo
     
     :returns: FSM name.
 
-.. method:: logE ()
+.. method:: logE (msg)
 
     Write to log with ERROR verbosity level = 0.
 
-.. method:: logW ()
+    :param msg: the log message
+    :type msg: string
+
+.. method:: logW (msg)
 
     Write to log with WARNING verbosity level = 1.
+
+    :param msg: the log message
+    :type msg: string
     
-.. method:: logI ()
+.. method:: logI (msg)
 
     Write to log with INFO verbosity level = 2.
+
+    :param msg: the log message
+    :type msg: string
     
-.. method:: logD ()
+.. method:: logD (msg)
 
     Write to log with DEBUG verbosity level = 3.
+
+    :param msg: the log message
+    :type msg: string
     
 .. method:: connect (name[, **args])
 
     :param name: the PV name, or the map reference to a PV name.
     :type name: string
-    :param args: optional arguments to be passed to :method:`fsmIOs.get()`
+    :param args: optional arguments to be passed to :meth:`fsmIOs.get()`
     :returns: :class:`fsmIO` object
 
     The optional arguments can be used by :class:`fsmIOs` derivate classes to
@@ -238,7 +250,7 @@ evaluated. For this reason it is important to keep the states simple and non-blo
 
     :param name: A unique identifier of this timer. The same timer can be reused more than once recalling the same name.
     :type name: string
-    :param timeout: The expiration time, starting from the invocation of :method:`tmrSet`. [s]
+    :param timeout: The expiration time, starting from the invocation of :meth:`tmrSet`. [s]
     :type timeout: float
     :param reset: If this is ``True`` the timer can be re-initialized before expiration. Default = ``True``.
     :type reset: boolean

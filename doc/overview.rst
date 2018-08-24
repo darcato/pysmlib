@@ -25,7 +25,7 @@ to connect.
 
 General structure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Each finite state machine is created as a derived class from ``fsmBase``,
+Each finite state machine is created as a derived class from :class:`fsmBase`,
 which is part of pysmlib. ::
     
     from smlib import fsmBase
