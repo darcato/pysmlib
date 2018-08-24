@@ -309,6 +309,6 @@ pattern logic, and replacing the parameters with the values passed at run time.
 Summary of the steps to implement a map on inputs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    1. Use :class:`mappedIOs` instead of :class:`fsmIOs`. This is achieved by calling :func:`loader.setIoMap( )` function.
+    1. Use :class:`mappedIOs` instead of :class:`fsmIOs`. This is achieved by calling :func:`loader.setIoMap()` function.
     2. Create the map file.
     3. Connect to the inputs using the strings defined in the map file, passing all the required parameters as optional arguments.

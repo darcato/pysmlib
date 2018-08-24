@@ -39,6 +39,7 @@ initialized, passing a ``name`` as argument which identifies the
 class instance. In fact, when this code will be executed a new thread
 will be created for each instance of the class.
 
+.. note:: Never forget to include ``**kwargs`` in the arguments of the super class as they are used by the :ref:`loader`.
 
 Define inputs / outputs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -51,7 +52,7 @@ reason the term "input" can be used to indicate both. ::
     self.mirror = self.connect("testmirror")
     self.enable = self.connect("testenable")
 
-The ``self.connect()`` methods requires a string as argument, which is
+The :meth:`connect()` methods requires a string as argument, which is
 the name of the EPICS PV to be connected (optional arguments are
 available, see :ref:`accessing-io`). 
 
