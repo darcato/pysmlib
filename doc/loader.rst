@@ -12,12 +12,14 @@ shared inputs and all the instances of the user defined FSM as required.
 :mod:`loader` module
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: setVerbosity(level)
+.. module:: loader
+
+.. function:: loader.setVerbosity(level)
 
     :param level: The verbosity level: all the messages with lower or equal level are printed.
     :type level: int
 
-.. function:: setVerbosity(levelStr)
+.. function:: loader.setVerbosity(levelStr)
 
     :param levelStr: The verbosity level, one of "error", "warning", "info","debug".
     :type level: string
@@ -29,7 +31,7 @@ shared inputs and all the instances of the user defined FSM as required.
         * Info: these messages are printed only when the verbosity level is 2 or higher 
         * Debug: these messages are printed only when the verbosity level is 3 or higher. They contain a lot of detailed information useful while debugging applications.
     
-.. function:: logToFile(path, prefix)
+.. function:: loader.logToFile(path, prefix)
 
     :param path: The path of a directory where to store all the logs. Can be both relative or absolute.
     :type level: string
@@ -41,12 +43,12 @@ shared inputs and all the instances of the user defined FSM as required.
     the logger will be instantiated from :class:`fsmFileLogger` instead of the
     default one (:class:`fsmLogger`).
 
-.. function:: setIoMap(ioMapPath)
+.. function:: loader.setIoMap(ioMapPath)
 
     :param ioMapPath: The path of a file defining a map for the inputs. See :class:`mappedIOs`.
     :type ioMapPath: string
 
-.. function:: load(myFsmClass, name, ... )
+.. function:: loader.load(myFsmClass, name, ... )
 
     :param myFsmClass: The definition of a FSM.
     :param name: The unique name of this FSM instance.
@@ -58,7 +60,7 @@ shared inputs and all the instances of the user defined FSM as required.
     constructor. Then an arbitrary number of parameters can be passed, as
     required by each different FSM constructor.
 
-.. function:: start()
+.. function:: loader.start()
 
     This is usually the last function to be called: it starts the execution of
     all the loaded FSMs and suspends the main thread, waiting for a signal.
