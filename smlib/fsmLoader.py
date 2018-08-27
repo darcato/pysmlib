@@ -21,9 +21,17 @@ __repo = None
 __repoinput = None
 __ioMap = None
 __fsmsList = []
+__levelStrings = { "error":0, "warning":1, "info":2, "debug":3 }
 
 
-def setVerbosity(n):
+def setVerbosity(level):
+    if isinstance(level, int):
+        n = max(0, min(level, 3)) # log level must be in range [0,3]
+    elif isinstance(level, str) and level.lower().strip() in __levelStrings.keys():
+        n = __levelStrings[level.lower().strip()]    
+    else:
+        raise KeyError("Verbosity level \"%s\" not recognized!" % str(level))
+
     __verbosity = n
     __logger.changeLevel(n)
 
@@ -61,6 +69,7 @@ def printUnconnectedIOs(signum, frame):
             print i.ioname()
             s+=1
     print("Total unconnected inputs: %d out of %d" % (s, len(ios)))
+    signal.pause()
 
 def start():
     #start another fsm to report if all the others are alive to epics db
