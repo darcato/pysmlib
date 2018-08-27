@@ -56,3 +56,25 @@ Log to Syslog
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Planned**
+
+Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Choosing the logging method::
+
+    from smblib import loader
+
+    loader.setVerbosity(2) # INFO verbosity
+    loader.logToFile("~/fsmlogs/", "exampleDaemon") # comment this line to log to stdout
+
+    loader.load( ... ) # load your FSMs
+
+    loader.start()
+
+Using log functions inside the FSM code::
+
+    def mymethod_eval(self):
+        self.logE("This is an ERROR level log message!")
+        self.logW("This is an WARNING level log message!")
+        self.logI("This is an INFO level log message!")
+        self.logD("This is an DEBUG level log message!")
