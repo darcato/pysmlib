@@ -49,9 +49,9 @@ method of :class:`fsmBase`: it is sufficient to pass to it a standard input
 (created with :meth:`connect`) and set two parameters:
 
     1. The watchdog mode, which can be:
-        a. "on-off": A ``put`` is perform periodically, once to 1 and once to 0.
-        b. "off": A ``put(0)`` is perform periodically.
-        c. "on": A ``put(1)`` is perform periodically.
+        a. "on-off": A ``put`` is performed periodically, once to 1 and once to 0.
+        b. "off": A ``put(0)`` is performed periodically.
+        c. "on": A ``put(1)`` is performed periodically.
     2. The watchdog period in seconds.
 
 Example
