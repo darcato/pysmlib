@@ -1,13 +1,13 @@
+# -*- coding: utf-8 -*-
 '''
-Created on Jan 20, 2018
-
-@author: damiano.bortolato@lnl.infn.it
-
 FSM that implements common operation for other machines.
 
+@date: Jan 20, 2018
+@author: Damiamo Bortolato
+@email: damiano.bortolato@lnl.infn.it
 '''
 
-from fsm import fsmBase
+from . import fsmBase
 
 class fsmTemplate(fsmBase):
     def __init__(self, name, **va):
@@ -35,7 +35,7 @@ class fsmTemplate(fsmBase):
         if self.tmrExp('_tmrwait'):
             self.gotoState(self._retstate)
 
-    def setErrorStaus(self, errCod, errMsg):
+    def setErrorStatus(self, errCod, errMsg):
         if self._errc:
             self._errc.put(errCod)
         if self._errm:
@@ -48,6 +48,6 @@ class fsmTemplate(fsmBase):
                 
     def gotoError(self, errCod, errMsg='default error message'):
         self.logI("Error: %s" % errMsg)
-        self.setErrorStaus(errCod, errMsg)
+        self.setErrorStatus(errCod, errMsg)
         self.gotoState(self._errst)
 
