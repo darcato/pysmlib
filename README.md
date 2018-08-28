@@ -6,7 +6,9 @@ _Developers_: Damiano Bortolato - Davide Marcato
 
 Laboratori Nazionali di Legnaro - INFN
 
-Full documentation: 
+Main Repository: https://github.com/darcato/pysmlib
+
+Full documentation: https://darcato.github.io/pysmlib/docs/html/
 
 ### Main features
 
