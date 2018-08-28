@@ -6,7 +6,7 @@
 Python Finite State Machines for EPICS
 ======================================
 
-PySmlib is a Python library which helps creating event based finite state machines 
+Pysmlib is a Python library which helps creating event based finite state machines 
 (fsm) for `Epics Control System <http://www.aps.anl.gov/epics/>`_. Each fsm 
 runs in a different thread and, by default, continues its execution until explicitly
 stopped. A convenient loader is provided to help loading multiple fsm together,
@@ -51,6 +51,7 @@ problems.
 Main features include:
 ----------------------
   - Easy to use and fast development of complex event based fsm - just code the states!
+  - Full EPICS Channel Access integration via PyEpics.
   - High expandability as provided by all the libraries of Python.
   - Integrated configurables logging systems.
   - Convenient methods to access all the information on I/O.

@@ -1,7 +1,5 @@
 # pysmlib
 
--------------------
-
 ## A python library for creating EPICS finite state machines, running in different threads as daemons and sharing resources.
 
 _Developers_: Damiano Bortolato - Davide Marcato
@@ -13,6 +11,7 @@ Full documentation:
 ### Main features
 
 - Easy to use and fast development of complex event based fsm - just code the states!
+- Full EPICS Channel Access integration via PyEpics.
 - High expandability as provided by all the libraries of Python.
 - Integrated configurable logging systems.
 - Convenient methods to access all the information on I/O.
@@ -39,16 +38,9 @@ pip install .
 
 ### Dependencies
 
-As of today only python 2.7 is supported. pyepics and numpy modules are required and automatically installed by pip. 
-To work properly pyepics needs to find the correct path to you EPICS installation, so you need to add the following line to your bashrc file:
-
-``` bash
-export PYEPICS_LIBCA=<path_to_your_epics_base>/lib/linux-x86_64/libca.so
-```
-
-replacing ``` <path_to_your_epics_base> ``` with the path to the folder containing your compiled EPICS base.
-
-For more information about pyepics visit http://cars9.uchicago.edu/software/python/pyepics3/
+As of today, only python 2.7 is supported. Pyepics and numpy modules are
+required and automatically installed by pip. Sphinx and its theme "Read the
+Docs" are required to build the documentation.
 
 ## Example
 
@@ -61,7 +53,7 @@ class exampleFsm(fsmBase):
     def __init__(self, name, *args, **kwargs):
         super(exampleFsm, self).__init__(name, **kwargs)
 
-        self.counter = self.connect("testcounter")
+        self.counter = self.connect("testcounter") # connect to PV "testcounter"
         self.mirror = self.connect("testmirror")
         self.enable = self.connect("testenable")
 

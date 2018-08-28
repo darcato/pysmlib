@@ -53,7 +53,12 @@ Check if the installation was successful by executing::
     >>> epics.ca.find_libca()
 
 This will print the path of the ``libca`` which will be used. If any error
-occurs, then check the installation of `PyEpics`_.
+occurs, then check the installation of `PyEpics`_. If you already have EPICS
+base compiled on your system you can choose to use its ``libca`` adding the following line to your ``~/.bashrc`` file::
+
+    export PYEPICS_LIBCA=<path_to_your_epics_base>/lib/linux-x86_64/libca.so
+
+replacing ``<path_to_your_epics_base>`` with the path to the folder containing your compiled EPICS base.
 
 Moreover you should now be able to import the ``smlib`` package without errors::
     
