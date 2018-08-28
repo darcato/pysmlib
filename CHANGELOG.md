@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simplified interface between IOs and fsmBase
 - Introducing event objects
 
-## [Unreleased]
+## [2.0.0] - 2018-08-28
 
 ### Added
 
