@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## To Do
+
+- Using Queque to handle multithreading
+- New interface to access IO via fsmBase methods
+- Simplified interface between IOs and fsmBase
+- Introducing event objects
+
 ## [Unreleased]
 
 ### Added
@@ -11,18 +18,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Packaging
 - New name
 - New fsmLoader to simplify the loading scripts, incorporating common stuff.
-- Test code
+- Test code (first snippets)
 - Test ioc
 - Examples
-- Usage and development documentation
+- Usage and documentation
+- Integrated watchdog logic
 
 ### Changed
 
 - Moving to a single repository for the library
-- Using Queque to handle multithreading
-- New interface to access IO via fsmBase methods
-- Simplified interface between IOs and fsmBase
-- Introducing event objects
+- fsmBase input() renamed to connect()
+- fsmIO access methods renamed
+    - hasPutCompleted() -> putCompleting()
+    - hasChanged() -> changing()
+    - hasDisconnected() -> disconnecting()
+    - hasConnected() -> connecting()
+    - hasFirstValue() -> initializing()
+- is_io_connected() renamed to isIoConnected()
+- Renamed lnlPvs class to mappedIOs
+- Renamed fsmIO to epicsIO
+- Renamed mirrorIO to fsmIO
+- Renamed fsmLoggerToFile to fsmFileLogger
+
 
 ## [1.0.0] - 2018-02-22
 
