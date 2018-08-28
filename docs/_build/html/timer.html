@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Timers &mdash; Epics Finite State Machines for Python</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Watchdog" href="watchdog.html" />
+    <link rel="prev" title="Loader and fsm execution" href="loader.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0-rc1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fsm.html">Finite State Machine development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Accessing I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loader.html">Loader and fsm execution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Timers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use-timers">How to use timers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fsmtimers-class"><code class="docutils literal notranslate"><span class="pre">fsmTimers</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="watchdog.html">Watchdog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pysmlib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Timers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/timer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="timers">
+<span id="id1"></span><h1>Timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="how-to-use-timers">
+<h2>How to use timers<a class="headerlink" href="#how-to-use-timers" title="Permalink to this headline">¶</a></h2>
+<p>The FSM execution, as explained on <a class="reference internal" href="fsm.html#fsm-development"><span class="std std-ref">Finite State Machine development</span></a>, is event-driven. This
+means that no code will be executed, until an event (eg: an input changes its
+value) triggers the execution of the current state.</p>
+<p>In some situations you may want to run some code at a specific time,
+independently from the inputs. For example you may want to run periodic actions
+with fixed delay, or wait for “timeout” delays. For these reasons the timers
+have been introduces: they let you develop a FSM with asynchronous execution
+model.</p>
+<p>The basic usage can be seen in the following example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>                     <span class="c1"># move the motor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tmrSet</span><span class="p">(</span><span class="s1">&#39;moveTimeout&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>          <span class="c1"># Set a timer of 10s</span>
+
+<span class="k">def</span> <span class="nf">move_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">doneMoving</span><span class="o">.</span><span class="n">rising</span><span class="p">():</span>            <span class="c1"># If the motor movement completed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;nextState&quot;</span><span class="p">)</span>         <span class="c1"># continue to next state</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExp</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>        <span class="c1"># Timer expired event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>             <span class="c1"># go to an error state</span>
+</pre></div>
+</div>
+<p>As seen in the example, timers are available as methods of the <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>
+class. After moving the motor, a timer is set with <a class="reference internal" href="fsm.html#tmrSet" title="tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a> which means
+that after 10 seconds a special event will be generated and the method
+<a class="reference internal" href="fsm.html#tmrExp" title="tmrExp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExp()</span></code></a> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>. This way the user can perform
+appropriate actions when a movement takes too long to complete.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="fsm.html#tmrExp" title="tmrExp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExp()</span></code></a> method returns <code class="docutils literal notranslate"><span class="pre">True</span></code> even before the timer is set, and will continue to return <code class="docutils literal notranslate"><span class="pre">True</span></code> after expiration until it is set again.</p>
+</div>
+<p>Timers are identified with a string, which should be unique. When reusing the
+same string, the same timer is used and if it is not expired, it is restarted.
+To avoid it being restarted, use a third optional parameter of <a class="reference internal" href="fsm.html#tmrSet" title="tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> and set it to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</div>
+<div class="section" id="fsmtimers-class">
+<h2><a class="reference internal" href="#fsmTimers" title="fsmTimers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code></a> class<a class="headerlink" href="#fsmtimers-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fsmTimers">
+<em class="property">class </em><code class="descname">fsmTimers</code><a class="headerlink" href="#fsmTimers" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class handles all the timers of all the FSMs as shared resources. It
+can be used by creating an instance and passing it as an optional argument
+to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> which automatically
+manages it.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="watchdog.html" class="btn btn-neutral float-right" title="Watchdog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="loader.html" class="btn btn-neutral" title="Loader and fsm execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Davide Marcato.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0.0-rc1+2.gc7fca22.dirty',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

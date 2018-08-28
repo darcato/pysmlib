@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Download and Installation &mdash; Epics Finite State Machines for Python</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pysmlib overview" href="overview.html" />
+    <link rel="prev" title="Python Finite State Machines for EPICS" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0-rc1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Download and Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloads-and-installation">Downloads and Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-version">Development Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fsm.html">Finite State Machine development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Accessing I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loader.html">Loader and fsm execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer.html">Timers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="watchdog.html">Watchdog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pysmlib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Download and Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="download-and-installation">
+<span id="id1"></span><h1>Download and Installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>This package requires Python version 2.7, while the support for newer version is
+still in development. Two modules are mandatory: <a class="reference external" href="http://www.numpy.org/">numpy</a> for
+the internal handling of vectors and <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> which provides the EPICS Channel
+Access support. Both are automatically installed when using pip, but you may
+have to install the EPICS base on your system and configure <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> to
+locate <code class="docutils literal notranslate"><span class="pre">libca</span></code>. See <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> documentation for further details.</p>
+<p><a class="reference external" href="http://www.sphinx-doc.org/en/master/">Sphinx</a> and its theme <a class="reference external" href="https://readthedocs.org/">Read the Docs</a> are required to build this
+documentation.</p>
+</div>
+<div class="section" id="downloads-and-installation">
+<h2>Downloads and Installation<a class="headerlink" href="#downloads-and-installation" title="Permalink to this headline">¶</a></h2>
+<p>To install, try running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pysmlib</span>
+</pre></div>
+</div>
+<div class="section" id="installing-from-sources">
+<h3>Installing from sources<a class="headerlink" href="#installing-from-sources" title="Permalink to this headline">¶</a></h3>
+<p>Alternatively, if you want to install from sources:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">darcato</span><span class="o">/</span><span class="n">pysmlib</span><span class="o">.</span><span class="n">git</span><span class="nd">@latest</span>
+</pre></div>
+</div>
+<p>where you can replace <code class="docutils literal notranslate"><span class="pre">latest</span></code> with the desired git tag.</p>
+<p>Another option is to download the tarball from <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a>, extract it and
+then run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">pysmlib</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Check if the installation was successful by executing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">epics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">epics</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">find_libca</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will print the path of the <code class="docutils literal notranslate"><span class="pre">libca</span></code> which will be used. If any error
+occurs, then check the installation of <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a>. If you already have EPICS
+base compiled on your system you can choose to use its <code class="docutils literal notranslate"><span class="pre">libca</span></code> adding the following line to your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">PYEPICS_LIBCA</span><span class="o">=&lt;</span><span class="n">path_to_your_epics_base</span><span class="o">&gt;/</span><span class="n">lib</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">x86_64</span><span class="o">/</span><span class="n">libca</span><span class="o">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<p>replacing <code class="docutils literal notranslate"><span class="pre">&lt;path_to_your_epics_base&gt;</span></code> with the path to the folder containing your compiled EPICS base.</p>
+<p>Moreover you should now be able to import the <code class="docutils literal notranslate"><span class="pre">smlib</span></code> package without errors:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">smlib</span>
+</pre></div>
+</div>
+<p>To start creating your first finite state machine you can give a look at the
+examples provided with the package (eventually executing them) and read
+<a class="reference internal" href="overview.html#pysmlib-overview"><span class="std std-ref">Pysmlib overview</span></a>.</p>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p><strong>Still in development</strong></p>
+<p>Automatic testing is done with gitlab-ci, which starts a Docker image, installs
+pysmlib with all its dependencies, run a simple IOC and executes the test suite.
+This can be done for different versions of python. In addition the user can
+execute the gitlab-ci script locally or simply run the test suite on his system.</p>
+<p><strong>TODO</strong>: Add specific instructions.</p>
+</div>
+<div class="section" id="development-version">
+<h2>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
+<p>To contribute to the project you can fork it on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a>, any help is appreciated!
+To obtain the latest development version just clone the project:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">darcato</span><span class="o">/</span><span class="n">pysmlib</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">pysmlib</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>where the <code class="docutils literal notranslate"><span class="pre">-e</span></code> automatically updates the installed version when the local
+repository is updated.</p>
+</div>
+<div class="section" id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h2>
+<p>For questions, bug reports, feature request, please consider using the
+following methods:</p>
+<ol class="arabic simple">
+<li>Create an issue on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a> where it can be discussed.</li>
+<li>Send an email to Davide Marcato &lt;<a class="reference external" href="mailto:davide&#46;marcato&#37;&#52;&#48;lnl&#46;infn&#46;it">davide<span>&#46;</span>marcato<span>&#64;</span>lnl<span>&#46;</span>infn<span>&#46;</span>it</a>&gt;, or
+to the Tech Talk mailing list if the issue is related to EPICS.</li>
+<li>If you are sure you have found a bug in existing code, or have
+some code you think would be useful to add to pysmlib, consider
+making a Pull Request on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a>.</li>
+</ol>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>The whole project is released under the GPLv3 license.</p>
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see &lt;<a class="reference external" href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>
+</div>
+<div class="section" id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>Pysmlib has been written by Damiano Bortolato &lt;<a class="reference external" href="mailto:damiano&#46;bortolato&#37;&#52;&#48;lnl&#46;infn&#46;i">damiano<span>&#46;</span>bortolato<span>&#64;</span>lnl<span>&#46;</span>infn<span>&#46;</span>i</a>&gt;
+and Davide Marcato &lt;<a class="reference external" href="mailto:davide&#46;marcato&#37;&#52;&#48;lnl&#46;infn&#46;it">davide<span>&#46;</span>marcato<span>&#64;</span>lnl<span>&#46;</span>infn<span>&#46;</span>it</a>&gt; at Legnaro National Laboratories,
+INFN. The development started in 2016 in order to have a simpler alternative to
+the Epics sequencer to create high level automatization for the RF control
+system of the ALPI accelerator. After that it has been separated in a standalone library to be used for the whole SPES project.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="overview.html" class="btn btn-neutral float-right" title="Pysmlib overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Python Finite State Machines for EPICS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Davide Marcato.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0.0-rc1+2.gc7fca22.dirty',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

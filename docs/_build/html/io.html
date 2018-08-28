@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Accessing I/O &mdash; Epics Finite State Machines for Python</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Logger" href="logger.html" />
+    <link rel="prev" title="Finite State Machine development" href="fsm.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0-rc1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fsm.html">Finite State Machine development</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Accessing I/O</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fsmio-class-reference"><code class="docutils literal notranslate"><span class="pre">fsmIO</span></code> class reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-o-mapping-and-parametrization">I/O mapping and parametrization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loader.html">Loader and fsm execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer.html">Timers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="watchdog.html">Watchdog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pysmlib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Accessing I/O</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/io.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="accessing-i-o">
+<span id="accessing-io"></span><h1>Accessing I/O<a class="headerlink" href="#accessing-i-o" title="Permalink to this headline">¶</a></h1>
+<p>Input and Outputs are the only way to comunicate with the external world. In the
+context of pysmlib each input is directly mapped to an EPICS PV. Furthermore the
+term “input” is used as a generic term for I/O because each input can be also an
+output. In fact, all the PVs can be read (get) and written (put).</p>
+<p>The main class to access inputs is <a class="reference internal" href="#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a>.</p>
+<div class="section" id="fsmio-class-reference">
+<h2><a class="reference internal" href="#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> class reference<a class="headerlink" href="#fsmio-class-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fsmIO">
+<em class="property">class </em><code class="descname">fsmIO</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#fsmIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>This represent an input as an object. The constructor should be never called
+directly by the user. Each input is created with the method
+<a class="reference internal" href="fsm.html#connect" title="connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a>, which returns an instance of this class.</p>
+</dd></dl>
+
+<p>The user can access the status of each input with some simple, yet powerful,
+methods. These are divided in four macro categories:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Methods to access stationary conditions</li>
+<li>Methods to detect edges.</li>
+<li>Methods to detect trends</li>
+<li>Methods to write outputs</li>
+</ul>
+</div></blockquote>
+<div class="section" id="methods-for-stationary-conditions">
+<span id="io-status"></span><h3>Methods for stationary conditions<a class="headerlink" href="#methods-for-stationary-conditions" title="Permalink to this headline">¶</a></h3>
+<p>These kind of methods return static informations about an input. For example
+they can tell if an input is connected or not, but do not give any informations
+on when the input has connected: it may have connected yesterday or just a
+moment ago.</p>
+<dl class="method">
+<dt id="ioname">
+<code class="descname">ioname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ioname" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of the input.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="val">
+<code class="descname">val</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#val" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current value of the input.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="connected">
+<code class="descname">connected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connected" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input is connected, via Channel Access.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="initialized">
+<code class="descname">initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initialized" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input is connected and has received the first value, meaning its value is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="putComplete">
+<code class="descname">putComplete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putComplete" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if a previous (or no) <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> on this input has completed, <code class="docutils literal notranslate"><span class="pre">False</span></code> if a <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> is being executed in this moment.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pval">
+<code class="descname">pval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pval" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the previous value of the input.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="data">
+<code class="descname">data</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#data" title="Permalink to this definition">¶</a></dt>
+<dd><p>PyEpics PV objects contain more informations than value and connection
+status. To access those fields, use this method. The available key are listed
+here: &lt;<a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions">http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions</a>&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>string</em>) – the particular information to extract from a PV.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the requested information.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="methods-to-detect-edges">
+<span id="io-edges"></span><h3>Methods to detect edges<a class="headerlink" href="#methods-to-detect-edges" title="Permalink to this headline">¶</a></h3>
+<p>As described on <a class="reference internal" href="fsm.html#fsm-development"><span class="std std-ref">Finite State Machine development</span></a>, while the FSM is running the current
+state is executed exactly once for each event received on any of the FSM inputs,
+or timers. With the methods on this group the user can access the information on
+the reason why the FSM has been executed at each time. So, for example, if a
+connection event is received, the FSM is executed and the method
+<a class="reference internal" href="#connecting" title="connecting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connecting()</span></code></a> on the correct input will return <code class="docutils literal notranslate"><span class="pre">True</span></code> for just this
+execution. After that a change event is received, and the FSM is executed again:
+this time the FSM was executed due to a change event, so <a class="reference internal" href="#connecting" title="connecting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connecting()</span></code></a>
+will return <code class="docutils literal notranslate"><span class="pre">False</span></code>, but the input is still connected and so the
+<a class="reference internal" href="#connected" title="connected"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connected()</span></code></a> will still return <code class="docutils literal notranslate"><span class="pre">True</span></code>. In fact, this time the
+method <a class="reference internal" href="#changing" title="changing"><code class="xref py py-meth docutils literal notranslate"><span class="pre">changing()</span></code></a> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>So, this way these methods return <code class="docutils literal notranslate"><span class="pre">True</span></code> just for one state evaluation, when a
+certain event is happening <cite>right now</cite>, and let the user access the information
+on rising or falling edges on certain conditions. This is useful when an action
+has to be performed only once when an event occurs, and not each time a
+condition is true.</p>
+<dl class="method">
+<dt id="rising">
+<code class="descname">rising</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rising" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just gone from 0 to not zero. Best to use only with boolean values (binary PVs).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="falling">
+<code class="descname">falling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#falling" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just gone from not zero to 0. Best to use only with boolean values (binary PVs).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="changing">
+<code class="descname">changing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#changing" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just changed its value.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="connecting">
+<code class="descname">connecting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connecting" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just connected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="disconnecting">
+<code class="descname">disconnecting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#disconnecting" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just disconnected. Note that the Channel Access uses timeouts to check the connection status, so a certain delay is to be expected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="initializing">
+<code class="descname">initializing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initializing" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just received its first value after a connection.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="putCompleting">
+<code class="descname">putCompleting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putCompleting" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just completed a previous <code class="docutils literal notranslate"><span class="pre">put()</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="methods-to-detect-trends">
+<h3>Methods to detect trends<a class="headerlink" href="#methods-to-detect-trends" title="Permalink to this headline">¶</a></h3>
+<p>In scientific applications, when an input has a physical meaning, it is often
+useful to filter it, get average value or check the trend over a certain amount
+of time. These methods cover most common use cases.</p>
+<dl class="method">
+<dt id="setBufSize">
+<code class="descname">setBufSize</code><span class="sig-paren">(</span><em>numOfElements</em><span class="sig-paren">)</span><a class="headerlink" href="#setBufSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method has to be called at initialization, or before accessing the
+following methods. It creates a buffer of the required lenght where the read
+value are stored to be used as the input history.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>numOfElements</strong> (<em>int</em>) – the buffer lenght</td>
+</tr>
+</tbody>
+</table>
+<p>A successive call to this method will discard older buffer and create a new
+one, so transient effects can be observed. Numpy arrays are used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="valAvg">
+<code class="descname">valAvg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#valAvg" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The average value of the elements on the buffer.</td>
+</tr>
+</tbody>
+</table>
+<p>Keep in mind that values are accumulated as they arrive, in a event driven
+way. This means that if a value does not change for a long time, no event is
+generated and the average value may be misleading. In other words: the
+values are not weighted with time.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="valStd">
+<code class="descname">valStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#valStd" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Standard deviation of the elements on the buffer.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="valTrend">
+<code class="descname">valTrend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#valTrend" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">0 = flat, 1 = increasing, -1 = decreasing</td>
+</tr>
+</tbody>
+</table>
+<p>code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avbuf</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>                 <span class="c1"># Standard deviation</span>
+<span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avbuf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avbuf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># newer element - oldest element</span>
+<span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">1</span>
+<span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">s</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="methods-to-write-outputs">
+<h3>Methods to write outputs<a class="headerlink" href="#methods-to-write-outputs" title="Permalink to this headline">¶</a></h3>
+<p>At least, of course, this method can be used to write a new value to a output.</p>
+<dl class="method">
+<dt id="put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>newValue</em><span class="sig-paren">)</span><a class="headerlink" href="#put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write <cite>newValue</cite> to output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newValue</strong> (<em>type depends on PV type</em>) – the value to be written</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">False</span></code> if <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> failed, <code class="docutils literal notranslate"><span class="pre">True</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="i-o-mapping-and-parametrization">
+<span id="io-mapping"></span><h2>I/O mapping and parametrization<a class="headerlink" href="#i-o-mapping-and-parametrization" title="Permalink to this headline">¶</a></h2>
+<p>The inputs on pysmlib are shared resources. The class which groups all the
+inputs from all the FSMs is:</p>
+<dl class="class">
+<dt id="fsmIOs">
+<em class="property">class </em><code class="descname">fsmIOs</code><a class="headerlink" href="#fsmIOs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a container of all inputs of all FSMs. It can be instantiated by the
+user and passed to all the FSMs as a optional argument (<code class="docutils literal notranslate"><span class="pre">ios</span></code>, see
+<a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>) on their constructor, but the easiest way is to use
+the <a class="reference internal" href="loader.html#loader"><span class="std std-ref">Loader and fsm execution</span></a> which automatically handles FSM optional arguments.</p>
+<p>This class declares a method <code class="docutils literal notranslate"><span class="pre">get()</span></code> which receives a string with the
+input name, creates the corresponding input, if not already available,
+and returns it. It is used by <a class="reference internal" href="fsm.html#connect" title="connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> and should not be accessed
+directly.</p>
+</dd></dl>
+
+<p>Using the <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> each input name must be exactly a PV name. This
+approach has some disadvantages:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The PV name is hard-coded in the FSM implementation. If, for any reason,the PV name changes, the code must be modified!!</li>
+<li>The names are not parametric. If your logic works well for two identical objects, with PV names which differ only for a number (eg: PS01 vs PS02) you will have to implement manually a parametrization mechanism for each FSM.</li>
+<li>Inserting long PV names in the code is not much readable.</li>
+<li>The user has to check each PV name to be compatible with the Naming Convention of the facility, if present.</li>
+</ol>
+</div></blockquote>
+<p>For all these reasons a derivate class of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> has been developed.</p>
+<dl class="class">
+<dt id="mappedIOs">
+<em class="property">class </em><code class="descname">mappedIOs</code><span class="sig-paren">(</span><em>mapFile</em><span class="sig-paren">)</span><a class="headerlink" href="#mappedIOs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mapFile</strong> (<em>string</em>) – the path to a map file, whose syntax is described below.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This let you use short names to identify inputs, and add any number of optional
+arguments to specify custom parameters. For example, you can define an input
+like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">exampleFsm</span><span class="p">(</span><span class="n">fsmBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">psNum</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">exampleFsm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;powerSupply&quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">psNum</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This way, the number of the power supply is a parameter of the FSM and you can
+instantiate multiple FSMs, one for each power supply. Moreover, inside the code
+the “powerSupply” string is easy to read and</p>
+<p>Then the input name has to be somehow translated to the correct PV name, which
+is, in our example, “PS01”. For this reason a map file has to be defined,
+containing the following lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pattern</span> <span class="o">=</span> <span class="p">({:</span><span class="o">.</span><span class="mi">2</span><span class="n">s</span><span class="p">}{:</span><span class="mi">02</span><span class="n">d</span><span class="p">})</span> <span class="p">(</span><span class="n">OBJ</span><span class="p">,</span> <span class="n">NUM</span><span class="p">)</span>
+<span class="s2">&quot;powerSupply&quot;</span> <span class="o">=</span> <span class="s2">&quot;PS&quot;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">n</span><span class="o">&gt;</span>      <span class="c1">#this is a comment</span>
+</pre></div>
+</div>
+<p>As you can see the first thing to do is to define a pattern, which is the naming
+convention followed by all the PVs who are defined after (before the next
+pattern). In this case the pattern specify that the PV name must contain two
+characters, followed by an integer with 2 digits, with leading zeroes. This way
+the translator knows what to expect, can correctly format numbers and can check
+that the inputs respect this Naming Convention. The syntax of the pattern
+definition is the same as the one used by python <code class="xref py py-func docutils literal notranslate"><span class="pre">format()</span></code> function.</p>
+<p>The second line defines the string “powerSupply”: this is the string that we
+will use inside our code to refer to that particular input. After the equal mark
+we can find the informations to fill the pattern to create the PV name. In
+particular the first two characters are provided directly: “PS”. Note that the
+quotation marks are optional and will be stripped away. The second part
+instead, which is put inside the <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">&gt;</span></code> signs, represent a parameters. This
+means that its value is not know before run time, and must be passed as an
+optional argument (with the exact same name) to the <a class="reference internal" href="fsm.html#connect" title="connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method. In
+fact, we provided the optional argument <code class="docutils literal notranslate"><span class="pre">n</span></code>. So, at execution time the
+translator will format the number as required, concatenate it to the first two
+characters and obtain “PS01”. This offer great flexibility to connect to similar
+PVs who differ only for some counters.</p>
+<p>A more complete example of a map file is the following one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#MACROS DEFINITION:
+&gt; FAC = &quot;Al&quot;
+&gt; APP = &quot;Llrf&quot;
+&gt; SAPP = &quot;Cryo&quot;
+&gt; CHID = &quot;A&quot;
+&gt; OBJ = &quot;Qwrs&quot;
+&gt; AMP = &quot;Ampl&quot;
+&gt; CVON = &quot;Cvon&quot;
+&gt; CRYG = &quot;Cryg&quot;
+
+#LONG PVS:
+&gt; pattern = ({:.2s}{:.4s}{:.4s}{:02d}{:.1s}_{:.4s}{:02d}{:.1s}{:s}) (FAC, APP, SAPP, NSAP, CHID, OBJ, NOBJ, TYPE, SIGNAL)
+&quot;CvonEn&quot;             = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;ProcEn&quot;         #enable fsm
+&quot;CvonRetc&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;Retc&quot;           #fsm return code
+&quot;CvonMsgs&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;Msgs&quot;           #message to user
+&quot;CvonStat&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;Stat&quot;           #state of the fsm
+&quot;CvonRunn&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;Runn&quot;           #running status the fsm
+&quot;CvonWdog&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), $(CVON), &lt;nobj&gt;, &quot;:&quot;, &quot;Wdog&quot;           #state of the fsm
+
+#SHORTER PVS
+&gt; pattern = ({:.2s}{:.4s}{:.4s}{:02d}{:.1s}{:.1s}{:s}) (FAC, APP, SAPP, NSAP, CHID, TYPE, SIGNAL)
+&quot;cryoName&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), &quot;:&quot;, &quot;Name&quot;                           #cryostat string name
+&quot;cryoNext&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), &quot;:&quot;, &quot;Next&quot;                           #pointer to next cryostat
+&quot;cryoPrev&quot;           = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), &quot;:&quot;, &quot;Prev&quot;                           #pointer to prev cryostat
+&quot;cryoNQwrs&quot;          = $(FAC), $(APP), $(SAPP), &lt;nsap&gt;, $(CHID), &quot;:&quot;, &quot;Nqwr&quot;                           #n of qwr in this cryostat
+&quot;cryogEn&quot;            = $(FAC), $(CRYG), $(SAPP), &lt;nsap&gt;, $(CHID), &quot;:&quot;, &quot;RfpaEn&quot;                        #enable from cryogenic
+&quot;storeConnWd&quot;        = $(FAC), $(APP), , , , &quot;:&quot;, &quot;StorWd&quot;                                             #store fsm connection watchdog
+</pre></div>
+</div>
+<p>Syntax rules:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The character <code class="docutils literal notranslate"><span class="pre">#</span></code> is used for comments.</li>
+<li><dl class="first docutils">
+<dt>The character <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> signal special lines.</dt>
+<dd><ul class="first last">
+<li>The word <code class="docutils literal notranslate"><span class="pre">pattern</span></code> is reserved to define a new pattern on special lines.</li>
+<li>All the other cases are macro definitions.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Each normal line defines a input name and its link to a PV name.</dt>
+<dd><ul class="first last">
+<li>The <code class="docutils literal notranslate"><span class="pre">$(</span> <span class="pre">)</span></code> string means that the part inside parentesis is a macro name and should be replaced with its value</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">&gt;</span></code> string indicates a parameter that should be passed as optional argument of <a class="reference internal" href="fsm.html#connect" title="connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Each element of the PV name is divided by a comma, and each part is associated with the one on the pattern, in order.</li>
+</ul>
+</div></blockquote>
+<p>Macro definition is used to avoid repeting the same string everywhere in the
+file, so each macro occurrence is substituted with its value on the whole
+document. For example, having defined the marco <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">FAC</span> <span class="pre">=</span> <span class="pre">&quot;Al&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">$(FAC)</span></code>
+is replaced with <code class="docutils literal notranslate"><span class="pre">Al</span></code>.</p>
+<p>Therefore, when defining an input, one of the string on the left can be used,
+and then the PV name will be built concatenating all the pieces following the
+pattern logic, and replacing the parameters with the values passed at run time.</p>
+<div class="section" id="summary-of-the-steps-to-implement-a-map-on-inputs">
+<h3>Summary of the steps to implement a map on inputs<a class="headerlink" href="#summary-of-the-steps-to-implement-a-map-on-inputs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Use <a class="reference internal" href="#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a> instead of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a>. This is achieved by calling <code class="xref py py-func docutils literal notranslate"><span class="pre">loader.setIoMap()</span></code> function.</li>
+<li>Create the map file.</li>
+<li>Connect to the inputs using the strings defined in the map file, passing all the required parameters as optional arguments.</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="logger.html" class="btn btn-neutral float-right" title="Logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fsm.html" class="btn btn-neutral" title="Finite State Machine development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Davide Marcato.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0.0-rc1+2.gc7fca22.dirty',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

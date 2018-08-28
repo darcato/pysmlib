@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Logger &mdash; Epics Finite State Machines for Python</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Loader and fsm execution" href="loader.html" />
+    <link rel="prev" title="Accessing I/O" href="io.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0-rc1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fsm.html">Finite State Machine development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Accessing I/O</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Logger</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#log-to-standard-output">Log to Standard Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-to-file">Log to File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-to-syslog">Log to Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="loader.html">Loader and fsm execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer.html">Timers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="watchdog.html">Watchdog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pysmlib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Logger</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/logger.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="logger">
+<span id="id1"></span><h1>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
+<p>All the log messages should be printed with the methods available in
+<a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>. This ensures that they are threaded in a coherent way. In the
+loader a verbosity level can be specified, so that only the messages with
+verbosity level lower or equal to that are printed. For example a verbosity of
+zero is related to ERROR logging, and messages are always printed, while a
+higher verbosity may be useful only while debugging.</p>
+<p>There are three options to log:</p>
+<div class="section" id="log-to-standard-output">
+<h2>Log to Standard Output<a class="headerlink" href="#log-to-standard-output" title="Permalink to this headline">¶</a></h2>
+<p>This is the easiest method, and the default one if no other is specified. Should
+be used only while developing or on small tests. All the messages are written to
+the standard output of the console where the executable is launched.</p>
+<p>This is achieved via a base class called <a class="reference internal" href="#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a>.</p>
+<dl class="class">
+<dt id="fsmLogger">
+<em class="property">class </em><code class="descname">fsmLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em>level=3</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect all the log messages from the various FSMs loaded and print them to
+stdout.</p>
+</dd></dl>
+
+<p>This can be used by creating an instance and passing it as an optional argument
+to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> with no option specified. The verbosity can be set with <code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code> function.</p>
+</div>
+<div class="section" id="log-to-file">
+<h2>Log to File<a class="headerlink" href="#log-to-file" title="Permalink to this headline">¶</a></h2>
+<p>A better approach is to write logs to file, in order to open them only when
+needed. For this reason a derivate class of the previous one has been developed:</p>
+<dl class="class">
+<dt id="fsmFileLogger">
+<em class="property">class </em><code class="descname">fsmFileLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em>level=3</em><span class="optional">[</span>, <em>directory=&quot;logs/&quot;</em><span class="optional">[</span>, <em>prefix=&quot;&quot;</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmFileLogger" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>level</strong> (<em>int</em>) – the log level</li>
+<li><strong>directory</strong> (<em>string</em>) – the folder where all the log files will be written</li>
+<li><strong>prefix</strong> (<em>string</em>) – a common prefix for all the logs of this executable</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This will write one file for each instance of FSM loaded in the executable, and
+will use the prefix, plus the name of the FSM to name the file.</p>
+<p>It can be used directly by  creating an instance and passing it as an optional
+argument to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> and its
+<code class="xref py py-func docutils literal notranslate"><span class="pre">logToFile()</span></code> function. The verbosity can be set with <code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code> function.</p>
+</div>
+<div class="section" id="log-to-syslog">
+<h2>Log to Syslog<a class="headerlink" href="#log-to-syslog" title="Permalink to this headline">¶</a></h2>
+<p><strong>Planned</strong></p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Choosing the logging method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smblib</span> <span class="k">import</span> <span class="n">loader</span>
+
+<span class="n">loader</span><span class="o">.</span><span class="n">setVerbosity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># INFO verbosity</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">logToFile</span><span class="p">(</span><span class="s2">&quot;~/fsmlogs/&quot;</span><span class="p">,</span> <span class="s2">&quot;exampleDaemon&quot;</span><span class="p">)</span> <span class="c1"># comment this line to log to stdout</span>
+
+<span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="o">...</span> <span class="p">)</span> <span class="c1"># load your FSMs</span>
+
+<span class="n">loader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Using log functions inside the FSM code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mymethod_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logE</span><span class="p">(</span><span class="s2">&quot;This is an ERROR level log message!&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logW</span><span class="p">(</span><span class="s2">&quot;This is an WARNING level log message!&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logI</span><span class="p">(</span><span class="s2">&quot;This is an INFO level log message!&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logD</span><span class="p">(</span><span class="s2">&quot;This is an DEBUG level log message!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="loader.html" class="btn btn-neutral float-right" title="Loader and fsm execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="io.html" class="btn btn-neutral" title="Accessing I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Davide Marcato.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0.0-rc1+2.gc7fca22.dirty',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
