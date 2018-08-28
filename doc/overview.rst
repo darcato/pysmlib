@@ -92,7 +92,7 @@ Then other states can be defined, for example::
     def mirroring_eval(self):
         if self.enable.falling() == 0:
             self.gotoState("idle")
-        elif self.mirror.hasChanged():
+        elif self.mirror.changing():
             readValue = self.mirror.val()
             self.mirror.put(readValue)
 
@@ -182,7 +182,7 @@ Here is the complete example described in this section::
         def mirroring_eval(self):
             if self.enable.falling() == 0:
                 self.gotoState("idle")
-            elif self.mirror.hasChanged():
+            elif self.mirror.changing():
                 readValue = self.mirror.val()
                 self.mirror.put(readValue)
 
