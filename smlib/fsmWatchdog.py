@@ -43,7 +43,7 @@ class fsmWatchdog(fsmBase):
     
     def run_eval(self):
         for tmrName, fsm in self.timers.iteritems():
-            if self.tmrExp(tmrName):
+            if self.tmrExpired(tmrName):
                 inp, mode, interval = fsm.getWatchdogInput()
                 self.tmrSet(tmrName, interval)
                 if inp.connected():
