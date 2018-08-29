@@ -221,7 +221,7 @@ class fsmBase(threading.Thread):
         self._tmgr.set(t, timeout, reset)
         self.logD("activating a timer: '%s', %.2fs" % (name, timeout))
     
-    def tmrExp(self, name):
+    def tmrExpired(self, name):
         return not name in self._timers or self._timers[name].expd()
 
     def isIoConnected(self):

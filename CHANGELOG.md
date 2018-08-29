@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Moving to a single repository for the library
 - fsmBase input() renamed to connect()
+- fsmBase tmrExp() renamed to tmrExpired()
 - fsmIO access methods renamed
     - hasPutCompleted() -> putCompleting()
     - hasChanged() -> changing()

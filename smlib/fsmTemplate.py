@@ -32,7 +32,7 @@ class fsmTemplate(fsmBase):
             self.gotoState('_wtimer')
             
     def _wtimer_eval(self):
-        if self.tmrExp('_tmrwait'):
+        if self.tmrExpired('_tmrwait'):
             self.gotoState(self._retstate)
 
     def setErrorStatus(self, errCod, errMsg):

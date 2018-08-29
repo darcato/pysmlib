@@ -239,7 +239,7 @@ class fsmTest(fsmBase):
             self.gotoState("uno")    
  
     def common_eval(self):
-        if self.tmrExp("timer"):
+        if self.tmrExpired("timer"):
             self.logI("Timer expired")
             self.gotoState("uno")    
  
