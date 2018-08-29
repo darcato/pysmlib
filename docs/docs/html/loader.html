@@ -273,10 +273,12 @@ required by each different FSM constructor.</p>
 <dd><p>This is usually the last function to be called: it starts the execution of
 all the loaded FSMs and suspends the main thread, waiting for a signal.</p>
 <p>The supported signals are:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">SIGINT</span> <span class="p">(</span><span class="n">Ctrl</span><span class="o">-</span><span class="n">C</span><span class="p">):</span> <span class="n">Terminate</span> <span class="n">the</span> <span class="n">execution</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">FSMs</span><span class="o">.</span>
-<span class="o">*</span> <span class="n">SIGUSR1</span><span class="p">:</span> <span class="n">Print</span> <span class="n">a</span> <span class="n">report</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">inputs</span> <span class="n">connections</span><span class="o">.</span>
-</pre></div>
-</div>
+<blockquote>
+<div><ul class="simple">
+<li>SIGINT (Ctrl-C): Terminate the execution of all the FSMs.</li>
+<li>SIGUSR1: Print a report of all the inputs connections.</li>
+</ul>
+</div></blockquote>
 <p>In this way each FSM is executed in a separate thread until the kill signal
 is received.</p>
 </dd></dl>
@@ -373,7 +375,7 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0-rc1+4.geb3fc84.dirty',
+            VERSION:'2.0.0-rc1+11.g4f41c6e.dirty',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

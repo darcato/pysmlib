@@ -231,7 +231,7 @@ are explained on the next pages of this documentation.</p>
 <span class="k">def</span> <span class="nf">move_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">doneMoving</span><span class="o">.</span><span class="n">rising</span><span class="p">():</span>            <span class="c1"># If the motor movement completed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;nextState&quot;</span><span class="p">)</span>         <span class="c1"># continue to next state</span>
-    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExp</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>        <span class="c1"># Timer expired event</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExpired</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>        <span class="c1"># Timer expired event</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>             <span class="c1"># go to an error state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logE</span><span class="p">(</span><span class="s2">&quot;The movement did not complete before timeout reached&quot;</span><span class="p">)</span>   <span class="c1">#write to error log</span>
 
@@ -454,8 +454,8 @@ time).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="tmrExp">
-<code class="descname">tmrExp</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#tmrExp" title="Permalink to this definition">¶</a></dt>
+<dt id="tmrExpired">
+<code class="descname">tmrExpired</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#tmrExpired" title="Permalink to this definition">¶</a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the timer has expired or does not exist.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -563,7 +563,7 @@ meaning that they have received the first connection event.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0-rc1+4.geb3fc84.dirty',
+            VERSION:'2.0.0-rc1+11.g4f41c6e.dirty',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -10,7 +10,7 @@
 \indexentry{start()|hyperpage}{11}
 \indexentry{kill()|hyperpage}{11}
 \indexentry{tmrSet()|hyperpage}{12}
-\indexentry{tmrExp()|hyperpage}{12}
+\indexentry{tmrExpired()|hyperpage}{12}
 \indexentry{isIoConnected()|hyperpage}{12}
 \indexentry{setWatchdogInput()|hyperpage}{12}
 \indexentry{getWatchdogInput()|hyperpage}{12}

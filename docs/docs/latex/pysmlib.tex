@@ -56,8 +56,8 @@
 
 
 \title{pysmlib Documentation}
-\date{Aug 28, 2018}
-\release{2.0.0-rc1+5.g84bef99.dirty}
+\date{Aug 29, 2018}
+\release{2.0.0-rc1+11.g4f41c6e.dirty}
 \author{Davide Marcato}
 \newcommand{\sphinxlogo}{\sphinxincludegraphics{pysmlib_logo.png}\par}
 \renewcommand{\releasename}{Release}
@@ -299,7 +299,7 @@ along with this program.  If not, see \textless{}\sphinxurl{https://www.gnu.org/
 Pysmlib has been written by Damiano Bortolato \textless{}\sphinxhref{mailto:damiano.bortolato@lnl.infn.i}{damiano.bortolato@lnl.infn.i}\textgreater{}
 and Davide Marcato \textless{}\sphinxhref{mailto:davide.marcato@lnl.infn.it}{davide.marcato@lnl.infn.it}\textgreater{} at Legnaro National Laboratories,
 INFN. The development started in 2016 in order to have a simpler alternative to
-the Epics sequencer to create high level automatization for the RF control
+the Epics sequencer to create high level automation for the RF control
 system of the ALPI accelerator. After that it has been separated in a standalone library to be used for the whole SPES project.
 
 
@@ -606,7 +606,7 @@ are explained on the next pages of this documentation.
 \PYG{k}{def} \PYG{n+nf}{move\PYGZus{}eval}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
     \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{doneMoving}\PYG{o}{.}\PYG{n}{rising}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}            \PYG{c+c1}{\PYGZsh{} If the motor movement completed}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{gotoState}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{nextState}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}         \PYG{c+c1}{\PYGZsh{} continue to next state}
-    \PYG{k}{elif} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{tmrExp}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{moveTimeout}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{:}        \PYG{c+c1}{\PYGZsh{} Timer expired event}
+    \PYG{k}{elif} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{tmrExpired}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{moveTimeout}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{:}        \PYG{c+c1}{\PYGZsh{} Timer expired event}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{gotoState}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{error}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}             \PYG{c+c1}{\PYGZsh{} go to an error state}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{logE}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{The movement did not complete before timeout reached}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}   \PYG{c+c1}{\PYGZsh{}write to error log}
 
@@ -846,10 +846,10 @@ time).
 
 \end{fulllineitems}
 
-\index{tmrExp()}
+\index{tmrExpired()}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{fsm:tmrExp}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{tmrExp}}}{\emph{name}}{}
+\phantomsection\label{\detokenize{fsm:tmrExpired}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{tmrExpired}}}{\emph{name}}{}
 This will return \sphinxcode{\sphinxupquote{True}} if the timer has expired or does not exist.
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
@@ -1640,12 +1640,14 @@ This is usually the last function to be called: it starts the execution of
 all the loaded FSMs and suspends the main thread, waiting for a signal.
 
 The supported signals are:
+\begin{itemize}
+\item {} 
+SIGINT (Ctrl-C): Terminate the execution of all the FSMs.
 
-\fvset{hllines={, ,}}%
-\begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{o}{*} \PYG{n}{SIGINT} \PYG{p}{(}\PYG{n}{Ctrl}\PYG{o}{\PYGZhy{}}\PYG{n}{C}\PYG{p}{)}\PYG{p}{:} \PYG{n}{Terminate} \PYG{n}{the} \PYG{n}{execution} \PYG{n}{of} \PYG{n+nb}{all} \PYG{n}{the} \PYG{n}{FSMs}\PYG{o}{.}
-\PYG{o}{*} \PYG{n}{SIGUSR1}\PYG{p}{:} \PYG{n}{Print} \PYG{n}{a} \PYG{n}{report} \PYG{n}{of} \PYG{n+nb}{all} \PYG{n}{the} \PYG{n}{inputs} \PYG{n}{connections}\PYG{o}{.}
-\end{sphinxVerbatim}
+\item {} 
+SIGUSR1: Print a report of all the inputs connections.
+
+\end{itemize}
 
 In this way each FSM is executed in a separate thread until the kill signal
 is received.
@@ -1739,18 +1741,18 @@ The basic usage can be seen in the following example:
 \PYG{k}{def} \PYG{n+nf}{move\PYGZus{}eval}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
     \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{doneMoving}\PYG{o}{.}\PYG{n}{rising}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}            \PYG{c+c1}{\PYGZsh{} If the motor movement completed}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{gotoState}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{nextState}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}         \PYG{c+c1}{\PYGZsh{} continue to next state}
-    \PYG{k}{elif} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{tmrExp}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{moveTimeout}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{:}        \PYG{c+c1}{\PYGZsh{} Timer expired event}
+    \PYG{k}{elif} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{tmrExpired}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{moveTimeout}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{:}        \PYG{c+c1}{\PYGZsh{} Timer expired event}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{gotoState}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{error}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}             \PYG{c+c1}{\PYGZsh{} go to an error state}
 \end{sphinxVerbatim}
 
 As seen in the example, timers are available as methods of the {\hyperref[\detokenize{fsm:fsmBase}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fsmBase}}}}}
 class. After moving the motor, a timer is set with {\hyperref[\detokenize{fsm:tmrSet}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{tmrSet()}}}}} which means
 that after 10 seconds a special event will be generated and the method
-{\hyperref[\detokenize{fsm:tmrExp}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{tmrExp()}}}}} will return \sphinxcode{\sphinxupquote{True}}. This way the user can perform
+{\hyperref[\detokenize{fsm:tmrExpired}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{tmrExpired()}}}}} will return \sphinxcode{\sphinxupquote{True}}. This way the user can perform
 appropriate actions when a movement takes too long to complete.
 
 \begin{sphinxadmonition}{note}{Note:}
-The {\hyperref[\detokenize{fsm:tmrExp}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{tmrExp()}}}}} method returns \sphinxcode{\sphinxupquote{True}} even before the timer is set, and will continue to return \sphinxcode{\sphinxupquote{True}} after expiration until it is set again.
+The {\hyperref[\detokenize{fsm:tmrExpired}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{tmrExpired()}}}}} method returns \sphinxcode{\sphinxupquote{True}} even before the timer is set, and will continue to return \sphinxcode{\sphinxupquote{True}} after expiration until it is set again.
 \end{sphinxadmonition}
 
 Timers are identified with a string, which should be unique. When reusing the

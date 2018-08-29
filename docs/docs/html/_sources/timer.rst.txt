@@ -26,16 +26,16 @@ The basic usage can be seen in the following example::
     def move_eval(self):
         if self.doneMoving.rising():            # If the motor movement completed
             self.gotoState("nextState")         # continue to next state
-        elif self.tmrExp("moveTimeout"):        # Timer expired event
+        elif self.tmrExpired("moveTimeout"):        # Timer expired event
             self.gotoState("error")             # go to an error state
 
 As seen in the example, timers are available as methods of the :class:`fsmBase`
 class. After moving the motor, a timer is set with :meth:`tmrSet` which means
 that after 10 seconds a special event will be generated and the method
-:meth:`tmrExp` will return ``True``. This way the user can perform
+:meth:`tmrExpired` will return ``True``. This way the user can perform
 appropriate actions when a movement takes too long to complete.
 
-.. note:: The :meth:`tmrExp` method returns ``True`` even before the timer is set, and will continue to return ``True`` after expiration until it is set again.
+.. note:: The :meth:`tmrExpired` method returns ``True`` even before the timer is set, and will continue to return ``True`` after expiration until it is set again.
 
 Timers are identified with a string, which should be unique. When reusing the
 same string, the same timer is used and if it is not expired, it is restarted.

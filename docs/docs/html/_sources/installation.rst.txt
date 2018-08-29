@@ -133,5 +133,5 @@ Acknowledgments
 Pysmlib has been written by Damiano Bortolato <damiano.bortolato@lnl.infn.i> 
 and Davide Marcato <davide.marcato@lnl.infn.it> at Legnaro National Laboratories,
 INFN. The development started in 2016 in order to have a simpler alternative to
-the Epics sequencer to create high level automatization for the RF control
+the Epics sequencer to create high level automation for the RF control
 system of the ALPI accelerator. After that it has been separated in a standalone library to be used for the whole SPES project.

@@ -76,7 +76,7 @@
 
   \indexspace
   \bigletter T
-  \item tmrExp(), \hyperpage{12}
+  \item tmrExpired(), \hyperpage{12}
   \item tmrSet(), \hyperpage{12}
 
   \indexspace

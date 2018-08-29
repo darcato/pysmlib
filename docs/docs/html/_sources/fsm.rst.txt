@@ -71,7 +71,7 @@ are explained on the next pages of this documentation. ::
     def move_eval(self):
         if self.doneMoving.rising():            # If the motor movement completed
             self.gotoState("nextState")         # continue to next state
-        elif self.tmrExp("moveTimeout"):        # Timer expired event
+        elif self.tmrExpired("moveTimeout"):        # Timer expired event
             self.gotoState("error")             # go to an error state
             self.logE("The movement did not complete before timeout reached")   #write to error log
     
@@ -220,7 +220,7 @@ In these cases, all the methods on the inputs which detect edges
     :param reset: If this is ``True`` the timer can be re-initialized before expiration. Default = ``True``.
     :type reset: boolean
 
-.. method:: tmrExp (name)
+.. method:: tmrExpired (name)
 
     This will return ``True`` if the timer has expired or does not exist.
     
