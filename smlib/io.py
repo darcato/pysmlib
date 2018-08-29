@@ -303,7 +303,7 @@ class fsmIO(object):
     #----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------
     #----- They return True if the fsm was woken up by this changement in this cycle
     
-    # hasPutCompleted: current awakening callback is a put callback
+    # putCompleting: current awakening callback is a put callback
     def putCompleting(self):
         return self._currcb == 'putcomp'       
     
@@ -315,19 +315,19 @@ class fsmIO(object):
     def falling(self):
         return self._currcb == 'change' and self._pval!=None and self._value < self._pval
 
-    # hasChanged = last callback was a change callback
+    # changing = last callback was a change callback
     def changing(self):
         return self._currcb == 'change'
 
-    # hasDisconnected = last callback was a connection callback due to disconnection
+    # disconnecting = last callback was a connection callback due to disconnection
     def disconnecting(self):
         return self._currcb == 'conn' and not self._conn
     
-    # hasConnected = last callback was a connection callback due to connection
+    # connecting = last callback was a connection callback due to connection
     def connecting(self):
         return self._currcb == 'conn' and self._conn
     
-    # hasFirstValue: the input has changed and this is the first value it got
+    # initializing: the input has changed and this is the first value it got
     def initializing(self):
         return self._currcb == 'change' and self._pval==None
     

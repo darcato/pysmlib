@@ -21,7 +21,7 @@ class exampleFsm(fsmBase):
     def mirroring_eval(self):
         if self.enable.falling() == 0:
             self.gotoState("idle")
-        elif self.mirror.hasChanged():
+        elif self.mirror.changing():
             readValue = self.mirror.val()
             self.mirror.put(readValue)
 
