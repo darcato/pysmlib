@@ -65,7 +65,7 @@ shared inputs and all the instances of the user defined FSM as required.
     This is usually the last function to be called: it starts the execution of
     all the loaded FSMs and suspends the main thread, waiting for a signal.
 
-    The supported signals are::
+    The supported signals are:
 
         * SIGINT (Ctrl-C): Terminate the execution of all the FSMs.
         * SIGUSR1: Print a report of all the inputs connections.
