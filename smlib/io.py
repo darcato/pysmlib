@@ -3,7 +3,7 @@
 Input - Output objects for finite state machines.
 
 @date: March 26, 2018
-@authors: Damiamo Bortolato, Davide Marcato 
+@authors: Damiano Bortolato, Davide Marcato 
 @email: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it 
 '''
 

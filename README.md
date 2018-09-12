@@ -1,6 +1,6 @@
 # pysmlib
 
-## A python library for creating EPICS finite state machines, running in different threads as daemons and sharing resources.
+## A python library to create EPICS finite state machines, running in different threads as daemons and sharing resources.
 
 _Developers_: Damiano Bortolato - Davide Marcato
 

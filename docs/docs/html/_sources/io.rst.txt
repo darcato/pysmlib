@@ -27,6 +27,12 @@ methods. These are divided in four macro categories:
     * Methods to detect trends
     * Methods to write outputs
 
+.. note: Input complete status does not change during state execution. New events are quequed and evalutated one by one whith the following logic:
+
+    1. Get oldest event from queque.
+    2. Update the corresponding input object with the value notified by the event.
+    3. Execute current state.
+    4. Repeat.
 
 .. _io-status:
 

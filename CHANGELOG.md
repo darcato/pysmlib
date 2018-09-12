@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New interface to access IO via fsmBase methods
 - Simplified interface between IOs and fsmBase
 - Introducing event objects
+- Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
 ## [2.0.0] - 2018-08-28
 
