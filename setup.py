@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(name='pysmlib',
       version=versioneer.get_version(),
-      description='A library to create event driven finite state machines for EPICS, running as daemons and sharing resources',
+      description='Python Finite State Machines for EPICS',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/darcato/pysmlib',
