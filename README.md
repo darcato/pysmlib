@@ -72,13 +72,11 @@ class exampleFsm(fsmBase):
             readValue = self.mirror.val()
             self.mirror.put(readValue)
 
-## -------------------
-# load each fsm
-## -------------------
-loader.load(exampleFsm, "myFirstFsm")
+# Main
+if __name__ == '__main__':
+    # load the fsm
+    loader.load(exampleFsm, "myFirstFsm")
 
-## -------------------
-# start execution
-## -------------------
-loader.start()
+    # start execution
+    loader.start()
 ```
