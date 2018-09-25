@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 Created on 15 set 2016
-@author: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it
+@author: damiano.bortolato@lnl.infn.it
 '''
 
 
