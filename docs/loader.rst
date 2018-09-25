@@ -48,11 +48,13 @@ shared inputs and all the instances of the user defined FSM as required.
     :param ioMapPath: The path of a file defining a map for the inputs. See :class:`mappedIOs`.
     :type ioMapPath: string
 
-.. function:: loader.load(myFsmClass, name, ... )
+.. function:: loader.load(myFsmClass, name, **args, **kwargs )
 
     :param myFsmClass: The definition of a FSM.
     :param name: The unique name of this FSM instance.
     :type name: string
+    :param args: The arguments to be passed to the FSM constructor.
+    :param kwargs: The keyword arguments to be passed to the FSM constructor.
 
     This function is used to load multiple FSM in this executable. The first
     parameter is the FSM class, not one of its instances. In fact, the loader
@@ -67,8 +69,8 @@ shared inputs and all the instances of the user defined FSM as required.
 
     The supported signals are:
 
-        * SIGINT (Ctrl-C): Terminate the execution of all the FSMs.
-        * SIGUSR1: Print a report of all the inputs connections.
+        * ``SIGINT`` (Ctrl-C): Terminate the execution of all the FSMs.
+        * ``SIGUSR1``: Print a report of all the inputs connections.
 
     In this way each FSM is executed in a separate thread until the kill signal
     is received.

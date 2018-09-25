@@ -39,7 +39,7 @@ initialized, passing a ``name`` as argument which identifies the
 class instance. In fact, when this code will be executed a new thread
 will be created for each instance of the class.
 
-.. note:: Never forget to include ``**kwargs`` in the arguments of the super class as they are used by the :ref:`loader`.
+.. note:: Never forget to include ``**kwargs`` in the arguments of the super class as they are used by the :mod:`loader`.
 
 Define inputs / outputs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -54,7 +54,7 @@ reason the term "input" can be used to indicate both. ::
 
 The :meth:`connect()` methods requires a string as argument, which is
 the name of the EPICS PV to be connected (optional arguments are
-available, see :ref:`accessing-io`). 
+available, see :class:`fsmIO`). 
 
 Now the inputs will be connected and all their events will be evaluated.
 This means that whenever one of those changes its status, the current
@@ -114,7 +114,7 @@ Here other methods to access the I/O are presented:
 
 The resulting effect is that, while enabled, this FSM will read
 the value of one input as soon as it changes and write it to another input.
-For a complete description of the available methods see :ref:`accessing-io`.
+For a complete description of the available methods see :class:`fsmIO`.
 
 
 Load and execute the FSM
