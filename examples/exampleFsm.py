@@ -14,12 +14,12 @@ class exampleFsm(fsmBase):
     
     # idle state
     def idle_eval(self):
-        if self.enable.rising() == 0:
+        if self.enable.rising():
             self.gotoState("mirroring")
 
     # mirroring state
     def mirroring_eval(self):
-        if self.enable.falling() == 0:
+        if self.enable.falling():
             self.gotoState("idle")
         elif self.mirror.changing():
             readValue = self.mirror.val()
