@@ -11,3 +11,4 @@
 .vscode*
 build/
 dist/
+tests/testIoc/modules/
