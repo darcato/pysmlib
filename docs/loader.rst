@@ -48,13 +48,13 @@ shared inputs and all the instances of the user defined FSM as required.
     :param ioMapPath: The path of a file defining a map for the inputs. See :class:`mappedIOs`.
     :type ioMapPath: string
 
-.. function:: loader.load(myFsmClass, name, **args, **kwargs )
+.. function:: loader.load(myFsmClass, name, *args, **kwargs )
 
     :param myFsmClass: The definition of a FSM.
     :param name: The unique name of this FSM instance.
     :type name: string
-    :param args: The arguments to be passed to the FSM constructor.
-    :param kwargs: The keyword arguments to be passed to the FSM constructor.
+    :param args: The custom arguments to be passed to the FSM constructor.
+    :param kwargs: The optional keyword arguments to be passed to the FSM constructor.
 
     This function is used to load multiple FSM in this executable. The first
     parameter is the FSM class, not one of its instances. In fact, the loader
