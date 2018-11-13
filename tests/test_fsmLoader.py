@@ -1,5 +1,7 @@
 import pytest
 from smlib import fsmBase, loader, fsmLogger, fsmFileLogger, fsmIOs, mappedIOs
+#from pcaspy import SimpleServer
+#from pcaspy.tools import ServerThread
 
 def test_setVerbosity():
     #default value 2=info
@@ -51,6 +53,7 @@ def test_logToFile():
     assert isinstance(loader.__logger, fsmFileLogger)
     assert loader.__logger.dir == "dir"
     assert loader.__logger.prefix == "prefix"
+    assert loader.__logger._level == loader.__verbosity
 
 
 def test_setIoMap():
@@ -65,11 +68,11 @@ def test_load():
     assert len(loader.__fsmsList) == 0
 
     class fsm_fake(object):
-        def __init__(self, name, *args, **kwargs):
+        def __init__(self, name, num, **kwargs):
             self.timerManager = kwargs.get("tmgr", None)
             self.ioManager = kwargs.get("ios", None)
             self.logger = kwargs.get("logger", None)
-            self.args = args
+            self.args = num
         
     loader.load(fsm_fake, "testname", 5)
     assert len(loader.__fsmsList) == 1
@@ -78,4 +81,4 @@ def test_load():
     assert loaded.timerManager == loader.__timerManager
     assert loaded.ioManager == loader.__ioManager
     assert loaded.logger == loader.__logger
-    assert 5 in loaded.args
+    assert loaded.args == 5
