@@ -1,0 +1,27 @@
+#MACROS DEFINITION:
+> FAC = "Al"
+> APP = "Llrf"
+> SAPP = "Cryo"
+> CHID = "A"
+> OBJ = "Qwrs"
+> AMP = "Ampl"
+> CVON = "Cvon"
+> CRYG = "Cryg"
+
+#LONG PVS:
+> pattern = ({:.2s}{:.4s}{:.4s}{:02d}{:.1s}_{:.4s}{:02d}{:.1s}{:s}) (FAC, APP, SAPP, NSAP, CHID, OBJ, NOBJ, TYPE, SIGNAL)
+"CvonEn"             = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "ProcEn"         #enable fsm
+"CvonRetc"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "Retc"           #fsm return code
+"CvonMsgs"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "Msgs"           #message to user
+"CvonStat"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "Stat"           #state of the fsm
+"CvonRunn"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "Runn"           #running status the fsm
+"CvonWdog"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), $(CVON), <nobj>, ":", "Wdog"           #state of the fsm
+
+#SHORTER PVS
+> pattern = ({:.2s}{:.4s}{:.4s}{:02d}{:.1s}{:.1s}{:s}) (FAC, APP, SAPP, NSAP, CHID, TYPE, SIGNAL)
+"cryoName"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), ":", "Name"                           #cryostat string name
+"cryoNext"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), ":", "Next"                           #pointer to next cryostat
+"cryoPrev"           = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), ":", "Prev"                           #pointer to prev cryostat
+"cryoNQwrs"          = $(FAC), $(APP), $(SAPP), <nsap>, $(CHID), ":", "Nqwr"                           #n of qwr in this cryostat
+"cryogEn"            = $(FAC), $(CRYG), $(SAPP), <nsap>, $(CHID), ":", "RfpaEn"                        #enable from cryogenic 
+"storeConnWd"        = $(FAC), $(APP), , , , ":", "StorWd"                                             #store fsm connection watchdog

@@ -12,7 +12,7 @@ from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdo
 from threading import Thread
 import signal
 
-
+# Global variables
 __timerManager = fsmTimers()
 __verbosity = 2
 __logger = fsmLogger(__verbosity)
@@ -32,25 +32,30 @@ def setVerbosity(level):
     else:
         raise KeyError("Verbosity level \"%s\" not recognized!" % str(level))
 
+    global __verbosity, __logger
     __verbosity = n
     __logger.changeLevel(n)
 
 def logToFile(path, prefix):
+    global __logger
     __logger = fsmFileLogger(__verbosity, path, prefix)
     
 def setIoMap(iomap):
+    global __ioMap, __ioManager
     __ioMap = iomap
     __ioManager = mappedIOs(__ioMap)
 
 def load(fsmClass, name, *args, **kwargs):
+    global __fsmsList, __timerManager, __ioManager, __logger
     kwargs["tmgr"] = __timerManager
     kwargs["ios"] = __ioManager
     kwargs["logger"] = __logger
-    #check if it is not a derivate of fsmBase
-    fsm = fsmClass(name, *args, **kwargs)
+    #TODO:check if it is not a derivate of fsmBase
+    fsm = fsmClass(name, *args, **kwargs) #instance class
     __fsmsList.append(fsm)
 
 def killAll(signum, frame):
+    global __fsmsList, __timerManager
     #print("Signal: %d -> Going to kill all fsms" % signum)
     for fsm in __fsmsList:
         if fsm.isAlive():
@@ -61,6 +66,7 @@ def killAll(signum, frame):
     print("Killed the timer manager")
     
 def printUnconnectedIOs(signum, frame):
+    global __ioManager
     ios = __ioManager.getAll()
     s = 0
     print("DISCONNECTED INPUTS:")
@@ -68,10 +74,11 @@ def printUnconnectedIOs(signum, frame):
         if not i.connected():
             print i.ioname()
             s+=1
-    print("Total unconnected inputs: %d out of %d" % (s, len(ios)))
+    print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
     signal.pause()
 
 def start():
+    global __fsmsList, __timerManager, __ioManager, __logger
     #start another fsm to report if all the others are alive to epics db
     repo = fsmWatchdog("REPORT", __fsmsList, tmgr=__timerManager, ios=__ioManager, logger=__logger)
     __fsmsList.append(repo)
