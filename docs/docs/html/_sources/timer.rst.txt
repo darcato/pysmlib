@@ -35,7 +35,7 @@ that after 10 seconds a special event will be generated and the method
 :meth:`tmrExpired` will return ``True``. This way the user can perform
 appropriate actions when a movement takes too long to complete.
 
-.. note:: The :meth:`tmrExpired` method returns ``True`` even before the timer is set, and will continue to return ``True`` after expiration until it is set again.
+.. warning:: The :meth:`tmrExpired` method returns ``True`` even before the timer is set, and will continue to return ``True`` after expiration until it is set again.
 
 Timers are identified with a string, which should be unique. When reusing the
 same string, the same timer is used and if it is not expired, it is restarted.

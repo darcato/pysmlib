@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                2.0.0-rc1
+                2.0.0-rc2
               </div>
             
           
@@ -247,7 +247,7 @@ default one (<a class="reference internal" href="logger.html#fsmLogger" title="f
 
 <dl class="function">
 <dt id="loader.loader.load">
-<code class="descclassname">loader.</code><code class="descname">load</code><span class="sig-paren">(</span><em>myFsmClass</em>, <em>name</em>, <em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.load" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">loader.</code><code class="descname">load</code><span class="sig-paren">(</span><em>myFsmClass</em>, <em>name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.load" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -255,6 +255,8 @@ default one (<a class="reference internal" href="logger.html#fsmLogger" title="f
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>myFsmClass</strong> – The definition of a FSM.</li>
 <li><strong>name</strong> (<em>string</em>) – The unique name of this FSM instance.</li>
+<li><strong>args</strong> – The custom arguments to be passed to the FSM constructor.</li>
+<li><strong>kwargs</strong> – The optional keyword arguments to be passed to the FSM constructor.</li>
 </ul>
 </td>
 </tr>
@@ -275,8 +277,8 @@ all the loaded FSMs and suspends the main thread, waiting for a signal.</p>
 <p>The supported signals are:</p>
 <blockquote>
 <div><ul class="simple">
-<li>SIGINT (Ctrl-C): Terminate the execution of all the FSMs.</li>
-<li>SIGUSR1: Print a report of all the inputs connections.</li>
+<li><code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> (Ctrl-C): Terminate the execution of all the FSMs.</li>
+<li><code class="docutils literal notranslate"><span class="pre">SIGUSR1</span></code>: Print a report of all the inputs connections.</li>
 </ul>
 </div></blockquote>
 <p>In this way each FSM is executed in a separate thread until the kill signal
@@ -375,7 +377,7 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0-rc1+14.gb74d770.dirty',
+            VERSION:'2.0.0-rc2+0.gca65e12.dirty',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
