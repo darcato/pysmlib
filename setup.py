@@ -1,9 +1,21 @@
+# Python installation file
+# 
+# TO INSTALL (user):
+# pip install [-e] .
+#
+# TO UPLOAD NEW RELEASE (mantainer):
+# 1 - git tag <new_tag>
+# 2 - python setup.py clean --all && python setup.py sdist bdist_wheel
+# 3 - twine upload dist/*
+# 4 - cd docs/docs/ && make html
+# 5 - git commit -am "Documentation update"
+# 6 - git push github master
+
 from setuptools import setup
 import versioneer
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
-
 
 setup(name='pysmlib',
       version=versioneer.get_version(),
