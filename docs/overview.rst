@@ -74,7 +74,7 @@ desired name, plus ``_eval``. For example the ``idle`` state can be
 defined like this::
 
     def idle_eval(self):
-        if self.enable.rising() == 0:
+        if self.enable.rising():
             self.gotoState("mirroring")
 
 In this case the FSM will execute this state whenever an input changes
@@ -90,10 +90,10 @@ will happen and the FSM will remain on the same state.
 Then other states can be defined, for example::
 
     def mirroring_eval(self):
-        if self.enable.falling() == 0:
+        if self.enable.falling():
             self.gotoState("idle")
-        elif self.mirror.changing():
-            readValue = self.mirror.val()
+        elif self.counter.changing():
+            readValue = self.counter.val()
             self.mirror.put(readValue)
 
 Here other methods to access the I/O are presented: 

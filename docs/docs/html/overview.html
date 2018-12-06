@@ -236,7 +236,7 @@ convention on their names. The basic way of naming them is to give the
 desired name, plus <code class="docutils literal notranslate"><span class="pre">_eval</span></code>. For example the <code class="docutils literal notranslate"><span class="pre">idle</span></code> state can be
 defined like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">idle_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="o">.</span><span class="n">rising</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="o">.</span><span class="n">rising</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;mirroring&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -251,10 +251,10 @@ will happen and the FSM will remain on the same state.
 <a class="reference internal" href="fsm.html#fsm-development"><span class="std std-ref">Finite State Machine development</span></a> describes more in detail the states execution mechanism.</p>
 <p>Then other states can be defined, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mirroring_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="o">.</span><span class="n">falling</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="o">.</span><span class="n">falling</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;idle&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">changing</span><span class="p">():</span>
-        <span class="n">readValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">val</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">changing</span><span class="p">():</span>
+        <span class="n">readValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">val</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">readValue</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -339,8 +339,8 @@ but simply go back to an idle state.</p>
     <span class="k">def</span> <span class="nf">mirroring_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="o">.</span><span class="n">falling</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;idle&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">changing</span><span class="p">():</span>
-            <span class="n">readValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">val</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">changing</span><span class="p">():</span>
+            <span class="n">readValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">val</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">readValue</span><span class="p">)</span>
 
 <span class="c1"># Main</span>
@@ -398,7 +398,7 @@ but simply go back to an idle state.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0-rc2+0.gca65e12.dirty',
+            VERSION:'2.0.0-rc2+2.g8452343.dirty',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
