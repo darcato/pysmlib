@@ -14,13 +14,15 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../smlib/'))
+import datetime
+sys.path.insert(0, os.path.abspath('../'))
+now = datetime.datetime.now()
 
 
 # -- Project information -----------------------------------------------------
 
 project = u'pysmlib'
-copyright = u'2018, Davide Marcato'
+copyright = u'%d, Davide Marcato' % now.year
 author = u'Davide Marcato, Damiano Bortolato'
 
 # version = The short X.Y version
