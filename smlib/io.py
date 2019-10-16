@@ -309,11 +309,11 @@ class fsmIO(object):
     
     # Rising = connected and received at least 2 values, with the last > precedent
     def rising(self):
-        return self._currcb == 'change' and self._pval!=None and self._value > self._pval
+        return self._currcb == 'change' and self._pval is not None and self._value > self._pval
 
     # Falling = connected and received at least 2 values, with the last < precedent
     def falling(self):
-        return self._currcb == 'change' and self._pval!=None and self._value < self._pval
+        return self._currcb == 'change' and self._pval is not None and self._value < self._pval
 
     # changing = last callback was a change callback
     def changing(self):
@@ -329,7 +329,7 @@ class fsmIO(object):
     
     # initializing: the input has changed and this is the first value it got
     def initializing(self):
-        return self._currcb == 'change' and self._pval==None
+        return self._currcb == 'change' and self._pval is None
     
     #------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------
     
@@ -339,7 +339,7 @@ class fsmIO(object):
     
     # return whether the pv is connected and has received the initial value
     def initialized(self):
-        return self._conn and self._value!=None
+        return self._conn and self._value is not None
 
     # returns wheter the pv is connected or not
     def connected(self):
