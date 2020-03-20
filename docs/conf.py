@@ -44,7 +44,8 @@ except ImportError:
     release = u'unknown'
     version = u'unknown'
 
-print 'Building Docs for PYSMLIB version %s / Python version %s ' % (release, sys.version)
+print('Building Docs for PYSMLIB version %s / Python version %s ' %
+      (release, sys.version))
 
 # -- General configuration ---------------------------------------------------
 
@@ -59,8 +60,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
     'sphinx.ext.extlinks',
-    'sphinx.ext.coverage', 
-    'sphinx.ext.mathjax', 
+    'sphinx.ext.coverage',
+    'sphinx.ext.mathjax',
     'numpydoc'
 ]
 
@@ -124,7 +125,7 @@ html_theme_options = {
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
-    #'vcs_pageview_mode': '',
+    # 'vcs_pageview_mode': '',
     # Toc options
     'collapse_navigation': True,
     'sticky_navigation': True,
