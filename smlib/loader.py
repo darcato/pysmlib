@@ -9,7 +9,6 @@ on different threads and sharing resources.
 '''
 
 from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog
-from threading import Thread
 import signal
 
 # Global variables
@@ -72,7 +71,7 @@ def printUnconnectedIOs(signum, frame):
     print("DISCONNECTED INPUTS:")
     for i in ios:
         if not i.connected():
-            print i.ioname()
+            print(i.ioname())
             s+=1
     print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
     signal.pause()

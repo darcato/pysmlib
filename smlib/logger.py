@@ -22,7 +22,7 @@ class fsmLogger(object):
             self.pushMsg('%8.2fs: %s - %s%s' %(tm, fsmLogger.levstr[lev], fsmname, msg))
             
     def pushMsg(self, msg):
-        print msg
+        print(msg)
 
     def resetTime(self):
         self.startime = time.time()
@@ -39,7 +39,7 @@ class fsmFileLogger(fsmLogger):
     
     def log(self, fsmname, lev, msg):
         if lev <= self._level:
-            if fsmname not in self.files.iterkeys():
+            if fsmname not in self.files.keys():
                 self.files[fsmname] = open(self.dir+"/"+self.prefix+"."+fsmname+".log", 'a')
             tm = datetime.now()
             self.pushMsg(self.files[fsmname], '%s: %s - %s\n' %(str(tm), fsmLogger.levstr[lev], msg))
@@ -49,7 +49,7 @@ class fsmFileLogger(fsmLogger):
         f.flush()  #to empty buffer after every message!
         
     def __del__(self):
-        for name, f in self.files.iteritems():
+        for name, f in self.files.items():
             if not f.closed:
                 print("Closing "+name+"\n")
                 f.close()

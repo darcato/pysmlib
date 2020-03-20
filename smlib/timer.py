@@ -3,7 +3,7 @@
 Timers to awake a fsm after a certain amount of time.
 
 @date: March 26, 2018
-@authors: Damiamo Bortolato, Davide Marcato 
+@authors: Damiamo Bortolato, Davide Marcato
 @email: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it
 '''
 
@@ -107,8 +107,8 @@ class fsmTimers(threading.Thread):
                 # un tempo di sleep corretto
                 self._cond.notify()
             #rilascia il lock
-        except Exception, e:
-            self.logE(repr(e))        
+        except Exception as e:
+            print(repr(e))
         finally:
             self._cond.release()
 

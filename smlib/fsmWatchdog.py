@@ -22,7 +22,7 @@ class fsmWatchdog(fsmBase):
         for fsm in fsms:
             wd = fsm.getWatchdogInput()
             if wd!=None:
-                inp, mode, interval = wd
+                inp = wd[0]
                 self.timers[inp.ioname()] = fsm
 
 
@@ -34,15 +34,15 @@ class fsmWatchdog(fsmBase):
         
 
     def run_entry(self):
-        for tmrName, fsm in self.timers.iteritems():
+        for tmrName, fsm in self.timers.items():
             #start with a random delay not to write all pvs at the same instant
-            inp, mode, interval = fsm.getWatchdogInput()
+            interval = fsm.getWatchdogInput()[2]
             randDelay = uniform(0, interval)
             self.tmrSet(tmrName, randDelay)
         self.logD("set %d watchdogs" % len(self.timers))
     
     def run_eval(self):
-        for tmrName, fsm in self.timers.iteritems():
+        for tmrName, fsm in self.timers.items():
             if self.tmrExpired(tmrName):
                 inp, mode, interval = fsm.getWatchdogInput()
                 self.tmrSet(tmrName, interval)

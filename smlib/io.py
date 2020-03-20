@@ -13,14 +13,14 @@ import re
 from collections import OrderedDict
 import numpy as np
 
-#classe che rappresenta un ingresso per le macchine a stati
+#class representing an IO with epics support for a finite state machine
 class epicsIO(object):
     def __init__(self, name):
         self._name = name
         self._data = {}     #keep all infos arriving with change callback
         self._conn = False  #keeps all infos arriving with connection callback
 
-        self._attached = set() # set che contiene le macchine a stati che utilizzano questo ingresso
+        self._attached = set() # set of finite state machines using this IO
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._cond = threading.Condition()
 
@@ -149,10 +149,10 @@ class mappedIOs(fsmIOs):
                         if cmd == "pattern":  #keywords of the config file
                             pattern = OrderedDict()  #will contain the naming convention elements, with each its format
                             strgen = ""   #will contain the whole string formats
-                            m = re.match(" *\((.*)\) *\((.*)\) *", expression)
+                            m = re.match(r" *\((.*)\) *\((.*)\) *", expression)
                             if m:
                                 strgen = m.group(1).strip().replace(" ","").replace("\"", "") #first part between {} = string definition
-                                strelm = re.findall("[^{}]*{([^{}]*)}[^{}]*", strgen) #parse all the single parts
+                                strelm = re.findall(r"[^{}]*{([^{}]*)}[^{}]*", strgen) #parse all the single parts
                                 patterns = m.group(2).split(",") #second part between {} = naming convention elements
                                 if not strelm or len(strelm)!=len(patterns):
                                     raise ValueError("inputMap ERROR, line {}: Failed to parse pattern elements".format(lines.index(line)))
@@ -182,7 +182,7 @@ class mappedIOs(fsmIOs):
                             cmap = OrderedDict() #map of this input: for each element of pattern there is a value
                             for k in range(len(pattern)):
                                 candidate = values[k].strip().replace("\"", "") #parse from file
-                                m = re.match(" *\$\((.*)\) *", candidate)  #$(MACRO)
+                                m = re.match(r" *\$\((.*)\) *", candidate)  #$(MACRO)
                                 if m:  #if this is a macro to be replaced
                                     candidate = m.group(1)  #get the macro name
                                     if candidate.upper() in replaces: #if there is a replacement for the macro in replaces
@@ -197,7 +197,7 @@ class mappedIOs(fsmIOs):
                         raise ValueError("inputMap ERROR, line {}: Declaring an input without first defining a pattern!".format(lines.index(line)))
             
         #inverse map, to perform back naming transformation
-        #self.inv_map = {v: k for k, v in self._map.iteritems()}
+        #self.inv_map = {v: k for k, v in self._map.items()}
 
     #call parent method to connect pvs with complete names
     #reads from calling fsm the targets and creates base pv name with those infos
@@ -206,15 +206,15 @@ class mappedIOs(fsmIOs):
 
         substitutions = ()  # a tuple containing the parts of pv name in order
         cstrgen = strgen # copy the string containing the format of each part
-        for pattern, v in cmap.iteritems():
-            m = re.match(" *<(.*)> *", v)   #these are parameters to be passed runtime
+        for pattern, v in cmap.items():
+            m = re.match(r" *<(.*)> *", v)   #these are parameters to be passed runtime
             if m:
                 v = m.group(1)
                 if v in args and args[v]!=None:
                     v = args[v] #get the value from args
                 else:
                     raise ValueError("Cannot find the arg: %s in the input creation, as required by input map" % v)
-            key, keydef = pattern
+            keydef = pattern[1]
             if keydef.endswith("d"):  #if we are dealing with an int value, let's format it now and then use it as a string
                 if v!="":             #this is done so that if we get a number as string doesn't crash
                     v = ("{"+keydef+"}").format(int(v))  #now the number is a string with the correct format
@@ -258,7 +258,7 @@ class fsmIO(object):
 
     def setBufSize(self, s):
         if s == 0:
-             self._avbuf = None        
+            self._avbuf = None
         else:
             self._avbuf = np.array([0.0]*s)
 

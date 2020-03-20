@@ -8,24 +8,24 @@ user interface to access all the functionalities of io, timers, logger etc.
 @email: damiano.bortolato@lnl.infn.it - davide.marcato@lnl.infn.it
 '''
 
+import threading
 from .timer import fsmTimers, fsmTimer
 from .io import fsmIOs, fsmIO
 from .logger import fsmLogger
-import threading
 
 # base class for a finite state machine running in a separate thread
 class fsmBase(threading.Thread):
     def __init__(self, name, **args):
         super(fsmBase, self).__init__(name=name)
         self._name = name
-        if not 'tmgr' in args:
+        if 'tmgr' not in args:
             self._tmgr = fsmTimers()
             self._tmgr.start()
         else:
             self._tmgr = args['tmgr']
             if not self._tmgr.isAlive():
                 self._tmgr.start()
-                
+
         self._timers = {}
         self._ios = args.get('ios', fsmIOs())
         self._logger = args.get('logger', fsmLogger())
@@ -53,7 +53,7 @@ class fsmBase(threading.Thread):
     def setSensLists(self, statesWithIos):
         # statesWithIos e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
-        for state, iolist in statesWithIos.iteritems():
+        for state, iolist in statesWithIos.items():
             iodict = {}
             for io in iolist:
                 iodict[io.ioname()] = io
@@ -225,7 +225,7 @@ class fsmBase(threading.Thread):
         return not name in self._timers or self._timers[name].expd()
 
     def isIoConnected(self):
-        stateios = self._cursens if self._cursens is not None else self._mirrors.itervalues()
+        stateios = self._cursens if self._cursens is not None else self._mirrors.values()
         return self.allof(stateios.values(), "connected")
 
     def anyof(self, objs, method):
