@@ -3,13 +3,16 @@
 # TO INSTALL (user):
 # pip install [-e] .
 #
-# TO UPLOAD NEW RELEASE (mantainer):
+# TO UPLOAD NEW RELEASE (maintainer):
 # 1 - git tag <new_tag>
-# 2 - python setup.py clean --all && python setup.py sdist bdist_wheel
-# 3 - twine upload dist/*
-# 4 - cd docs/docs/ && make html
-# 5 - git commit -am "Documentation update"
-# 6 - git push github master
+# 2 - python2 setup.py clean --all
+# 3 - rm -rf dist
+# 4 - python2 setup.py sdist bdist_wheel
+# 5 - python2 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+# 6 - python2 -m twine upload dist/*
+# 7 - cd docs/docs/ && make html
+# 8 - git commit -am "Documentation update"
+# 9 - git push github master
 
 from setuptools import setup
 import versioneer
