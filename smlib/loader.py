@@ -9,90 +9,83 @@ on different threads and sharing resources.
 '''
 
 import signal
-from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog
+from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog, fsmBase
 
-# Global variables
-__timerManager = fsmTimers()
-__verbosity = 2
-__logger = fsmLogger(__verbosity)
-__ioManager = fsmIOs()
-__repo = None
-__repoinput = None
-__ioMap = None
-__fsmsList = []
-__levelStrings = {"error": 0, "warning": 1, "info": 2, "debug": 3}
+# class to load multiple fsm
+class loader(object):
+    def __init__(self):
+        self._timerManager = fsmTimers()
+        self._verbosity = 2
+        self._logger = fsmLogger(self._verbosity)
+        self._ioManager = fsmIOs()
+        self._ioMap = None
+        self._fsmsList = []
+        self._levelStrings = {"error": 0, "warning": 1, "info": 2, "debug": 3}
 
+    def setVerbosity(self, level):
+        if isinstance(level, int):
+            n = max(0, min(level, 3))  # log level must be in range [0,3]
+        elif isinstance(level, str) and level.lower().strip() in self._levelStrings.keys():
+            n = self._levelStrings[level.lower().strip()]
+        else:
+            raise KeyError("Verbosity level \"%s\" not recognized!" % str(level))
 
-def setVerbosity(level):
-    if isinstance(level, int):
-        n = max(0, min(level, 3))  # log level must be in range [0,3]
-    elif isinstance(level, str) and level.lower().strip() in __levelStrings.keys():
-        n = __levelStrings[level.lower().strip()]
-    else:
-        raise KeyError("Verbosity level \"%s\" not recognized!" % str(level))
-
-    global __verbosity, __logger
-    __verbosity = n
-    __logger.changeLevel(n)
+        self._verbosity = n
+        self._logger.changeLevel(n)
 
 
-def logToFile(path, prefix):
-    global __logger
-    __logger = fsmFileLogger(__verbosity, path, prefix)
+    def logToFile(self, path, prefix):
+        self._logger = fsmFileLogger(self._verbosity, path, prefix)
 
 
-def setIoMap(iomap):
-    global __ioMap, __ioManager
-    __ioMap = iomap
-    __ioManager = mappedIOs(__ioMap)
+    def setIoMap(self, iomap):
+        self._ioMap = iomap
+        self._ioManager = mappedIOs(self._ioMap)
 
 
-def load(fsmClass, name, *args, **kwargs):
-    global __fsmsList, __timerManager, __ioManager, __logger
-    kwargs["tmgr"] = __timerManager
-    kwargs["ios"] = __ioManager
-    kwargs["logger"] = __logger
-    # TODO:check if it is not a derivate of fsmBase
-    fsm = fsmClass(name, *args, **kwargs)  # instance class
-    __fsmsList.append(fsm)
+    def load(self, fsmClass, name, *args, **kwargs):
+        kwargs["tmgr"] = self._timerManager
+        kwargs["ios"] = self._ioManager
+        kwargs["logger"] = self._logger
+        if not issubclass(fsmClass, fsmBase):
+            raise TypeError("%s is not a subclass of fsmBase" % repr(fsmClass))
+        fsm = fsmClass(name, *args, **kwargs)  # instance class
+        self._fsmsList.append(fsm)
 
 
-def killAll(signum, frame):
-    global __fsmsList, __timerManager
-    #print("Signal: %d -> Going to kill all fsms" % signum)
-    for fsm in __fsmsList:
-        if fsm.isAlive():
-            fsm.kill()
-    print("Killed all the fsms")
-    if __timerManager.isAlive():  # if no fsm is loaded it won't be alive
-        __timerManager.kill()
-    print("Killed the timer manager")
+    def killAll(self, signum, frame):
+        #print("Signal: %d -> Going to kill all fsms" % signum)
+        for fsm in self._fsmsList:
+            if fsm.isAlive():
+                fsm.kill()
+        print("Killed all the fsms")
+        if self._timerManager.isAlive():  # if no fsm is loaded it won't be alive
+            self._timerManager.kill()
+        print("Killed the timer manager")
 
 
-def printUnconnectedIOs(signum, frame):
-    global __ioManager
-    ios = __ioManager.getAll()
-    s = 0
-    print("DISCONNECTED INPUTS:")
-    for i in ios:
-        if not i.connected():
-            print(i.ioname())
-            s += 1
-    print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
-    signal.pause()
+    def printUnconnectedIOs(self, signum, frame):
+        ios = self._ioManager.getAll()
+        s = 0
+        print("DISCONNECTED INPUTS:")
+        for i in ios:
+            if not i.connected():
+                print(i.ioname())
+                s += 1
+        print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
+        signal.pause()
 
 
-def start():
-    global __fsmsList, __timerManager, __ioManager, __logger
-    # start another fsm to report if all the others are alive to epics db
-    repo = fsmWatchdog("REPORT", __fsmsList, tmgr=__timerManager, ios=__ioManager, logger=__logger)
-    __fsmsList.append(repo)
+    def start(self):
+        # start another fsm to report if all the others are alive to epics db
+        wd = fsmWatchdog("REPORT", self._fsmsList, tmgr=self._timerManager, ios=self._ioManager, logger=self._logger)
+        self._fsmsList.append(wd)
 
-    for thread in __fsmsList:
-        thread.start()
-    print("%d fsms started!" % (len(__fsmsList)-1))  # do not count reported (not issued by user)
+        for thread in self._fsmsList:
+            thread.start()
+        print("%d fsms started!" % (len(self._fsmsList)-1))  # do not count fsmWatchdog (not issued by user)
 
-    # wait for events
-    signal.signal(signal.SIGINT, killAll)
-    signal.signal(signal.SIGUSR1, printUnconnectedIOs)
-    signal.pause()
+        # wait for events
+        signal.signal(signal.SIGINT, self.killAll)
+        signal.signal(signal.SIGUSR1, self.printUnconnectedIOs)
+        signal.pause()

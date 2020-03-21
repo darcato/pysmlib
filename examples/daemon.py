@@ -11,26 +11,27 @@ An example of a startup script to load a pysmlib daemon
 from smlib import loader
 from myfsm import myfsm
 
+l = loader()
 
 ## -------------------
 # logger options
 ## -------------------
-loader.setVerbosity(4)  ##use only this if you want to print log to shell
+l.setVerbosity(4)  ##use only this if you want to print log to shell
 #loader.logToFile("mypath", "daemon")  ##use also this if you want to print to file
 
 ## -------------------
 # inputs options
 ## -------------------
-#loader.setIoMap("pathToMapFile")  #this will set the map file path
+#l.setIoMap("pathToMapFile")  #this will set the map file path
 
 
 ## -------------------
 # load each fsm
 ## -------------------
-loader.load(myfsm, "fsm1", "ciao", "-come")
-loader.load(myfsm, "fsm2", "ciao")
+l.load(myfsm, "fsm1", "ciao", "-come")
+l.load(myfsm, "fsm2", "ciao")
 
 ## -------------------
 # start execution
 ## -------------------
-loader.start()
+l.start()

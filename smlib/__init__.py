@@ -35,4 +35,4 @@ from .timer import fsmTimers
 from .io import fsmIOs, mappedIOs
 from .fsmTemplate import fsmTemplate
 from .fsmWatchdog import fsmWatchdog
-from . import loader
+from .loader import loader
