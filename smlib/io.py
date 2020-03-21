@@ -262,6 +262,9 @@ class fsmIO(object):
     def setBufSize(self, s):
         if s == 0:
             self._circBuf = None
+        elif self._circBuf is not None:
+            # new buffer with old data and new maxlen
+            self._circBuf = deque(self._circBuf, maxlen=s)
         else:
             self._circBuf = deque(maxlen=s)
 
