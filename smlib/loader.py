@@ -50,7 +50,7 @@ class loader(object):
         fsm = fsmClass(name, *args, **kwargs)  # instance class
         self._fsmsList.append(fsm)
 
-    def killAll(self, signum, frame):
+    def killAll(self, signum, frame): # pylint: disable=unused-argument
         #print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm in self._fsmsList:
             if fsm.isAlive():
@@ -60,7 +60,7 @@ class loader(object):
             self._timerManager.kill()
         print("Killed the timer manager")
 
-    def printUnconnectedIOs(self, signum, frame):
+    def printUnconnectedIOs(self, signum, frame): # pylint: disable=unused-argument
         ios = self._ioManager.getAll()
         s = 0
         print("DISCONNECTED INPUTS:")
