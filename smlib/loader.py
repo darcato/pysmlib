@@ -11,6 +11,7 @@ on different threads and sharing resources.
 import signal
 from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdog, fsmBase
 
+
 # class to load multiple fsm
 class loader(object):
     def __init__(self):
@@ -33,15 +34,12 @@ class loader(object):
         self._verbosity = n
         self._logger.changeLevel(n)
 
-
     def logToFile(self, path, prefix):
         self._logger = fsmFileLogger(self._verbosity, path, prefix)
-
 
     def setIoMap(self, iomap):
         self._ioMap = iomap
         self._ioManager = mappedIOs(self._ioMap)
-
 
     def load(self, fsmClass, name, *args, **kwargs):
         kwargs["tmgr"] = self._timerManager
@@ -51,7 +49,6 @@ class loader(object):
             raise TypeError("%s is not a subclass of fsmBase" % repr(fsmClass))
         fsm = fsmClass(name, *args, **kwargs)  # instance class
         self._fsmsList.append(fsm)
-
 
     def killAll(self, signum, frame):
         #print("Signal: %d -> Going to kill all fsms" % signum)
@@ -63,7 +60,6 @@ class loader(object):
             self._timerManager.kill()
         print("Killed the timer manager")
 
-
     def printUnconnectedIOs(self, signum, frame):
         ios = self._ioManager.getAll()
         s = 0
@@ -74,7 +70,6 @@ class loader(object):
                 s += 1
         print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
         signal.pause()
-
 
     def start(self):
         # start another fsm to report if all the others are alive to epics db
