@@ -261,9 +261,9 @@ class fsmIO(object):
 
     def setBufSize(self, s):
         if s == 0:
-            self._avbuf = None
+            self._circBuf = None
         else:
-            self._avbuf = deque(maxlen=s)
+            self._circBuf = deque(maxlen=s)
 
     def update(self, reason, cbdata):
         if reason == 'change':
@@ -271,8 +271,8 @@ class fsmIO(object):
             self._data = cbdata
             self._pval = self._value
             self._value = self._data.get('value', None)
-            if self._value is not None and self._avbuf is not None:
-                self._avbuf.append(self._value)
+            if self._value is not None and self._circBuf is not None:
+                self._circBuf.append(self._value)
 
         elif reason == 'conn':
             self._currcb = reason
@@ -352,20 +352,20 @@ class fsmIO(object):
         return self._value
 
     def valAvg(self):
-        if self._avbuf is None or len(self._avbuf) < 1:
+        if self._circBuf is None or len(self._circBuf) < 1:
             return self._value
-        return mean(self._avbuf)
+        return mean(self._circBuf)
 
     def valStd(self):
-        if self._avbuf is None or len(self._avbuf) < 2:
+        if self._circBuf is None or len(self._circBuf) < 2:
             return 0
-        return stdev(self._avbuf)
+        return stdev(self._circBuf)
 
     def valTrend(self, k=1):
-        if self._avbuf is None or len(self._avbuf) < 2:
+        if self._circBuf is None or len(self._circBuf) < 2:
             return 0
-        s = stdev(self._avbuf)
-        d = self._avbuf[0] - self._avbuf[-1]
+        s = stdev(self._circBuf)
+        d = self._circBuf[-1] - self._circBuf[0]
         if d > k*s:
             return 1
         if d < -k*s:
