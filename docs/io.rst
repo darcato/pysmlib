@@ -158,17 +158,24 @@ of time. These methods cover most common use cases.
 
     :returns: Standard deviation of the elements on the buffer.
 
-.. method:: valTrend ()
+.. method:: valTrend (k=1)
 
+    :param k: comparison coefficient
+    :type k: float, optional
     :returns: 0 = flat, 1 = increasing, -1 = decreasing
+
+    This method compares the standard deviation of the last ``numOfElements``
+    values received (as stored in the circular buffer) and the difference 
+    between the last and the first value in the buffer to find the increasing
+    or decreasing trend in the series. 
 
     code::
 
-        s = self._avbuf.std()                 # Standard deviation
-        d = self._avbuf[0] - self._avbuf[-1]  # newer element - oldest element
-        if d > s:
+        s = stdev(self._circBuf)                  # Standard deviation
+        d = self._circBuf[-1] - self._circBuf[0]  # last element - oldest element
+        if d > k*s:
             return 1
-        if d < -s:
+        if d < -k*s:
             return -1
         return 0
 
