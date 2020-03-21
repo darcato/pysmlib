@@ -351,16 +351,19 @@ class fsmIO(object):
     def val(self):
         return self._value
 
+    # return the average values in the circular buffer
     def valAvg(self):
         if self._circBuf is None or len(self._circBuf) < 1:
             return self._value
         return mean(self._circBuf)
 
+    # return the standard deviation of the circular buffer
     def valStd(self):
         if self._circBuf is None or len(self._circBuf) < 2:
             return 0
         return stdev(self._circBuf)
 
+    # return the trend [0 = flat, 1 = increasing, -1 = decreasing]
     def valTrend(self, k=1):
         if self._circBuf is None or len(self._circBuf) < 2:
             return 0
