@@ -22,7 +22,7 @@ now = datetime.datetime.now()
 # -- Project information -----------------------------------------------------
 
 project = u'pysmlib'
-copyright = u'%d, Davide Marcato' % now.year
+copyright = u'%d, Davide Marcato' % now.year # pylint: disable=redefined-builtin
 author = u'Davide Marcato, Damiano Bortolato'
 
 # version = The short X.Y version
