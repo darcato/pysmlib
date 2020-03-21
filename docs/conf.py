@@ -61,8 +61,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.extlinks',
     'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'numpydoc'
+    'sphinx.ext.mathjax'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

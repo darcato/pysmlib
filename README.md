@@ -38,7 +38,7 @@ pip install .
 
 ### Dependencies
 
-As of today, only python 2.7 is supported. Pyepics and numpy modules are
+As of today, only python 2.7 is supported. Pyepics is
 required and automatically installed by pip. Sphinx and its theme "Read the
 Docs" are required to build the documentation.
 

@@ -31,5 +31,5 @@ setup(name='pysmlib',
       author_email='davide.marcato@lnl.infn.it',
       license='GPLv3',
       packages=['smlib'],
-      install_requires=['pyepics', 'numpy'],
+      install_requires=['pyepics'],
       zip_safe=False)

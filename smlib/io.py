@@ -8,10 +8,10 @@ Input - Output objects for finite state machines.
 '''
 
 import re
-from collections import OrderedDict
+from collections import OrderedDict, deque
+from statistics import mean, stdev
 import threading
 import epics
-import numpy as np
 
 
 # class representing an IO with epics support for a finite state machine
@@ -263,7 +263,7 @@ class fsmIO(object):
         if s == 0:
             self._avbuf = None
         else:
-            self._avbuf = np.array([0.0]*s)
+            self._avbuf = deque(maxlen=s)
 
     def update(self, reason, cbdata):
         if reason == 'change':
@@ -272,8 +272,7 @@ class fsmIO(object):
             self._pval = self._value
             self._value = self._data.get('value', None)
             if self._value is not None and self._avbuf is not None:
-                self._avbuf = np.roll(self._avbuf, 1)
-                self._avbuf[0] = self._value
+                self._avbuf.append(self._value)
 
         elif reason == 'conn':
             self._currcb = reason
@@ -353,19 +352,23 @@ class fsmIO(object):
         return self._value
 
     def valAvg(self):
-        return self._value if self._avbuf is None else self._avbuf.mean()
+        if self._avbuf is None or len(self._avbuf) < 1:
+            return self._value
+        return mean(self._avbuf)
 
     def valStd(self):
-        return self._value if self._avbuf is None else self._avbuf.std()
-
-    def valTrend(self):
-        if self._avbuf is None:
+        if self._avbuf is None or len(self._avbuf) < 2:
             return 0
-        s = self._avbuf.std()
+        return stdev(self._avbuf)
+
+    def valTrend(self, k=1):
+        if self._avbuf is None or len(self._avbuf) < 2:
+            return 0
+        s = stdev(self._avbuf)
         d = self._avbuf[0] - self._avbuf[-1]
-        if d > s:
+        if d > k*s:
             return 1
-        if d < -s:
+        if d < -k*s:
             return -1
         return 0
 

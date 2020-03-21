@@ -143,7 +143,7 @@ of time. These methods cover most common use cases.
     :type numOfElements: int
 
     A successive call to this method will discard older buffer and create a new
-    one, so transient effects can be observed. Numpy arrays are used.
+    one, so transient effects can be observed. Python ``deque`` are used.
 
 .. method:: valAvg ()
 

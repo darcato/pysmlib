@@ -5,7 +5,6 @@ Download and Installation
 ====================================
 
 .. _pyepics:        http://cars9.uchicago.edu/software/python/pyepics3/
-.. _numpy:          http://www.numpy.org/
 .. _Sphinx:         http://www.sphinx-doc.org/en/master/
 .. _Read the Docs:  https://readthedocs.org/
 .. _Github:         https://github.com/darcato/pysmlib
@@ -14,10 +13,9 @@ Download and Installation
 Prerequisites
 ~~~~~~~~~~~~~~~
 This package requires Python version 2.7, while the support for newer version is
-still in development. Two modules are mandatory: `numpy`_ for
-the internal handling of vectors and `PyEpics`_ which provides the EPICS Channel
-Access support. Both are automatically installed when using pip, but you may 
-have to install the EPICS base on your system and configure `PyEpics`_ to 
+still in development. One module is mandatory: `PyEpics`_ which provides the 
+EPICS Channel Access support. It is automatically installed when using pip, 
+but you may have to install the EPICS base on your system and configure `PyEpics`_ to 
 locate ``libca``. See `PyEpics`_ documentation for further details.
 
 `Sphinx`_ and its theme `Read the Docs`_ are required to build this 
