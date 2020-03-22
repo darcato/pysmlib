@@ -159,8 +159,8 @@ class mappedIOs(fsmIOs):
                                 patterns = m.group(2).split(",")  # second part between {} = naming convention elements
                                 if not strelm or len(strelm) != len(patterns):
                                     raise ValueError("inputMap ERROR, line {}: Failed to parse pattern elements".format(lines.index(line)))
-                                for k in range(len(patterns)):
-                                    p = patterns[k].strip().replace(" ", "").replace("\"", "")
+                                for k, kpattern in enumerate(patterns):
+                                    p = kpattern.strip().replace(" ", "").replace("\"", "")
                                     if p != "":
                                         if p not in pattern:
                                             pattern[p] = strelm[k]  # populate pattern
