@@ -63,6 +63,10 @@ moment ago.
 
     :returns: ``True`` if a previous (or no) :meth:`put()` on this input has completed, ``False`` if a :meth:`put()` is being executed in this moment.
 
+.. method:: time()
+
+    :returns: the processing time associated with the current value. This is a datetime object.
+
 .. method:: pval ()
 
     :returns: the previous value of the input.
@@ -145,14 +149,17 @@ of time. These methods cover most common use cases.
     A successive call to this method will discard older buffer and create a new
     one, so transient effects can be observed. Python ``deque`` are used.
 
-.. method:: valAvg ()
+.. method:: valAvg (timeWeight=False)
 
+    :param timeWeight: ``True`` if you want a time-weighted average.
+    :type timeWeight: bool, optional.
     :returns: The average value of the elements on the buffer.
 
     Keep in mind that values are accumulated as they arrive, in a event driven
     way. This means that if a value does not change for a long time, no event is
-    generated and the average value may be misleading. In other words: the
-    values are not weighted with time.
+    generated and the simple average value could be misleading. If you want
+    to keep into account the time elapsed with each value, set ``timeWeight``
+    to ``True``.
 
 .. method:: valStd ()
 
