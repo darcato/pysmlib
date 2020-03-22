@@ -10,6 +10,7 @@ Input - Output objects for finite state machines.
 import re
 from collections import OrderedDict, deque
 from statistics import mean, stdev
+from datetime import datetime
 import threading
 import epics
 
@@ -95,7 +96,6 @@ class epicsIO(object):
 class fsmIOs(object):
     def __init__(self):
         self._ios = {}
-
 
     def get(self, name, fsm, **args):
         # first time this input was requested: we create and attach it
@@ -250,6 +250,7 @@ class fsmIO(object):
         self._name = None
         self._value = None  # pv value
         self._pval = None  # pv previous value
+        self._timestamp = 0  # value timestamp
         self._currcb = None  # current callback
         self._putComplete = True  # keep track of put completement
 
@@ -261,21 +262,29 @@ class fsmIO(object):
 
     def setBufSize(self, s):
         if s == 0:
-            self._circBuf = None
-        elif self._circBuf is not None:
+            self._cbufVal = None
+            self._cbufTime = None
+        elif self._cbufVal is not None:
             # new buffer with old data and new maxlen
-            self._circBuf = deque(self._circBuf, maxlen=s)
+            self._cbufVal = deque(self._cbufVal, maxlen=s)
+            self._cbufTime = deque(self._cbufTime, maxlen=s)
         else:
-            self._circBuf = deque(maxlen=s)
+            self._cbufVal = deque(maxlen=s)
+            self._cbufTime = deque(maxlen=s)
 
     def update(self, reason, cbdata):
         if reason == 'change':
             self._currcb = reason
             self._data = cbdata
             self._pval = self._value
+            ptime = self._timestamp
             self._value = self._data.get('value', None)
-            if self._value is not None and self._circBuf is not None:
-                self._circBuf.append(self._value)
+            self._timestamp = self._data.get('timestamp', 0)
+            if self._value is not None and self._cbufVal is not None:
+                self._cbufVal.append(self._value)
+                # delta in seconds [float] -> microsecond precision
+                # how much previous value lasted
+                self._cbufTime.append(self._timestamp-ptime)
 
         elif reason == 'conn':
             self._currcb = reason
@@ -355,23 +364,29 @@ class fsmIO(object):
         return self._value
 
     # return the average values in the circular buffer
-    def valAvg(self):
-        if self._circBuf is None or len(self._circBuf) < 1:
+    def valAvg(self, timeWeight=False):
+        if self._cbufVal is None or len(self._cbufVal) < 2:
             return self._value
-        return mean(self._circBuf)
+
+        if timeWeight:
+            times = list(self._cbufTime)[1:].append(datetime.now().timestamp()-self._timestamp)
+            vt = [v * t for v, t in zip(self._cbufVal, times)]
+            return sum(vt)/sum(times)
+
+        return mean(self._cbufVal)
 
     # return the standard deviation of the circular buffer
     def valStd(self):
-        if self._circBuf is None or len(self._circBuf) < 2:
+        if self._cbufVal is None or len(self._cbufVal) < 2:
             return 0
-        return stdev(self._circBuf)
+        return stdev(self._cbufVal)
 
     # return the trend [0 = flat, 1 = increasing, -1 = decreasing]
     def valTrend(self, k=1):
-        if self._circBuf is None or len(self._circBuf) < 2:
+        if self._cbufVal is None or len(self._cbufVal) < 2:
             return 0
-        s = stdev(self._circBuf)
-        d = self._circBuf[-1] - self._circBuf[0]
+        s = stdev(self._cbufVal)
+        d = self._cbufVal[-1] - self._cbufVal[0]
         if d > k*s:
             return 1
         if d < -k*s:
@@ -381,6 +396,10 @@ class fsmIO(object):
     # return the pv previuos value
     def pval(self):
         return self._pval
+
+    # return the last timestamp
+    def time(self):
+        return datetime.fromtimestamp(self._timestamp)
 
     # return one element from pv data, choosen by key
     def data(self, key):
