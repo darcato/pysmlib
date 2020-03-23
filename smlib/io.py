@@ -10,6 +10,7 @@ Input - Output objects for finite state machines.
 import re
 from collections import OrderedDict, deque
 from statistics import mean, stdev
+from math import sqrt
 from datetime import datetime
 import threading
 import epics
@@ -375,10 +376,20 @@ class fsmIO(object):
 
         return mean(self._cbufVal)
 
-    # return the standard deviation of the circular buffer
-    def valStd(self):
+    # return the sample standard deviation of the circular buffer
+    def valStd(self, timeWeight=False):
         if self._cbufVal is None or len(self._cbufVal) < 2:
             return 0
+
+        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
+        # https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/weightsd.pdf
+        if timeWeight:
+            m = self.valAvg(timeWeight=True)
+            times = list(self._cbufTime)[1:].append(datetime.now().timestamp()-self._timestamp)
+            wdiff = [t*((v-m)*(v-m)) for v, t in zip(self._cbufVal, times)]
+            n = len(times)
+            return sqrt(sum(wdiff)/((n-1)*sum(times)/n))
+
         return stdev(self._cbufVal)
 
     # return the trend [0 = flat, 1 = increasing, -1 = decreasing]
