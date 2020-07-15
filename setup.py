@@ -1,11 +1,11 @@
 # Python installation file
-# 
+#
 # TO INSTALL (user):
 # pip install [-e] .
 #
 # TO UPLOAD NEW RELEASE (maintainer):
 # 1 - git tag <new_tag>
-# 2 - python2 setup.py clean --all
+# 2 - python setup.py clean --all
 # 3 - rm -rf dist
 # 4 - python2 setup.py sdist bdist_wheel
 # 5 - python2 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
@@ -23,6 +23,7 @@ with open("README.md", "r") as fh:
 setup(name='pysmlib',
       version=versioneer.get_version(),
       description='Python Finite State Machines for EPICS',
+      python_requires='>=3.6',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://darcato.github.io/pysmlib/docs/html/',

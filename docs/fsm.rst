@@ -137,116 +137,116 @@ In these cases, all the methods on the inputs which detect edges
     classes is shared between all the FSMs on an executable. The :ref:`loader`
     automatically takes care of these arguments.
 
-.. method:: gotoState (stateName)
+    .. method:: gotoState (stateName)
 
-    Force a transition from the current state to "stateName". First of all the
-    ``exit`` method of the current state is executed, then the library will
-    look for the three methods associated to the string "stateName", as
-    described above, will execute the ``entry`` and ``eval`` method, then
-    wait for an event. When this arrives, the ``stateName_eval`` method is executed again.
+        Force a transition from the current state to "stateName". First of all the
+        ``exit`` method of the current state is executed, then the library will
+        look for the three methods associated to the string "stateName", as
+        described above, will execute the ``entry`` and ``eval`` method, then
+        wait for an event. When this arrives, the ``stateName_eval`` method is executed again.
 
-    :param stateName:  the name of the next state
-    :type stateName:  String
+        :param stateName:  the name of the next state
+        :type stateName:  String
 
-.. method:: gotoPrevState ()
+    .. method:: gotoPrevState ()
 
-    Return to the previous state
+        Return to the previous state
 
-.. method:: fsmname ()
+    .. method:: fsmname ()
 
-    Return the FSM name
-    
-    :returns: FSM name.
+        Return the FSM name
+        
+        :returns: FSM name.
 
-.. method:: logE (msg)
+    .. method:: logE (msg)
 
-    Write to log with ERROR verbosity level = 0.
+        Write to log with ERROR verbosity level = 0.
 
-    :param msg: the log message
-    :type msg: string
+        :param msg: the log message
+        :type msg: string
 
-.. method:: logW (msg)
+    .. method:: logW (msg)
 
-    Write to log with WARNING verbosity level = 1.
+        Write to log with WARNING verbosity level = 1.
 
-    :param msg: the log message
-    :type msg: string
-    
-.. method:: logI (msg)
+        :param msg: the log message
+        :type msg: string
+        
+    .. method:: logI (msg)
 
-    Write to log with INFO verbosity level = 2.
+        Write to log with INFO verbosity level = 2.
 
-    :param msg: the log message
-    :type msg: string
-    
-.. method:: logD (msg)
+        :param msg: the log message
+        :type msg: string
+        
+    .. method:: logD (msg)
 
-    Write to log with DEBUG verbosity level = 3.
+        Write to log with DEBUG verbosity level = 3.
 
-    :param msg: the log message
-    :type msg: string
-    
-.. method:: connect (name[, **args])
+        :param msg: the log message
+        :type msg: string
+        
+    .. method:: connect (name[, **args])
 
-    :param name: the PV name, or the map reference to a PV name.
-    :type name: string
-    :param args: optional arguments to be passed to :meth:`fsmIOs.get()`
-    :returns: :class:`fsmIO` object
+        :param name: the PV name, or the map reference to a PV name.
+        :type name: string
+        :param args: optional arguments to be passed to :meth:`fsmIOs.get()`
+        :returns: :class:`fsmIO` object
 
-    The optional arguments can be used by :class:`fsmIOs` derivate classes to
-    get further specification on the desired input. See :ref:`io-mapping`.
+        The optional arguments can be used by :class:`fsmIOs` derivate classes to
+        get further specification on the desired input. See :ref:`io-mapping`.
 
-.. method:: start ()
+    .. method:: start ()
 
-    Start FSM execution.
+        Start FSM execution.
 
-.. method:: kill ()
+    .. method:: kill ()
 
-    Stop FSM execution. FSM are derivate of :class:`threading.Thread` so they
-    cannot be restarted after a kill, but a new instance must be created.
-    However, a better approach is to use an idle state where the FSM will do
-    nothing, instead of killing it.
+        Stop FSM execution. FSM are derivate of :class:`threading.Thread` so they
+        cannot be restarted after a kill, but a new instance must be created.
+        However, a better approach is to use an idle state where the FSM will do
+        nothing, instead of killing it.
 
-.. method:: tmrSet (name, timeout[, reset=True])
+    .. method:: tmrSet (name, timeout[, reset=True])
 
-    Create a new timer which will expire in `timeout` seconds, generating an
-    timer expired event, which will execute the FSM current state (at expiration
-    time).
+        Create a new timer which will expire in `timeout` seconds, generating an
+        timer expired event, which will execute the FSM current state (at expiration
+        time).
 
-    :param name: A unique identifier of this timer. The same timer can be reused more than once recalling the same name.
-    :type name: string
-    :param timeout: The expiration time, starting from the invocation of :meth:`tmrSet`. [s]
-    :type timeout: float
-    :param reset: If this is ``True`` the timer can be re-initialized before expiration. Default = ``True``.
-    :type reset: boolean
+        :param name: A unique identifier of this timer. The same timer can be reused more than once recalling the same name.
+        :type name: string
+        :param timeout: The expiration time, starting from the invocation of :meth:`tmrSet`. [s]
+        :type timeout: float
+        :param reset: If this is ``True`` the timer can be re-initialized before expiration. Default = ``True``.
+        :type reset: boolean
 
-.. method:: tmrExpired (name)
+    .. method:: tmrExpired (name)
 
-    This will return ``True`` if the timer has expired or does not exist.
-    
-    :returns: timer expired condition
+        This will return ``True`` if the timer has expired or does not exist.
+        
+        :returns: timer expired condition
 
-.. method:: isIoConnected ()
+    .. method:: isIoConnected ()
 
-    This will return ``True`` only when all the FSM inputs are connected,
-    meaning that they have received the first connection event.
+        This will return ``True`` only when all the FSM inputs are connected,
+        meaning that they have received the first connection event.
 
-    :returns: ``True`` if all I/Os are connected.
+        :returns: ``True`` if all I/Os are connected.
 
-.. method:: setWatchdogInput (input[, mode="on-off"[, interval=1]])
+    .. method:: setWatchdogInput (input[, mode="on-off"[, interval=1]])
 
-    This set an input to be used for the :ref:`watchdog` logic.
-    
-    :param input: the input to use as watchdog.
-    :type input: :class:`fsmIO` object.
-    :param mode: One of "on-off", "off", "on".
-    :type mode: string
-    :param interval: the watchdog period [s].
-    :type interval: float
-    :raises: ValueError: Unrecognized input type or mode.
+        This set an input to be used for the :ref:`watchdog` logic.
+        
+        :param input: the input to use as watchdog.
+        :type input: :class:`fsmIO` object.
+        :param mode: One of "on-off", "off", "on".
+        :type mode: string
+        :param interval: the watchdog period [s].
+        :type interval: float
+        :raises: ValueError: Unrecognized input type or mode.
 
-.. method:: getWatchdogInput ()
+    .. method:: getWatchdogInput ()
 
-    Returns the input set as a watchdog or ``None``.
+        Returns the input set as a watchdog or ``None``.
 
-    :returns: watchdog input or ``None``.
+        :returns: watchdog input or ``None``.

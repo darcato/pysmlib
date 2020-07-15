@@ -12,8 +12,8 @@ Download and Installation
 
 Prerequisites
 ~~~~~~~~~~~~~~~
-This package requires Python version 2.7, while the support for newer version is
-still in development. One module is mandatory: `PyEpics`_ which provides the 
+This package requires Python version 3.6+. 
+One module is mandatory: `PyEpics`_ which provides the 
 EPICS Channel Access support. It is automatically installed when using pip, 
 but you may have to install the EPICS base on your system and configure `PyEpics`_ to 
 locate ``libca``. See `PyEpics`_ documentation for further details.
