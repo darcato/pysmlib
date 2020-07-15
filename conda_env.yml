@@ -1,0 +1,12 @@
+name: smlib3
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - pcaspy
+  - pytest
+  - pyepics
+  - sphinx
+  - sphinx_rtd_theme
+  - twine
+
