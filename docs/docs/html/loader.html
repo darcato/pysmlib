@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Timers" href="timer.html" />
     <link rel="prev" title="Logger" href="logger.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -96,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="io.html">Accessing I/O</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Loader and fsm execution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-loader"><code class="docutils literal notranslate"><span class="pre">loader</span></code> module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loader-class-reference"><code class="xref py py-class docutils literal notranslate"><span class="pre">loader</span></code> class reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-run-the-application">How to run the application</a></li>
 </ul>
@@ -174,94 +176,74 @@
 sharing resources. All the configuration options are available via convenient
 methods. It takes care of instantiating the classes for loggers, timers, and
 shared inputs and all the instances of the user defined FSM as required.</p>
-<div class="section" id="module-loader">
-<span id="loader-module"></span><h2><a class="reference internal" href="#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> module<a class="headerlink" href="#module-loader" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="loader.loader.setVerbosity">
-<code class="descclassname">loader.</code><code class="descname">setVerbosity</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.setVerbosity" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> (<em>int</em>) – The verbosity level: all the messages with lower or equal level are printed.</td>
-</tr>
-</tbody>
-</table>
+<div class="section" id="loader-class-reference">
+<h2><a class="reference internal" href="#id0" title="loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">loader</span></code></a> class reference<a class="headerlink" href="#loader-class-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="id0">
+<em class="property">class </em><code class="sig-name descname">loader</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of the loader class.</p>
 </dd></dl>
 
-<dl class="function">
-<dt>
-<code class="descclassname">loader.</code><code class="descname">setVerbosity</code><span class="sig-paren">(</span><em>levelStr</em><span class="sig-paren">)</span></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>levelStr</strong> – The verbosity level, one of “error”, “warning”, “info”,”debug”.</td>
-</tr>
-</tbody>
-</table>
+<dl class="py method">
+<dt id="setVerbosity">
+<code class="sig-name descname">setVerbosity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#setVerbosity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em><em> or </em><em>string</em>) – The verbosity level: all the messages with lower or equal level are printed.
+Accepted parameters are: [0, 1, 2, 3] or, equivalently, [“error”, “warning”, “info”,”debug”].</p>
+</dd>
+</dl>
 <p>The available verbosity levels are:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Error: these messages are always printed, and contain critical information on failures.</li>
-<li>Warning: these messages are printed only when the verbosity level is 1 or higher.</li>
-<li>Info: these messages are printed only when the verbosity level is 2 or higher</li>
-<li>Debug: these messages are printed only when the verbosity level is 3 or higher. They contain a lot of detailed information useful while debugging applications.</li>
+<li><p>Error: these messages are always printed, and contain critical information on failures.</p></li>
+<li><p>Warning: these messages are printed only when the verbosity level is 1 or higher.</p></li>
+<li><p>Info: these messages are printed only when the verbosity level is 2 or higher</p></li>
+<li><p>Debug: these messages are printed only when the verbosity level is 3 or higher. They contain a lot of detailed information useful while debugging applications.</p></li>
 </ul>
 </div></blockquote>
 </dd></dl>
 
-<dl class="function">
-<dt id="loader.loader.logToFile">
-<code class="descclassname">loader.</code><code class="descname">logToFile</code><span class="sig-paren">(</span><em>path</em>, <em>prefix</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.logToFile" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> – The path of a directory where to store all the logs. Can be both relative or absolute.</li>
-<li><strong>prefix</strong> (<em>string</em>) – A prefix for log file names, to identify all the logs belonging to this executable.</li>
+<dl class="py method">
+<dt id="logToFile">
+<code class="sig-name descname">logToFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#logToFile" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The path of a directory where to store all the logs. Can be both relative or absolute.</p></li>
+<li><p><strong>prefix</strong> (<em>string</em>) – A prefix for log file names, to identify all the logs belonging to this executable.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>While logging to file, a file will be created for each FSM loaded, plus one
 more for all the information on the main thread. If this function is called,
 the logger will be instantiated from <a class="reference internal" href="logger.html#fsmFileLogger" title="fsmFileLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmFileLogger</span></code></a> instead of the
 default one (<a class="reference internal" href="logger.html#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a>).</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="loader.loader.setIoMap">
-<code class="descclassname">loader.</code><code class="descname">setIoMap</code><span class="sig-paren">(</span><em>ioMapPath</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.setIoMap" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ioMapPath</strong> (<em>string</em>) – The path of a file defining a map for the inputs. See <a class="reference internal" href="io.html#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a>.</td>
-</tr>
-</tbody>
-</table>
+<dl class="py method">
+<dt id="setIoMap">
+<code class="sig-name descname">setIoMap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ioMapPath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#setIoMap" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ioMapPath</strong> (<em>string</em>) – The path of a file defining a map for the inputs. See <a class="reference internal" href="io.html#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a>.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="loader.loader.load">
-<code class="descclassname">loader.</code><code class="descname">load</code><span class="sig-paren">(</span><em>myFsmClass</em>, <em>name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.load" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myFsmClass</strong> – The definition of a FSM.</li>
-<li><strong>name</strong> (<em>string</em>) – The unique name of this FSM instance.</li>
-<li><strong>args</strong> – The custom arguments to be passed to the FSM constructor.</li>
-<li><strong>kwargs</strong> – The optional keyword arguments to be passed to the FSM constructor.</li>
+<dl class="py method">
+<dt id="load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">myFsmClass</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#load" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myFsmClass</strong> – The definition of a FSM.</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – The unique name of this FSM instance.</p></li>
+<li><p><strong>args</strong> – The custom arguments to be passed to the FSM constructor.</p></li>
+<li><p><strong>kwargs</strong> – The optional keyword arguments to be passed to the FSM constructor.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>This function is used to load multiple FSM in this executable. The first
 parameter is the FSM class, not one of its instances. In fact, the loader
 will create the instance, adding the required optional arguments to the
@@ -269,16 +251,16 @@ constructor. Then an arbitrary number of parameters can be passed, as
 required by each different FSM constructor.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="loader.loader.start">
-<code class="descclassname">loader.</code><code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#loader.loader.start" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#start" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is usually the last function to be called: it starts the execution of
 all the loaded FSMs and suspends the main thread, waiting for a signal.</p>
 <p>The supported signals are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> (Ctrl-C): Terminate the execution of all the FSMs.</li>
-<li><code class="docutils literal notranslate"><span class="pre">SIGUSR1</span></code>: Print a report of all the inputs connections.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> (Ctrl-C): Terminate the execution of all the FSMs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIGUSR1</span></code>: Print a report of all the inputs connections.</p></li>
 </ul>
 </div></blockquote>
 <p>In this way each FSM is executed in a separate thread until the kill signal
@@ -291,27 +273,29 @@ is received.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
 <span class="kn">from</span> <span class="nn">myfsm</span> <span class="k">import</span> <span class="n">myfsm</span>
 
+<span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
+
 <span class="c1">## -------------------</span>
 <span class="c1"># logger options</span>
 <span class="c1">## -------------------</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">setVerbosity</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>  <span class="c1">##use only this if you want to print log to shell</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">logToFile</span><span class="p">(</span><span class="s2">&quot;mypath&quot;</span><span class="p">,</span> <span class="s2">&quot;daemon&quot;</span><span class="p">)</span>  <span class="c1">##use also this if you want to print to file</span>
+<span class="n">l</span><span class="o">.</span><span class="n">setVerbosity</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>  <span class="c1">##use only this if you want to print log to shell</span>
+<span class="n">l</span><span class="o">.</span><span class="n">logToFile</span><span class="p">(</span><span class="s2">&quot;mypath&quot;</span><span class="p">,</span> <span class="s2">&quot;daemon&quot;</span><span class="p">)</span>  <span class="c1">##use also this if you want to print to file</span>
 
 <span class="c1">## -------------------</span>
 <span class="c1"># inputs options</span>
 <span class="c1">## -------------------</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">setIoMap</span><span class="p">(</span><span class="s2">&quot;pathToMapFile&quot;</span><span class="p">)</span>  <span class="c1">#this will set the map file path</span>
+<span class="n">l</span><span class="o">.</span><span class="n">setIoMap</span><span class="p">(</span><span class="s2">&quot;pathToMapFile&quot;</span><span class="p">)</span>  <span class="c1">#this will set the map file path</span>
 
 <span class="c1">## -------------------</span>
 <span class="c1"># load each fsm</span>
 <span class="c1">## -------------------</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="s2">&quot;fsm1&quot;</span><span class="p">,</span> <span class="s2">&quot;ciao&quot;</span><span class="p">,</span> <span class="s2">&quot;come&quot;</span><span class="p">,</span> <span class="s2">&quot;va?&quot;</span><span class="p">)</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="s2">&quot;fsm2&quot;</span><span class="p">,</span> <span class="s2">&quot;ciao&quot;</span><span class="p">)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="s2">&quot;fsm1&quot;</span><span class="p">,</span> <span class="s2">&quot;ciao&quot;</span><span class="p">,</span> <span class="s2">&quot;come&quot;</span><span class="p">,</span> <span class="s2">&quot;va?&quot;</span><span class="p">)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="s2">&quot;fsm2&quot;</span><span class="p">,</span> <span class="s2">&quot;ciao&quot;</span><span class="p">)</span>
 
 <span class="c1">## -------------------</span>
 <span class="c1"># start execution</span>
 <span class="c1">## -------------------</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -346,7 +330,7 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
         <a href="timer.html" class="btn btn-neutral float-right" title="Timers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="logger.html" class="btn btn-neutral" title="Logger" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="logger.html" class="btn btn-neutral float-left" title="Logger" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -355,7 +339,7 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -372,33 +356,16 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

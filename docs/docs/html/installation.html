@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Pysmlib overview" href="overview.html" />
     <link rel="prev" title="Python Finite State Machines for EPICS" href="index.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -177,11 +179,10 @@
 <span id="id1"></span><h1>Download and Installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
-<p>This package requires Python version 2.7, while the support for newer version is
-still in development. Two modules are mandatory: <a class="reference external" href="http://www.numpy.org/">numpy</a> for
-the internal handling of vectors and <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> which provides the EPICS Channel
-Access support. Both are automatically installed when using pip, but you may
-have to install the EPICS base on your system and configure <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> to
+<p>This package requires Python version 3.6+.
+One module is mandatory: <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> which provides the
+EPICS Channel Access support. It is automatically installed when using pip,
+but you may have to install the EPICS base on your system and configure <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> to
 locate <code class="docutils literal notranslate"><span class="pre">libca</span></code>. See <a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/">PyEpics</a> documentation for further details.</p>
 <p><a class="reference external" href="http://www.sphinx-doc.org/en/master/">Sphinx</a> and its theme <a class="reference external" href="https://readthedocs.org/">Read the Docs</a> are required to build this
 documentation.</p>
@@ -255,12 +256,12 @@ repository is updated.</p>
 <p>For questions, bug reports, feature request, please consider using the
 following methods:</p>
 <ol class="arabic simple">
-<li>Create an issue on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a> where it can be discussed.</li>
-<li>Send an email to Davide Marcato &lt;<a class="reference external" href="mailto:davide&#46;marcato&#37;&#52;&#48;lnl&#46;infn&#46;it">davide<span>&#46;</span>marcato<span>&#64;</span>lnl<span>&#46;</span>infn<span>&#46;</span>it</a>&gt;, or
-to the Tech Talk mailing list if the issue is related to EPICS.</li>
-<li>If you are sure you have found a bug in existing code, or have
+<li><p>Create an issue on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a> where it can be discussed.</p></li>
+<li><p>Send an email to Davide Marcato &lt;<a class="reference external" href="mailto:davide&#46;marcato&#37;&#52;&#48;lnl&#46;infn&#46;it">davide<span>&#46;</span>marcato<span>&#64;</span>lnl<span>&#46;</span>infn<span>&#46;</span>it</a>&gt;, or
+to the Tech Talk mailing list if the issue is related to EPICS.</p></li>
+<li><p>If you are sure you have found a bug in existing code, or have
 some code you think would be useful to add to pysmlib, consider
-making a Pull Request on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a>.</li>
+making a Pull Request on <a class="reference external" href="https://github.com/darcato/pysmlib">Github</a>.</p></li>
 </ol>
 </div>
 <div class="section" id="license">
@@ -298,7 +299,7 @@ system of the ALPI accelerator. After that it has been separated in a standalone
         <a href="overview.html" class="btn btn-neutral float-right" title="Pysmlib overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Python Finite State Machines for EPICS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Python Finite State Machines for EPICS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -307,7 +308,7 @@ system of the ALPI accelerator. After that it has been separated in a standalone
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -324,33 +325,16 @@ system of the ALPI accelerator. After that it has been separated in a standalone
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

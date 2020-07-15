@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Loader and fsm execution" href="loader.html" />
     <link rel="prev" title="Accessing I/O" href="io.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -184,43 +186,39 @@ higher verbosity may be useful only while debugging.</p>
 be used only while developing or on small tests. All the messages are written to
 the standard output of the console where the executable is launched.</p>
 <p>This is achieved via a base class called <a class="reference internal" href="#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a>.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="fsmLogger">
-<em class="property">class </em><code class="descname">fsmLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em>level=3</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmLogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">fsmLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">level=3</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect all the log messages from the various FSMs loaded and print them to
 stdout.</p>
 </dd></dl>
 
 <p>This can be used by creating an instance and passing it as an optional argument
-to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> with no option specified. The verbosity can be set with <code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code> function.</p>
+to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> with no option specified. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
 </div>
 <div class="section" id="log-to-file">
 <h2>Log to File<a class="headerlink" href="#log-to-file" title="Permalink to this headline">¶</a></h2>
 <p>A better approach is to write logs to file, in order to open them only when
 needed. For this reason a derivate class of the previous one has been developed:</p>
-<dl class="class">
+<dl class="py class">
 <dt id="fsmFileLogger">
-<em class="property">class </em><code class="descname">fsmFileLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em>level=3</em><span class="optional">[</span>, <em>directory=&quot;logs/&quot;</em><span class="optional">[</span>, <em>prefix=&quot;&quot;</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmFileLogger" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>level</strong> (<em>int</em>) – the log level</li>
-<li><strong>directory</strong> (<em>string</em>) – the folder where all the log files will be written</li>
-<li><strong>prefix</strong> (<em>string</em>) – a common prefix for all the logs of this executable</li>
+<em class="property">class </em><code class="sig-name descname">fsmFileLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">level=3</em><span class="optional">[</span>, <em class="sig-param">directory=&quot;logs/&quot;</em><span class="optional">[</span>, <em class="sig-param">prefix=&quot;&quot;</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmFileLogger" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<em>int</em>) – the log level</p></li>
+<li><p><strong>directory</strong> (<em>string</em>) – the folder where all the log files will be written</p></li>
+<li><p><strong>prefix</strong> (<em>string</em>) – a common prefix for all the logs of this executable</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <p>This will write one file for each instance of FSM loaded in the executable, and
 will use the prefix, plus the name of the FSM to name the file.</p>
 <p>It can be used directly by  creating an instance and passing it as an optional
-argument to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> and its
-<code class="xref py py-func docutils literal notranslate"><span class="pre">logToFile()</span></code> function. The verbosity can be set with <code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code> function.</p>
+argument to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> and its
+<a class="reference internal" href="loader.html#logToFile" title="logToFile"><code class="xref py py-func docutils literal notranslate"><span class="pre">logToFile()</span></code></a> function. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
 </div>
 <div class="section" id="log-to-syslog">
 <h2>Log to Syslog<a class="headerlink" href="#log-to-syslog" title="Permalink to this headline">¶</a></h2>
@@ -261,7 +259,7 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
         <a href="loader.html" class="btn btn-neutral float-right" title="Loader and fsm execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="io.html" class="btn btn-neutral" title="Accessing I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="io.html" class="btn btn-neutral float-left" title="Accessing I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -270,7 +268,7 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -287,33 +285,16 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

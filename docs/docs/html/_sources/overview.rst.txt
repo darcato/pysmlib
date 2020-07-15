@@ -126,22 +126,24 @@ multiple algorithms. Pysmlib has been design to offer greater efficiency when
 multiple FSMs are loaded together on the same executable, because some resources
 can be shared (eg: common inputs).
 
-For these reasons a convenient loader is available. The ``loader.load()``
-function lets you load an instance of your FSM with specific
-parameters. At the end the execution begins with the function
-``loader.start()``::
+For these reasons a convenient loader class is available. The ``load()``
+method lets you load an instance of your FSM with specific
+parameters. At the end the execution begins with the method
+``start()``::
 
     from smlib import loader
+
+    l = loader()
 
     ## -------------------
     # load each fsm
     ## -------------------
-    loader.load(exampleFsm, "myFirstFsm")
+    l.load(exampleFsm, "myFirstFsm")
 
     ## -------------------
     # start execution
     ## -------------------
-    loader.start()
+    l.start()
 
 Now you can execute the FSM simply launching::
 

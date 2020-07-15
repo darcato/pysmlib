@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced" href="advanced.html" />
     <link rel="prev" title="Timers" href="timer.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -205,22 +207,21 @@ inside an IOC.</p>
 <div class="section" id="fsm-side-the-watchdog-input">
 <h2>FSM side: the watchdog input<a class="headerlink" href="#fsm-side-the-watchdog-input" title="Permalink to this headline">¶</a></h2>
 <p>To signal being online each FSM has to perform periodic <a class="reference internal" href="io.html#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> to its
-watchdog PV. This can be easily achieved with the <a class="reference internal" href="fsm.html#setWatchdogInput" title="setWatchdogInput"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setWatchdogInput()</span></code></a>
+watchdog PV. This can be easily achieved with the <code class="xref py py-meth docutils literal notranslate"><span class="pre">setWatchdogInput()</span></code>
 method of <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>: it is sufficient to pass to it a standard input
-(created with <a class="reference internal" href="fsm.html#connect" title="connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a>) and set two parameters:</p>
+(created with <code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code>) and set two parameters:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><dl class="first docutils">
-<dt>The watchdog mode, which can be:</dt>
-<dd><ol class="first last loweralpha">
-<li>“on-off”: A <code class="docutils literal notranslate"><span class="pre">put</span></code> is performed periodically, once to 1 and once to 0.</li>
-<li>“off”: A <code class="docutils literal notranslate"><span class="pre">put(0)</span></code> is performed periodically.</li>
-<li>“on”: A <code class="docutils literal notranslate"><span class="pre">put(1)</span></code> is performed periodically.</li>
+<li><dl class="simple">
+<dt>The watchdog mode, which can be:</dt><dd><ol class="loweralpha simple">
+<li><p>“on-off”: A <code class="docutils literal notranslate"><span class="pre">put</span></code> is performed periodically, once to 1 and once to 0.</p></li>
+<li><p>“off”: A <code class="docutils literal notranslate"><span class="pre">put(0)</span></code> is performed periodically.</p></li>
+<li><p>“on”: A <code class="docutils literal notranslate"><span class="pre">put(1)</span></code> is performed periodically.</p></li>
 </ol>
 </dd>
 </dl>
 </li>
-<li>The watchdog period in seconds.</li>
+<li><p>The watchdog period in seconds.</p></li>
 </ol>
 </div></blockquote>
 <div class="section" id="example">
@@ -252,7 +253,7 @@ will be automatically performed to it every 5s, as long as the FSM is running.</
         <a href="advanced.html" class="btn btn-neutral float-right" title="Advanced" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="timer.html" class="btn btn-neutral" title="Timers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="timer.html" class="btn btn-neutral float-left" title="Timers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -261,7 +262,7 @@ will be automatically performed to it every 5s, as long as the FSM is running.</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -278,33 +279,16 @@ will be automatically performed to it every 5s, as long as the FSM is running.</
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Accessing I/O" href="io.html" />
     <link rel="prev" title="Pysmlib overview" href="overview.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -96,7 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#states-execution">States execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#state-definition-example">State definition example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#event-types">Event types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#fsmbase-class-reference"><code class="docutils literal notranslate"><span class="pre">fsmBase</span></code> class reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fsmbase-class-reference"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code> class reference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">Accessing I/O</a></li>
@@ -179,29 +181,29 @@ states. The user only has to implement the actual states, as methods of
 <a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>. Each state can have up to 3 methods defined, for example for a
 state called “exampleState” these are:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_entry()</span></code> [optional]</dt>
-<dd>This method is executed only once on the transition from previous state
+<div><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_entry()</span></code> [optional]</dt><dd><p>This method is executed only once on the transition from previous state
 to the current one (“exampleState”). It can be useful for
 initializations or to perform specific actions related to the
 transition. For example if this is an error state, one could use the
 entry part of the error state to perform security actions (like power
 off the output of a power supply), and then wait on the <code class="docutils literal notranslate"><span class="pre">eval</span></code>
 method for a manual reset of the error before continuing. If it is
-omitted the <code class="docutils literal notranslate"><span class="pre">eval</span></code> method is executed directly.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_eval()</span></code> [mandatory]</dt>
-<dd>This the the main body of the state, and the only mandatory part. If
+omitted the <code class="docutils literal notranslate"><span class="pre">eval</span></code> method is executed directly.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_eval()</span></code> [mandatory]</dt><dd><p>This the the main body of the state, and the only mandatory part. If
 this method is defined, so is the state. If this is the current state,it
 is executed every time an event occurs on one of the FSM inputs. Here
 the code should check some conditions and when they are met, perform
 actions accordingly. These can be a <code class="docutils literal notranslate"><span class="pre">put()</span></code> to write a value to an
-output or a change of FSM state, by calling <code class="docutils literal notranslate"><span class="pre">gotoState(&quot;nextStateName&quot;)</span></code>. The FSM  will remain in this state and execute this method until the first call to <code class="docutils literal notranslate"><span class="pre">gotoState()</span></code>.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_exit()</span></code> [optional]</dt>
-<dd>This method is the opposite of the <code class="docutils literal notranslate"><span class="pre">entry</span></code> one and is execute only
+output or a change of FSM state, by calling <code class="docutils literal notranslate"><span class="pre">gotoState(&quot;nextStateName&quot;)</span></code>. The FSM  will remain in this state and execute this method until the first call to <code class="docutils literal notranslate"><span class="pre">gotoState()</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_exit()</span></code> [optional]</dt><dd><p>This method is the opposite of the <code class="docutils literal notranslate"><span class="pre">entry</span></code> one and is execute only
 on the transition from this state to the next one, with no distinction
 on the destination. It can be used to perform some clean-up after the
 execution of the state and to perform actions related to this
-transition.</dd>
+transition.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p>This architecture gives easy access to the first and last execution of the
@@ -247,28 +249,28 @@ are explained on the next pages of this documentation.</p>
 <span id="id1"></span><h2>Event types<a class="headerlink" href="#event-types" title="Permalink to this headline">¶</a></h2>
 <p>The events which trigger the execution of the current state are:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>Connection events</dt>
-<dd>One of the input has connected or disconnected.</dd>
-<dt>Change events</dt>
-<dd>One of the inputs has changed value.</dd>
-<dt>Put complete events</dt>
-<dd>When a call to <code class="docutils literal notranslate"><span class="pre">put()</span></code> is executed the value has to be written over
+<div><dl class="simple">
+<dt>Connection events</dt><dd><p>One of the input has connected or disconnected.</p>
+</dd>
+<dt>Change events</dt><dd><p>One of the inputs has changed value.</p>
+</dd>
+<dt>Put complete events</dt><dd><p>When a call to <code class="docutils literal notranslate"><span class="pre">put()</span></code> is executed the value has to be written over
 the network to the PV. This may take some time and after that the put
 complete event is notified. When executing a <code class="docutils literal notranslate"><span class="pre">put()</span></code> on some kinds of
 PVs, these are executed. The event is returned when the execution has
-completed.</dd>
-<dt>Timer expired events</dt>
-<dd>These events are local of pysmlib and are used to notify the current
-state that a previously set timer has reached its maximum time.</dd>
+completed.</p>
+</dd>
+<dt>Timer expired events</dt><dd><p>These events are local of pysmlib and are used to notify the current
+state that a previously set timer has reached its maximum time.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p>There are only two situations where a new state is executed without being
 triggered by an event:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>The first state is evaluated once at startup.</li>
-<li>When a transition from a state to the next one occurs, the next one is   evaluated once right after the previous one, without waiting for an event.</li>
+<li><p>The first state is evaluated once at startup.</p></li>
+<li><p>When a transition from a state to the next one occurs, the next one is   evaluated once right after the previous one, without waiting for an event.</p></li>
 </ol>
 </div></blockquote>
 <p>In these cases, all the methods on the inputs which detect edges
@@ -276,246 +278,203 @@ triggered by an event:</p>
 </div>
 <div class="section" id="fsmbase-class-reference">
 <h2><a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a> class reference<a class="headerlink" href="#fsmbase-class-reference" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="fsmBase">
-<em class="property">class </em><code class="descname">fsmBase</code><span class="sig-paren">(</span><em>name</em><span class="optional">[</span>, <em>tmgr=None</em><span class="optional">[</span>, <em>ios=None</em><span class="optional">[</span>, <em>logger=None</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">fsmBase</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="optional">[</span>, <em class="sig-param">tmgr=None</em><span class="optional">[</span>, <em class="sig-param">ios=None</em><span class="optional">[</span>, <em class="sig-param">logger=None</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an empty FSM: usually you derive from this to add custom states.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) – the name of the FSM and its related thread.</li>
-<li><strong>tmgr</strong> (<a class="reference internal" href="timer.html#fsmTimers" title="fsmTimers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code></a> object) – a timer manager instance</li>
-<li><strong>ios</strong> (<a class="reference internal" href="io.html#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> instance) – a container of all the (shared) I/Os available</li>
-<li><strong>logger</strong> (<a class="reference internal" href="logger.html#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a> instance) – a log facility</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>string</em>) – the name of the FSM and its related thread.</p></li>
+<li><p><strong>tmgr</strong> (<a class="reference internal" href="timer.html#fsmTimers" title="fsmTimers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code></a> object) – a timer manager instance</p></li>
+<li><p><strong>ios</strong> (<a class="reference internal" href="io.html#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> instance) – a container of all the (shared) I/Os available</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="logger.html#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a> instance) – a log facility</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>The optional arguments let you pass shared objects. When they are omitted,
 they are automatically created by <a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a> from default classes,
 while derivate ones can be passed. Usually just one instance of the three
 classes is shared between all the FSMs on an executable. The <a class="reference internal" href="loader.html#loader"><span class="std std-ref">Loader and fsm execution</span></a>
 automatically takes care of these arguments.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="gotoState">
-<code class="descname">gotoState</code><span class="sig-paren">(</span><em>stateName</em><span class="sig-paren">)</span><a class="headerlink" href="#gotoState" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.gotoState">
+<code class="sig-name descname">gotoState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stateName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Force a transition from the current state to “stateName”. First of all the
 <code class="docutils literal notranslate"><span class="pre">exit</span></code> method of the current state is executed, then the library will
 look for the three methods associated to the string “stateName”, as
 described above, will execute the <code class="docutils literal notranslate"><span class="pre">entry</span></code> and <code class="docutils literal notranslate"><span class="pre">eval</span></code> method, then
 wait for an event. When this arrives, the <code class="docutils literal notranslate"><span class="pre">stateName_eval</span></code> method is executed again.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stateName</strong> (<em>String</em>) – the name of the next state</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stateName</strong> (<em>String</em>) – the name of the next state</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="gotoPrevState">
-<code class="descname">gotoPrevState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gotoPrevState" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.gotoPrevState">
+<code class="sig-name descname">gotoPrevState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoPrevState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return to the previous state</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="fsmname">
-<code class="descname">fsmname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmname" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.fsmname">
+<code class="sig-name descname">fsmname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.fsmname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the FSM name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">FSM name.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>FSM name.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="logE">
-<code class="descname">logE</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#logE" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.logE">
+<code class="sig-name descname">logE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write to log with ERROR verbosity level = 0.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>string</em>) – the log message</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>string</em>) – the log message</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="logW">
-<code class="descname">logW</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#logW" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.logW">
+<code class="sig-name descname">logW</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write to log with WARNING verbosity level = 1.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>string</em>) – the log message</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>string</em>) – the log message</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="logI">
-<code class="descname">logI</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#logI" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.logI">
+<code class="sig-name descname">logI</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write to log with INFO verbosity level = 2.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>string</em>) – the log message</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>string</em>) – the log message</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="logD">
-<code class="descname">logD</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#logD" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.logD">
+<code class="sig-name descname">logD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write to log with DEBUG verbosity level = 3.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>string</em>) – the log message</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>string</em>) – the log message</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><em>name</em><span class="optional">[</span>, <em>**args</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#connect" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>string</em>) – the PV name, or the map reference to a PV name.</li>
-<li><strong>args</strong> – optional arguments to be passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">fsmIOs.get()</span></code></li>
+<dl class="py method">
+<dt id="fsmBase.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="optional">[</span>, <em class="sig-param">**args</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.connect" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>string</em>) – the PV name, or the map reference to a PV name.</p></li>
+<li><p><strong>args</strong> – optional arguments to be passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">fsmIOs.get()</span></code></p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="io.html#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="io.html#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> object</p>
+</dd>
+</dl>
 <p>The optional arguments can be used by <a class="reference internal" href="io.html#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> derivate classes to
 get further specification on the desired input. See <a class="reference internal" href="io.html#io-mapping"><span class="std std-ref">I/O mapping and parametrization</span></a>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#start" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start FSM execution.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kill">
-<code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kill" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.kill">
+<code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.kill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop FSM execution. FSM are derivate of <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code> so they
 cannot be restarted after a kill, but a new instance must be created.
 However, a better approach is to use an idle state where the FSM will do
 nothing, instead of killing it.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="tmrSet">
-<code class="descname">tmrSet</code><span class="sig-paren">(</span><em>name</em>, <em>timeout</em><span class="optional">[</span>, <em>reset=True</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#tmrSet" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.tmrSet">
+<code class="sig-name descname">tmrSet</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">timeout</em><span class="optional">[</span>, <em class="sig-param">reset=True</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new timer which will expire in <cite>timeout</cite> seconds, generating an
 timer expired event, which will execute the FSM current state (at expiration
 time).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) – A unique identifier of this timer. The same timer can be reused more than once recalling the same name.</li>
-<li><strong>timeout</strong> (<em>float</em>) – The expiration time, starting from the invocation of <a class="reference internal" href="#tmrSet" title="tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a>. [s]</li>
-<li><strong>reset</strong> (<em>boolean</em>) – If this is <code class="docutils literal notranslate"><span class="pre">True</span></code> the timer can be re-initialized before expiration. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>string</em>) – A unique identifier of this timer. The same timer can be reused more than once recalling the same name.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – The expiration time, starting from the invocation of <a class="reference internal" href="#fsmBase.tmrSet" title="fsmBase.tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a>. [s]</p></li>
+<li><p><strong>reset</strong> (<em>boolean</em>) – If this is <code class="docutils literal notranslate"><span class="pre">True</span></code> the timer can be re-initialized before expiration. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="tmrExpired">
-<code class="descname">tmrExpired</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#tmrExpired" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.tmrExpired">
+<code class="sig-name descname">tmrExpired</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpired" title="Permalink to this definition">¶</a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the timer has expired or does not exist.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">timer expired condition</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>timer expired condition</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="isIoConnected">
-<code class="descname">isIoConnected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isIoConnected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.isIoConnected">
+<code class="sig-name descname">isIoConnected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoConnected" title="Permalink to this definition">¶</a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only when all the FSM inputs are connected,
 meaning that they have received the first connection event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if all I/Os are connected.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if all I/Os are connected.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="setWatchdogInput">
-<code class="descname">setWatchdogInput</code><span class="sig-paren">(</span><em>input</em><span class="optional">[</span>, <em>mode=&quot;on-off&quot;</em><span class="optional">[</span>, <em>interval=1</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#setWatchdogInput" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.setWatchdogInput">
+<code class="sig-name descname">setWatchdogInput</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="optional">[</span>, <em class="sig-param">mode=&quot;on-off&quot;</em><span class="optional">[</span>, <em class="sig-param">interval=1</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.setWatchdogInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>This set an input to be used for the <a class="reference internal" href="watchdog.html#watchdog"><span class="std std-ref">Watchdog</span></a> logic.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input</strong> (<a class="reference internal" href="io.html#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> object.) – the input to use as watchdog.</li>
-<li><strong>mode</strong> (<em>string</em>) – One of “on-off”, “off”, “on”.</li>
-<li><strong>interval</strong> (<em>float</em>) – the watchdog period [s].</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="io.html#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> object.) – the input to use as watchdog.</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – One of “on-off”, “off”, “on”.</p></li>
+<li><p><strong>interval</strong> (<em>float</em>) – the watchdog period [s].</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError: Unrecognized input type or mode.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>ValueError: Unrecognized input type or mode.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="getWatchdogInput">
-<code class="descname">getWatchdogInput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#getWatchdogInput" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="fsmBase.getWatchdogInput">
+<code class="sig-name descname">getWatchdogInput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.getWatchdogInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the input set as a watchdog or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">watchdog input or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>watchdog input or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -532,7 +491,7 @@ meaning that they have received the first connection event.</p>
         <a href="io.html" class="btn btn-neutral float-right" title="Accessing I/O" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="overview.html" class="btn btn-neutral" title="Pysmlib overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="overview.html" class="btn btn-neutral float-left" title="Pysmlib overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -541,7 +500,7 @@ meaning that they have received the first connection event.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -558,33 +517,16 @@ meaning that they have received the first connection event.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

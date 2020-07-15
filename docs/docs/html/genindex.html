@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -20,33 +19,35 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -184,7 +185,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="io.html#changing">changing()</a>
 </li>
-      <li><a href="fsm.html#connect">connect()</a>
+      <li><a href="fsm.html#fsmBase.connect">connect() (fsmBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -224,7 +225,7 @@
 </li>
       <li><a href="logger.html#fsmLogger">fsmLogger (built-in class)</a>
 </li>
-      <li><a href="fsm.html#fsmname">fsmname()</a>
+      <li><a href="fsm.html#fsmBase.fsmname">fsmname() (fsmBase method)</a>
 </li>
       <li><a href="timer.html#fsmTimers">fsmTimers (built-in class)</a>
 </li>
@@ -234,13 +235,13 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#getWatchdogInput">getWatchdogInput()</a>
+      <li><a href="fsm.html#fsmBase.getWatchdogInput">getWatchdogInput() (fsmBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#gotoPrevState">gotoPrevState()</a>
+      <li><a href="fsm.html#fsmBase.gotoPrevState">gotoPrevState() (fsmBase method)</a>
 </li>
-      <li><a href="fsm.html#gotoState">gotoState()</a>
+      <li><a href="fsm.html#fsmBase.gotoState">gotoState() (fsmBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -256,7 +257,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="io.html#ioname">ioname()</a>
 </li>
-      <li><a href="fsm.html#isIoConnected">isIoConnected()</a>
+      <li><a href="fsm.html#fsmBase.isIoConnected">isIoConnected() (fsmBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -264,7 +265,7 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#kill">kill()</a>
+      <li><a href="fsm.html#fsmBase.kill">kill() (fsmBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -272,27 +273,21 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="loader.html#module-loader">loader (module)</a>
+      <li><a href="loader.html#load">load()</a>
 </li>
-      <li><a href="loader.html#loader.loader.load">loader.load() (in module loader)</a>
+      <li><a href="loader.html#id0">loader (built-in class)</a>
 </li>
-      <li><a href="loader.html#loader.loader.logToFile">loader.logToFile() (in module loader)</a>
-</li>
-      <li><a href="loader.html#loader.loader.setIoMap">loader.setIoMap() (in module loader)</a>
-</li>
-      <li><a href="loader.html#loader.loader.setVerbosity">loader.setVerbosity() (in module loader)</a>, <a href="loader.html#loader.loader.setVerbosity">[1]</a>
+      <li><a href="fsm.html#fsmBase.logD">logD() (fsmBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="loader.html#loader.loader.start">loader.start() (in module loader)</a>
+      <li><a href="fsm.html#fsmBase.logE">logE() (fsmBase method)</a>
 </li>
-      <li><a href="fsm.html#logD">logD()</a>
+      <li><a href="fsm.html#fsmBase.logI">logI() (fsmBase method)</a>
 </li>
-      <li><a href="fsm.html#logE">logE()</a>
+      <li><a href="loader.html#logToFile">logToFile()</a>
 </li>
-      <li><a href="fsm.html#logI">logI()</a>
-</li>
-      <li><a href="fsm.html#logW">logW()</a>
+      <li><a href="fsm.html#fsmBase.logW">logW() (fsmBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -334,23 +329,33 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="io.html#setBufSize">setBufSize()</a>
 </li>
+      <li><a href="loader.html#setIoMap">setIoMap()</a>
+</li>
+      <li><a href="loader.html#setVerbosity">setVerbosity()</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#setWatchdogInput">setWatchdogInput()</a>
+      <li><a href="fsm.html#fsmBase.setWatchdogInput">setWatchdogInput() (fsmBase method)</a>
 </li>
-      <li><a href="fsm.html#start">start()</a>
+      <li><a href="loader.html#start">start()</a>
+
+      <ul>
+        <li><a href="fsm.html#fsmBase.start">(fsmBase method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#tmrExpired">tmrExpired()</a>
+      <li><a href="io.html#time">time()</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fsm.html#tmrSet">tmrSet()</a>
+      <li><a href="fsm.html#fsmBase.tmrExpired">tmrExpired() (fsmBase method)</a>
+</li>
+      <li><a href="fsm.html#fsmBase.tmrSet">tmrSet() (fsmBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -383,7 +388,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -400,33 +405,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

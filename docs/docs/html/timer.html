@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
@@ -33,21 +40,16 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Watchdog" href="watchdog.html" />
     <link rel="prev" title="Loader and fsm execution" href="loader.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -98,7 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="loader.html">Loader and fsm execution</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Timers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-use-timers">How to use timers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#fsmtimers-class"><code class="docutils literal notranslate"><span class="pre">fsmTimers</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fsmtimers-class"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code> class</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="watchdog.html">Watchdog</a></li>
@@ -192,27 +194,27 @@ model.</p>
 </pre></div>
 </div>
 <p>As seen in the example, timers are available as methods of the <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>
-class. After moving the motor, a timer is set with <a class="reference internal" href="fsm.html#tmrSet" title="tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a> which means
+class. After moving the motor, a timer is set with <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code> which means
 that after 10 seconds a special event will be generated and the method
-<a class="reference internal" href="fsm.html#tmrExpired" title="tmrExpired"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code></a> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>. This way the user can perform
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>. This way the user can perform
 appropriate actions when a movement takes too long to complete.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The <a class="reference internal" href="fsm.html#tmrExpired" title="tmrExpired"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code></a> method returns <code class="docutils literal notranslate"><span class="pre">True</span></code> even before the timer is set, and will continue to return <code class="docutils literal notranslate"><span class="pre">True</span></code> after expiration until it is set again.</p>
+<p class="admonition-title">Warning</p>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code> method returns <code class="docutils literal notranslate"><span class="pre">True</span></code> even before the timer is set, and will continue to return <code class="docutils literal notranslate"><span class="pre">True</span></code> after expiration until it is set again.</p>
 </div>
 <p>Timers are identified with a string, which should be unique. When reusing the
 same string, the same timer is used and if it is not expired, it is restarted.
-To avoid it being restarted, use a third optional parameter of <a class="reference internal" href="fsm.html#tmrSet" title="tmrSet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code></a>:
+To avoid it being restarted, use a third optional parameter of <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code>:
 <code class="docutils literal notranslate"><span class="pre">reset</span></code> and set it to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </div>
 <div class="section" id="fsmtimers-class">
 <h2><a class="reference internal" href="#fsmTimers" title="fsmTimers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code></a> class<a class="headerlink" href="#fsmtimers-class" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="fsmTimers">
-<em class="property">class </em><code class="descname">fsmTimers</code><a class="headerlink" href="#fsmTimers" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">fsmTimers</code><a class="headerlink" href="#fsmTimers" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class handles all the timers of all the FSMs as shared resources. It
 can be used by creating an instance and passing it as an optional argument
-to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#module-loader" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> which automatically
+to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> which automatically
 manages it.</p>
 </dd></dl>
 
@@ -230,7 +232,7 @@ manages it.</p>
         <a href="watchdog.html" class="btn btn-neutral float-right" title="Watchdog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="loader.html" class="btn btn-neutral" title="Loader and fsm execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="loader.html" class="btn btn-neutral float-left" title="Loader and fsm execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -239,7 +241,7 @@ manages it.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Davide Marcato.
+        &copy; Copyright 2020, Davide Marcato
 
     </p>
   </div>
@@ -256,33 +258,16 @@ manages it.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.0+0.g8847e46.dirty',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
