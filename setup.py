@@ -7,9 +7,9 @@
 # 1 - git tag <new_tag>
 # 2 - python setup.py clean --all
 # 3 - rm -rf dist
-# 4 - python2 setup.py sdist bdist_wheel
-# 5 - python2 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-# 6 - python2 -m twine upload dist/*
+# 4 - python setup.py sdist bdist_wheel
+# 5 - twine upload -r testpypi dist/*
+# 6 - python -m twine upload dist/*
 # 7 - cd docs/docs/ && make html
 # 8 - git commit -am "Documentation update"
 # 9 - git push github master

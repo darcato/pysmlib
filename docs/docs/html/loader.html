@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                2.0.0
+                3.0.0
               </div>
             
           
@@ -176,6 +176,23 @@
 sharing resources. All the configuration options are available via convenient
 methods. It takes care of instantiating the classes for loggers, timers, and
 shared inputs and all the instances of the user defined FSM as required.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When upgrading from version 2 to 3 of the library, <code class="docutils literal notranslate"><span class="pre">loader</span></code> becomes a class.
+Update your code from this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
+<span class="n">l</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="loader-class-reference">
 <h2><a class="reference internal" href="#id0" title="loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">loader</span></code></a> class reference<a class="headerlink" href="#loader-class-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">

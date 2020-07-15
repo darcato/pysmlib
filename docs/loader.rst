@@ -9,6 +9,25 @@ sharing resources. All the configuration options are available via convenient
 methods. It takes care of instantiating the classes for loggers, timers, and
 shared inputs and all the instances of the user defined FSM as required.
 
+.. warning:: When upgrading from version 2 to 3 of the library, ``loader`` becomes a class. 
+    Update your code from this:
+
+    ::
+    
+        from smlib import loader
+        loader.load(myfsm, args)
+        loader.start()
+    
+    to this: 
+
+    ::
+
+        from smlib import loader
+        l = loader()
+        l.load(myfsm, args)
+        l.start()
+
+
 :class:`loader` class reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

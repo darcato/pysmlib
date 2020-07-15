@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
@@ -11,6 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simplified interface between IOs and fsmBase
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
+
+## [3.0.0] - 2020-07-15
+
+This version breaks back-compatibility by abandoning support for python 2.
+
+### Changed
+
+- Now supporting python 3.6+ only. Python 2.7 is deprecated.
+- Changed ``loader`` to be class-based
 
 ## [2.0.0] - 2018-08-28
 
@@ -31,11 +41,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - fsmBase input() renamed to connect()
 - fsmBase tmrExp() renamed to tmrExpired()
 - fsmIO access methods renamed
-    - hasPutCompleted() -> putCompleting()
-    - hasChanged() -> changing()
-    - hasDisconnected() -> disconnecting()
-    - hasConnected() -> connecting()
-    - hasFirstValue() -> initializing()
+  - hasPutCompleted() -> putCompleting()
+  - hasChanged() -> changing()
+  - hasDisconnected() -> disconnecting()
+  - hasConnected() -> connecting()
+  - hasFirstValue() -> initializing()
 - is_io_connected() renamed to isIoConnected()
 - Renamed lnlPvs class to mappedIOs
 - Renamed fsmIO to epicsIO

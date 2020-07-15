@@ -75,8 +75,9 @@ class exampleFsm(fsmBase):
 # Main
 if __name__ == '__main__':
     # load the fsm
-    loader.load(exampleFsm, "myFirstFsm")
+    l = loader()
+    l.load(exampleFsm, "myFirstFsm")
 
     # start execution
-    loader.start()
+    l.start()
 ```
