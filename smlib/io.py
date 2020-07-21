@@ -250,7 +250,9 @@ class fsmIO(object):
 
         self._name = None
         self._value = None  # pv value
+        self._sevr = None
         self._pval = None  # pv previous value
+        self._psevr = None
         self._timestamp = 0  # value timestamp
         self._currcb = None  # current callback
         self._putComplete = True  # keep track of put completement
@@ -278,8 +280,10 @@ class fsmIO(object):
             self._currcb = reason
             self._data = cbdata
             self._pval = self._value
+            self._psevr = self._sevr
             ptime = self._timestamp
             self._value = self._data.get('value', None)
+            self._sevr = self._data.get('severity', None)
             self._timestamp = self._data.get('timestamp', 0)
             if self._value is not None and self._cbufVal is not None:
                 self._cbufVal.append(self._value)
@@ -293,7 +297,9 @@ class fsmIO(object):
             # on connection or disconnection reset all previous values of the input
             # in order not to access old values after disconnections
             self._pval = None
+            self._psevr = None
             self._value = None
+            self._sevr = None
             self._data = {}
 
         # if a put complete callback arrives, the flag must be set true only if
@@ -315,8 +321,8 @@ class fsmIO(object):
         self._putComplete = False
         return self._reflectedIO.put(value, self._fsm)
 
-    # ----- METHODS THAT CATCH CHANGEMENT ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGEMENT ------
-    # ----- They return True if the fsm was woken up by this changement in this cycle
+    # ----- METHODS THAT CATCH CHANGE ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGE ------
+    # ----- They return True if the fsm was woken up by this change in this cycle
 
     # putCompleting: current awakening callback is a put callback
     def putCompleting(self):
@@ -329,6 +335,18 @@ class fsmIO(object):
     # Falling = connected and received at least 2 values, with the last < precedent
     def falling(self):
         return self._currcb == 'change' and self._pval is not None and self._value < self._pval
+
+    # Alarm Increasing = last alarm > precedent (in absolute value)
+    def alarm_increasing(self):
+        return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) > abs(self._psevr)
+
+    # Alarm Decreasing = last alarm < precedent (in absolute value)
+    def alarm_decreasing(self):
+        return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) < abs(self._psevr)
+
+    # Alarm changing = change callback and the alarm status != precedent
+    def alarm_changing(self):
+        return self._currcb == 'change' and self._psevr is not None and self._sevr != self._psevr
 
     # changing = last callback was a change callback
     def changing(self):
@@ -348,7 +366,7 @@ class fsmIO(object):
 
     # ------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------
 
-    # returns wheter the pv processing after the last put has been completed
+    # returns whether the pv processing after the last put has been completed
     def putComplete(self):
         return self._putComplete
 
@@ -356,9 +374,24 @@ class fsmIO(object):
     def initialized(self):
         return self._conn and self._value is not None
 
-    # returns wheter the pv is connected or not
+    # returns whether the pv is connected or not
     def connected(self):
         return self._conn
+
+    # returns whether the pv is in alarm or not
+    def alarm(self):
+        return self._sevr
+    
+    # returns whether the pv is in alarm or not
+    def alarm_name(self, short=False):
+        alarm_levels = {-2: "UNDER THRESHOLD MAJOR ALARM", 
+                        -1: "UNDER THRESHOLD MINOR ALARM", 
+                         0: "NO ALARM",
+                         1: "OVER THRESHOLD MINOR ALARM", 
+                         2: "OVER THRESHOLD MAJOR ALARM"}
+        if short:
+            alarm_levels = {k: " ".join(v.split(' ')[-2:]) for k, v in alarm_levels.items()}
+        return alarm_levels[self._sevr]
 
     # return the pv value
     def val(self):
