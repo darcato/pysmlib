@@ -1,6 +1,8 @@
 name: smlib3
 channels:
   - defaults
+  - conda-forge
+  - paulscherrerinstitute
 dependencies:
   - python=3.6
   - pcaspy
@@ -9,4 +11,3 @@ dependencies:
   - sphinx
   - sphinx_rtd_theme
   - twine
-
