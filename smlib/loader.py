@@ -49,6 +49,7 @@ class loader(object):
             raise TypeError("%s is not a subclass of fsmBase" % repr(fsmClass))
         fsm = fsmClass(name, *args, **kwargs)  # instance class
         self._fsmsList.append(fsm)
+        return fsm
 
     def killAll(self, signum, frame): # pylint: disable=unused-argument
         #print("Signal: %d -> Going to kill all fsms" % signum)
