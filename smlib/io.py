@@ -88,7 +88,7 @@ class epicsIO(object):
     def data(self):
         return self._data
 
-    # returns wheter the pv is connected or not
+    # returns whether the pv is connected or not
     def connected(self):
         return self._conn
 
@@ -337,15 +337,15 @@ class fsmIO(object):
         return self._currcb == 'change' and self._pval is not None and self._value < self._pval
 
     # Alarm Increasing = last alarm > precedent (in absolute value)
-    def alarm_increasing(self):
+    def alarmIncreasing(self):
         return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) > abs(self._psevr)
 
     # Alarm Decreasing = last alarm < precedent (in absolute value)
-    def alarm_decreasing(self):
+    def alarmDecreasing(self):
         return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) < abs(self._psevr)
 
     # Alarm changing = change callback and the alarm status != precedent
-    def alarm_changing(self):
+    def alarmChanging(self):
         return self._currcb == 'change' and self._psevr is not None and self._sevr != self._psevr
 
     # changing = last callback was a change callback
@@ -383,7 +383,7 @@ class fsmIO(object):
         return self._sevr
     
     # returns whether the pv is in alarm or not
-    def alarm_name(self, short=False):
+    def alarmName(self, short=False):
         alarm_levels = {-2: "UNDER THRESHOLD MAJOR ALARM", 
                         -1: "UNDER THRESHOLD MINOR ALARM", 
                          0: "NO ALARM",
@@ -391,10 +391,20 @@ class fsmIO(object):
                          2: "OVER THRESHOLD MAJOR ALARM"}
         if short:
             alarm_levels = {k: " ".join(v.split(' ')[-2:]) for k, v in alarm_levels.items()}
-        return alarm_levels[self._sevr]
+        return alarm_levels.get(self._sevr, None)
+
+    # Return alarm thresholds
+    def alarmLimits(self):
+        lolo = self._data.get('lower_alarm_limit', None)
+        low = self._data.get('lower_warning_limit', None)
+        high = self._data.get('upper_warning_limit', None)
+        hihi = self._data.get('upper_alarm_limit', None)
+        return (lolo, low, high, hihi)
 
     # return the pv value
-    def val(self):
+    def val(self, as_string=False):
+        if as_string:
+            return self._data.get('char_value', str(self._value))
         return self._value
 
     # return the average values in the circular buffer
@@ -437,7 +447,7 @@ class fsmIO(object):
             return -1
         return 0
 
-    # return the pv previuos value
+    # return the pv previous value
     def pval(self):
         return self._pval
 
@@ -445,6 +455,56 @@ class fsmIO(object):
     def time(self):
         return datetime.fromtimestamp(self._timestamp)
 
-    # return one element from pv data, choosen by key
-    def data(self, key):
-        return self._data.get(key, None)
+    # The status of the PV (1 for OK)
+    def status(self):
+        return self._data.get('status', None)
+    
+    # PV PREC field
+    def precision(self):
+        return self._data.get('precision', None)
+
+    # PV EGU field
+    def units(self):
+        return self._data.get('units', None)
+
+    # True if read access granted
+    def readAccess(self):
+        return self._data.get('read_access', None)
+
+    # True if write access granted
+    def writeAccess(self):
+        return self._data.get('write_access', None)
+
+    # Possible string values of enum PV
+    def enumStrings(self):
+        return self._data.get('enum_strs', None)
+    
+    # LOPR, HOPR
+    def displayLimits(self):
+        l = self._data.get('lower_disp_limit', None)
+        u = self._data.get('upper_disp_limit', None)
+        return (l,u)
+
+    # DRVL, DRVH
+    def controlLimits(self):
+        l = self._data.get('lower_ctrl_limit', None)
+        u = self._data.get('upper_ctrl_limit', None)
+        return (l,u)
+
+    # Waveform NELM field
+    def maxLen(self):
+        return self._data.get('nelm', None)
+
+    # IP:port of IOC
+    def host(self):
+        return self._data.get('host', None)
+    
+    # PV CA type
+    def caType(self):
+        return self._data.get('type', None)
+
+    # return one element from pv data, chosen by key, or all data
+    def data(self, key=None):
+        if key is not None:
+            return self._data.get(key, None)
+        return self._data
