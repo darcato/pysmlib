@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.1.0
               </div>
             
           
@@ -191,10 +191,10 @@ to connect.</p>
 <h3>General structure<a class="headerlink" href="#general-structure" title="Permalink to this headline">¶</a></h3>
 <p>Each finite state machine is created as a derived class from <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>,
 which is part of pysmlib.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">fsmBase</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">fsmBase</span>
 
 <span class="k">class</span> <span class="nc">exampleFsm</span><span class="p">(</span><span class="n">fsmBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">exampleFsm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -292,7 +292,7 @@ can be shared (eg: common inputs).</p>
 method lets you load an instance of your FSM with specific
 parameters. At the end the execution begins with the method
 <code class="docutils literal notranslate"><span class="pre">start()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">loader</span>
 
 <span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
 

@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.1.0
               </div>
             
           
@@ -215,10 +215,13 @@ moment ago.</p>
 
 <dl class="py method">
 <dt id="val">
-<code class="sig-name descname">val</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#val" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">as_string</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#val" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the current value of the input.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>short</strong> – as_string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the current value of the input. If <code class="docutils literal notranslate"><span class="pre">as_string</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> a string representation of the value is returned.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -254,11 +257,34 @@ moment ago.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="time">
-<code class="sig-name descname">time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#time" title="Permalink to this definition">¶</a></dt>
+<dt id="alarm">
+<code class="sig-name descname">alarm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarm" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the processing time associated with the current value. This is a datetime object.</p>
+<dd class="field-odd"><p>the alarm status: one of [-2, -1, 0, 1, 2] where 0 is the <code class="docutils literal notranslate"><span class="pre">NO_ALARM</span></code> state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="alarmName">
+<code class="sig-name descname">alarmName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">short</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#alarmName" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>short</strong> – return a short version of the name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the corresponding alarm string: -2: <code class="docutils literal notranslate"><span class="pre">UNDER</span> <span class="pre">THRESHOLD</span> <span class="pre">MAJOR</span> <span class="pre">ALARM</span></code>, -1: <code class="docutils literal notranslate"><span class="pre">UNDER</span> <span class="pre">THRESHOLD</span> <span class="pre">MINOR</span> <span class="pre">ALARM</span></code>, 0: <code class="docutils literal notranslate"><span class="pre">NO</span> <span class="pre">ALARM</span></code>, 1: <code class="docutils literal notranslate"><span class="pre">OVER</span> <span class="pre">THRESHOLD</span> <span class="pre">MINOR</span> <span class="pre">ALARM</span></code>,  2: <code class="docutils literal notranslate"><span class="pre">OVER</span> <span class="pre">THRESHOLD</span> <span class="pre">MAJOR</span> <span class="pre">ALARM</span></code>. If the <code class="docutils literal notranslate"><span class="pre">short</span></code> parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, only the last two words of the strings are returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="alarmLimits">
+<code class="sig-name descname">alarmLimits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmLimits" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a tuple with the 4 alarm thresholds, in the following order: lower major threshold, lower minor threshold, upper minor threshold, upper major threshold.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -274,17 +300,137 @@ moment ago.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="time">
+<code class="sig-name descname">time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the processing time associated with the current value. This is a datetime object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="status">
+<code class="sig-name descname">status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#status" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the status of the input (1 for OK).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="precision">
+<code class="sig-name descname">precision</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#precision" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the number of decimal positions to display.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="units">
+<code class="sig-name descname">units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#units" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the unit of measure of the value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="readAccess">
+<code class="sig-name descname">readAccess</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#readAccess" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you can read the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="writeAccess">
+<code class="sig-name descname">writeAccess</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#writeAccess" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you can write the input..</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="enumStrings">
+<code class="sig-name descname">enumStrings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#enumStrings" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the list of possible string values of an input which defines an enumeration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="displayLimits">
+<code class="sig-name descname">displayLimits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#displayLimits" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the <code class="docutils literal notranslate"><span class="pre">(minimum,</span> <span class="pre">maximum)</span></code> values to use to display the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="controlLimits">
+<code class="sig-name descname">controlLimits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlLimits" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the <code class="docutils literal notranslate"><span class="pre">(minimum,</span> <span class="pre">maximum)</span></code> control limits.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="maxLen">
+<code class="sig-name descname">maxLen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#maxLen" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the maximum length of an input with an array value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="host">
+<code class="sig-name descname">host</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#host" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the IP and port of the host hosting the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="caType">
+<code class="sig-name descname">caType</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#caType" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the channel access type of this input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="data">
-<code class="sig-name descname">data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data" title="Permalink to this definition">¶</a></dt>
 <dd><p>PyEpics PV objects contain more informations than value and connection
 status. To access those fields, use this method. The available key are listed
 here: &lt;<a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions">http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions</a>&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<em>string</em>) – the particular information to extract from a PV.</p>
+<dd class="field-odd"><p><strong>key</strong> (<em>string</em><em>, </em><em>optional</em>) – the particular information to extract from a PV.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the requested information.</p>
+<dd class="field-even"><p>the requested information. If key is not specified or is <code class="docutils literal notranslate"><span class="pre">None</span></code> the whole dictionary with all the data is returned.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -376,6 +522,36 @@ condition is true.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just completed a previous <code class="docutils literal notranslate"><span class="pre">put()</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="alarmIncreasing">
+<code class="sig-name descname">alarmIncreasing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmIncreasing" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed from <code class="docutils literal notranslate"><span class="pre">NO_ALARM</span></code> to <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> or from <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> to <code class="docutils literal notranslate"><span class="pre">MAJOR</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="alarmDecreasing">
+<code class="sig-name descname">alarmDecreasing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmDecreasing" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed from <code class="docutils literal notranslate"><span class="pre">MAJOR</span></code> to <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> or from <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> to <code class="docutils literal notranslate"><span class="pre">NO_ALARMs</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="alarmChanging">
+<code class="sig-name descname">alarmChanging</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmChanging" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -523,7 +699,7 @@ approach has some disadvantages:</p>
 arguments to specify custom parameters. For example, you can define an input
 like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">exampleFsm</span><span class="p">(</span><span class="n">fsmBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">psNum</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">psNum</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">exampleFsm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;powerSupply&quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">psNum</span><span class="p">)</span>
@@ -622,7 +798,7 @@ pattern logic, and replacing the parameters with the values passed at run time.<
 <h3>Summary of the steps to implement a map on inputs<a class="headerlink" href="#summary-of-the-steps-to-implement-a-map-on-inputs" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>Use <a class="reference internal" href="#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a> instead of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a>. This is achieved by calling <code class="xref py py-func docutils literal notranslate"><span class="pre">loader.setIoMap()</span></code> function.</p></li>
+<li><p>Use <a class="reference internal" href="#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a> instead of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a>.  This is achieved by calling <a class="reference internal" href="loader.html#setIoMap" title="setIoMap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setIoMap()</span></code></a> method of the <cite>loader</cite> class.</p></li>
 <li><p>Create the map file.</p></li>
 <li><p>Connect to the inputs using the strings defined in the map file, passing all the required parameters as optional arguments.</p></li>
 </ol>

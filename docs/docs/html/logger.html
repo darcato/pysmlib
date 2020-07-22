@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.1.0
               </div>
             
           
@@ -227,14 +227,15 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Choosing the logging method:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smblib</span> <span class="k">import</span> <span class="n">loader</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smblib</span> <span class="kn">import</span> <span class="n">loader</span>
 
-<span class="n">loader</span><span class="o">.</span><span class="n">setVerbosity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># INFO verbosity</span>
-<span class="n">loader</span><span class="o">.</span><span class="n">logToFile</span><span class="p">(</span><span class="s2">&quot;~/fsmlogs/&quot;</span><span class="p">,</span> <span class="s2">&quot;exampleDaemon&quot;</span><span class="p">)</span> <span class="c1"># comment this line to log to stdout</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
+<span class="n">l</span><span class="o">.</span><span class="n">setVerbosity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># INFO verbosity</span>
+<span class="n">l</span><span class="o">.</span><span class="n">logToFile</span><span class="p">(</span><span class="s2">&quot;~/fsmlogs/&quot;</span><span class="p">,</span> <span class="s2">&quot;exampleDaemon&quot;</span><span class="p">)</span> <span class="c1"># comment this line to log to stdout</span>
 
-<span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="o">...</span> <span class="p">)</span> <span class="c1"># load your FSMs</span>
+<span class="n">l</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="o">...</span> <span class="p">)</span> <span class="c1"># load your FSMs</span>
 
-<span class="n">loader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Using log functions inside the FSM code:</p>

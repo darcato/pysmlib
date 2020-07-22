@@ -64,12 +64,13 @@ Choosing the logging method::
 
     from smblib import loader
 
-    loader.setVerbosity(2) # INFO verbosity
-    loader.logToFile("~/fsmlogs/", "exampleDaemon") # comment this line to log to stdout
+    l = loader()
+    l.setVerbosity(2) # INFO verbosity
+    l.logToFile("~/fsmlogs/", "exampleDaemon") # comment this line to log to stdout
 
-    loader.load( ... ) # load your FSMs
+    l.load( ... ) # load your FSMs
 
-    loader.start()
+    l.start()
 
 Using log functions inside the FSM code::
 

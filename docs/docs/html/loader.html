@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.1.0
               </div>
             
           
@@ -180,13 +180,13 @@ shared inputs and all the instances of the user defined FSM as required.</p>
 <p class="admonition-title">Warning</p>
 <p>When upgrading from version 2 to 3 of the library, <code class="docutils literal notranslate"><span class="pre">loader</span></code> becomes a class.
 Update your code from this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">loader</span>
 <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 <span class="n">loader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>to this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">loader</span>
 <span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
 <span class="n">l</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myfsm</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 <span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -287,8 +287,8 @@ is received.</p>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="k">import</span> <span class="n">loader</span>
-<span class="kn">from</span> <span class="nn">myfsm</span> <span class="k">import</span> <span class="n">myfsm</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">loader</span>
+<span class="kn">from</span> <span class="nn">myfsm</span> <span class="kn">import</span> <span class="n">myfsm</span>
 
 <span class="n">l</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
 

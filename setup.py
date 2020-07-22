@@ -9,8 +9,8 @@
 # 3 - rm -rf dist
 # 4 - python setup.py sdist bdist_wheel
 # 5 - twine upload -r testpypi dist/*
-# 6 - python -m twine upload dist/*
-# 7 - cd docs/docs/ && make html
+# 6 - twine upload dist/*
+# 7 - cd docs/ && make html
 # 8 - git commit -am "Documentation update"
 # 9 - git push github master
 
