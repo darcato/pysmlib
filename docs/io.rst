@@ -47,9 +47,11 @@ moment ago.
 
         :returns: the name of the input.
 
-    .. method:: val()
+    .. method:: val(as_string=False)
 
-        :returns: the current value of the input.
+        :param short: as_string.
+        :type key: bool
+        :returns: the current value of the input. If ``as_string`` is ``True`` a string representation of the value is returned.
 
     .. method:: connected ()
 
@@ -63,23 +65,81 @@ moment ago.
 
         :returns: ``True`` if a previous (or no) :meth:`put()` on this input has completed, ``False`` if a :meth:`put()` is being executed in this moment.
 
-    .. method:: time()
+    .. method:: alarm ()
 
-        :returns: the processing time associated with the current value. This is a datetime object.
+        :returns: the alarm status: one of [-2, -1, 0, 1, 2] where 0 is the ``NO_ALARM`` state.
+
+    .. method:: alarmName (short=False)
+
+        :param short: return a short version of the name.
+        :type key: bool
+        :returns: the corresponding alarm string: -2: ``UNDER THRESHOLD MAJOR ALARM``, -1: ``UNDER THRESHOLD MINOR ALARM``, 0: ``NO ALARM``, 1: ``OVER THRESHOLD MINOR ALARM``,  2: ``OVER THRESHOLD MAJOR ALARM``. If the ``short`` parameter is ``True``, only the last two words of the strings are returned.
+
+    .. method:: alarmLimits ()
+
+        :returns: a tuple with the 4 alarm thresholds, in the following order: lower major threshold, lower minor threshold, upper minor threshold, upper major threshold.    
 
     .. method:: pval ()
 
         :returns: the previous value of the input.
 
-    .. method:: data (key)
+    .. method:: time()
+
+        :returns: the processing time associated with the current value. This is a datetime object.
+
+    .. method:: status()
+
+        :returns: the status of the input (1 for OK).
+
+    .. method:: precision()
+
+        :returns: the number of decimal positions to display.
+
+    .. method:: units()
+
+        :returns: the unit of measure of the value.
+
+    .. method:: readAccess()
+
+        :returns: ``True`` if you can read the input.
+
+    .. method:: writeAccess()
+
+        :returns: ``True`` if you can write the input..
+
+    .. method:: enumStrings()
+
+        :returns: the list of possible string values of an input which defines an enumeration.
+
+    .. method:: displayLimits()
+
+        :returns: the ``(minimum, maximum)`` values to use to display the input.
+
+    .. method:: controlLimits()
+
+        :returns: the ``(minimum, maximum)`` control limits.
+
+    .. method:: maxLen()
+
+        :returns: the maximum length of an input with an array value.
+
+    .. method:: host()
+
+        :returns: the IP and port of the host hosting the input.
+
+    .. method:: caType()
+
+        :returns: the channel access type of this input.
+
+    .. method:: data (key=None)
 
         PyEpics PV objects contain more informations than value and connection
         status. To access those fields, use this method. The available key are listed
         here: <http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions>
 
         :param key: the particular information to extract from a PV.
-        :type key: string
-        :returns: the requested information.
+        :type key: string, optional
+        :returns: the requested information. If key is not specified or is ``None`` the whole dictionary with all the data is returned.
 
 .. _io-edges:
 
@@ -130,6 +190,19 @@ condition is true.
     .. method:: putCompleting ()
 
         :returns: ``True`` if the input has just completed a previous ``put()``.
+
+    .. method:: alarmIncreasing ()
+
+        :returns: ``True`` if the alarm severity has just changed from ``NO_ALARM`` to ``MINOR`` or from ``MINOR`` to ``MAJOR``.
+
+    .. method:: alarmDecreasing ()
+
+        :returns: ``True`` if the alarm severity has just changed from ``MAJOR`` to ``MINOR`` or from ``MINOR`` to ``NO_ALARMs``.
+
+
+    .. method:: alarmChanging ()
+
+        :returns: ``True`` if the alarm severity has just changed.
 
 Methods to detect trends
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -329,6 +402,6 @@ pattern logic, and replacing the parameters with the values passed at run time.
 Summary of the steps to implement a map on inputs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    1. Use :class:`mappedIOs` instead of :class:`fsmIOs`. This is achieved by calling :func:`loader.setIoMap()` function.
+    1. Use :class:`mappedIOs` instead of :class:`fsmIOs`.  This is achieved by calling :meth:`setIoMap()` method of the `loader` class.
     2. Create the map file.
     3. Connect to the inputs using the strings defined in the map file, passing all the required parameters as optional arguments.
