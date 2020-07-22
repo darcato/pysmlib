@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.1.0] - 2020-07-22
+
+Adding support for PV alarms.
+
+### Added
+
+- Added ``I/O`` methods to access alarm value and changing state.
+- Added a lot of methods and options to access ``I/O`` properties.
+- Documentation update.
+
 ## [3.0.0] - 2020-07-15
 
 This version breaks back-compatibility by abandoning support for python 2.

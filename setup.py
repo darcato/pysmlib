@@ -4,6 +4,7 @@
 # pip install [-e] .
 #
 # TO UPLOAD NEW RELEASE (maintainer):
+# 0 - Update CHANGELOG.md
 # 1 - git tag <new_tag>
 # 2 - python setup.py clean --all
 # 3 - rm -rf dist
