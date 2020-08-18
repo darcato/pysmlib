@@ -350,7 +350,7 @@ class fsmIO(object):
 
     # changing = last callback was a change callback
     def changing(self):
-        return self._currcb == 'change'
+        return self._currcb == 'change' and self._pval is not None
 
     # disconnecting = last callback was a connection callback due to disconnection
     def disconnecting(self):
