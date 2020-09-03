@@ -391,7 +391,7 @@ class fsmIO(object):
                          2: "OVER THRESHOLD MAJOR ALARM"}
         if short:
             alarm_levels = {k: " ".join(v.split(' ')[-2:]) for k, v in alarm_levels.items()}
-        return alarm_levels.get(self._sevr, None)
+        return alarm_levels.get(self._sevr, 'UNKNOWN ALARM')
 
     # Return alarm thresholds
     def alarmLimits(self):
