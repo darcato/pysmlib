@@ -72,7 +72,7 @@ class loader(object):
         print("Total disconnected inputs: %d out of %d!" % (s, len(ios)))
         signal.pause()
 
-    def start(self):
+    def start(self, blocking=True):
         # start another fsm to report if all the others are alive to epics db
         wd = fsmWatchdog("REPORT", self._fsmsList, tmgr=self._timerManager, ios=self._ioManager, logger=self._logger)
         self._fsmsList.append(wd)
@@ -81,7 +81,8 @@ class loader(object):
             thread.start()
         print("%d fsms started!" % (len(self._fsmsList)-1))  # do not count fsmWatchdog (not issued by user)
 
-        # wait for events
-        signal.signal(signal.SIGINT, self.killAll)
-        signal.signal(signal.SIGUSR1, self.printUnconnectedIOs)
-        signal.pause()
+        if blocking:
+            # wait for events
+            signal.signal(signal.SIGINT, self.killAll)
+            signal.signal(signal.SIGUSR1, self.printUnconnectedIOs)
+            signal.pause()
