@@ -225,6 +225,12 @@ In these cases, all the methods on the inputs which detect edges
         This will return ``True`` if the timer has expired or does not exist.
         
         :returns: timer expired condition
+    
+    .. method:: tmrExpiring (name)
+
+        This will return ``True`` if the timer is expiring in the current event (rising condition). This means that it will return ``True`` only during a single execution of the current state, when the state execution was triggered by the timer expiring.
+        
+        :returns: timer expiring condition
 
     .. method:: isIoConnected ()
 

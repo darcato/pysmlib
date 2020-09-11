@@ -435,6 +435,17 @@ time).</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="fsmBase.tmrExpiring">
+<code class="sig-name descname">tmrExpiring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpiring" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the timer is expiring in the current event (rising condition). This means that it will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only during a single execution of the current state, when the state execution was triggered by the timer expiring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>timer expiring condition</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="fsmBase.isIoConnected">
 <code class="sig-name descname">isIoConnected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoConnected" title="Permalink to this definition">¶</a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only when all the FSM inputs are connected,

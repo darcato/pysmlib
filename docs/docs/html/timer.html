@@ -189,15 +189,14 @@ model.</p>
 <span class="k">def</span> <span class="nf">move_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">doneMoving</span><span class="o">.</span><span class="n">rising</span><span class="p">():</span>            <span class="c1"># If the motor movement completed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;nextState&quot;</span><span class="p">)</span>         <span class="c1"># continue to next state</span>
-    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExpired</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>        <span class="c1"># Timer expired event</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExpiring</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>   <span class="c1"># Timer expired event</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>             <span class="c1"># go to an error state</span>
 </pre></div>
 </div>
 <p>As seen in the example, timers are available as methods of the <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>
 class. After moving the motor, a timer is set with <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code> which means
 that after 10 seconds a special event will be generated and the method
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>. This way the user can perform
-appropriate actions when a movement takes too long to complete.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpiring()</span></code> will return <code class="docutils literal notranslate"><span class="pre">True</span></code>. From this moment, the timer is in the expired state, and the method <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code> will continue to return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrExpired()</span></code> method returns <code class="docutils literal notranslate"><span class="pre">True</span></code> even before the timer is set, and will continue to return <code class="docutils literal notranslate"><span class="pre">True</span></code> after expiration until it is set again.</p>

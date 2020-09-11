@@ -183,7 +183,7 @@ class fsmBase(threading.Thread):
 
     def _process_one_event(self):
         if self._awaker and self._awakerType == 'io':
-            # reset io to catch changements only on the eval triggered by the same changement
+            # reset io to catch changes only on the eval triggered by the same change
             self._awaker.reset()
         self.resetAwaker()
         if len(self._events):
