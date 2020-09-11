@@ -27,6 +27,9 @@ class fsmTimer(object):
         self._pending = False
         self._fsm.trigger(tmrobj=self, timername=self._name, reason="expired")
 
+    def name(self):
+        return self._name
+
     def expd(self):
         return not self._pending
 

@@ -227,6 +227,12 @@ class fsmBase(threading.Thread):
     def tmrExpired(self, name):
         return not name in self._timers or self._timers[name].expd()
 
+    def tmrExpiring(self, name):
+        return name in self._timers \
+            and self._awakerType == 'tmr' \
+            and self._awakerReason == "expired" \
+            and self._awaker is self._timers[name]
+
     def isIoConnected(self):
         stateios = self._cursens if self._cursens is not None else self._mirrors.values()
         return self.allof(stateios.values(), "connected")
