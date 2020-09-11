@@ -24,7 +24,7 @@ class fsmBase(threading.Thread):
             self._tmgr.start()
         else:
             self._tmgr = args['tmgr']
-            if not self._tmgr.isAlive():
+            if not self._tmgr.is_alive():
                 self._tmgr.start()
 
         self._timers = {}

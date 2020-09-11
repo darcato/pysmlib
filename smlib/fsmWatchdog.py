@@ -47,11 +47,11 @@ class fsmWatchdog(fsmBase):
                 self.tmrSet(tmrName, interval)
                 if inp.connected():
                     if mode == "on":
-                        inp.put(int(fsm.isAlive()))
+                        inp.put(int(fsm.is_alive()))
                     elif mode == "off":
-                        inp.put(int(not fsm.isAlive()))
+                        inp.put(int(not fsm.is_alive()))
                     elif mode == "on-off":
-                        if fsm.isAlive():
+                        if fsm.is_alive():
                             inp.put(int(not inp.val()))
                     else:
                         self.logE("Unknown watchdog mode")

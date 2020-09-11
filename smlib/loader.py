@@ -54,10 +54,10 @@ class loader(object):
     def killAll(self, signum, frame): # pylint: disable=unused-argument
         #print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm in self._fsmsList:
-            if fsm.isAlive():
+            if fsm.is_alive():
                 fsm.kill()
         print("Killed all the fsms")
-        if self._timerManager.isAlive():  # if no fsm is loaded it won't be alive
+        if self._timerManager.is_alive():  # if no fsm is loaded it won't be alive
             self._timerManager.kill()
         print("Killed the timer manager")
 
