@@ -31,9 +31,11 @@ class FSM(fsmBase):
     def run_entry(self):
         self.register_event("before_set")
         self.t = datetime.now()
-        self.tmrSet('t1', 0.5)
+        self.tmrSet('t1', 0.2)
+        self.tmrSet('t1', 0.5) # default reset = True, the active timer is reinitialized
         self.register_event("after_set")
         self.tmrSet('t2', 0.7)
+        self.tmrSet('t2', 1, reset=False) # reset = False, the active timer is not changed
         self.exec_n = 0
 
     def run_eval(self):
@@ -80,6 +82,7 @@ def test_timer(loaded_fsm):
     assert ev["exec_n"]==1
     assert ev["t1_expired"]
     assert ev["t1_expiring"]
+    # t1 will expire after 0.5s as it is reset by the second call to tmrSet 
     delta = ev["delta"].seconds + ev["delta"].microseconds/1e6
     assert delta == pytest.approx(0.5, rel=1e-2)
 
@@ -89,6 +92,9 @@ def test_timer(loaded_fsm):
     assert ev["exec_n"]==2
     assert ev["t1_expired"]
     assert not ev["t1_expiring"]
+    # t2 will expire after 0.7s as the reset on second call is false
+    delta = ev["delta"].seconds + ev["delta"].microseconds/1e6
+    assert delta == pytest.approx(0.7, rel=1e-2)
 
     with pytest.raises(Empty):
         ev = events.get(timeout=0.5)
