@@ -33,7 +33,7 @@ class FSM(fsmBase):
     def after_eval(self):
         self.delta = datetime.now() - self.t
         self.t2_expired = self.tmrExpired('t2')
-        #self.t2_expiring = self.tmrExpiring('t2')
+        self.t2_expiring = self.tmrExpiring('t2')
 
 # Will be called to produce the argument to test_timer function
 # and again after its execution to kill all the FSMs
@@ -60,10 +60,10 @@ def test_timer(loaded_fsm):
 
     # after timer t2 is expired
     assert fsm.t2_expired
-    #assert fsm.t2_expiring
+    assert fsm.t2_expiring
     assert fsm.delta.seconds + fsm.delta.microseconds/1e6 == approx(1, rel=1e-2)
     time.sleep(0.5)
 
     # after timer t3 is expired
     assert fsm.t2_expired
-    #assert not fsm.t2_expiring
+    assert not fsm.t2_expiring
