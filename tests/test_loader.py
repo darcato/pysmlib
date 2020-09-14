@@ -1,9 +1,12 @@
 import pytest
 from smlib import fsmBase, loader, fsmLogger, fsmFileLogger, fsmIOs, mappedIOs
 
-def test_setVerbosity():
-    l = loader()
+@pytest.fixture
+def l(scope='module'):
+    return loader()
+    
 
+def test_setVerbosity(l):
     #default value 2=info
     assert l._verbosity == 2
     assert l._logger._level == 2 
@@ -45,9 +48,7 @@ def test_setVerbosity():
         l.setVerbosity("otherstring")
 
 
-def test_logToFile():
-    l=loader()
-    
+def test_logToFile(l):
     #default value
     assert isinstance(l._logger, fsmLogger)
 
@@ -58,22 +59,18 @@ def test_logToFile():
     assert l._logger._level == l._verbosity
 
 
-def test_setIoMap():
-    l = loader()
-    
+def test_setIoMap(l):
     #default
     assert isinstance(l._ioManager, fsmIOs)
 
     l.setIoMap("../examples/config/iomap.txt")
     assert isinstance(l._ioManager, mappedIOs)
 
-def test_load():
-    l = loader()
-    
+def test_load(l):
     #default
     assert len(l._fsmsList) == 0
 
-    class fsm_fake(object):
+    class fsm_fake(fsmBase):
         def __init__(self, name, num, **kwargs):
             self.timerManager = kwargs.get("tmgr", None)
             self.ioManager = kwargs.get("ios", None)
