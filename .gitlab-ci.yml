@@ -1,0 +1,8 @@
+# To run locally: gitlab-runner exec docker nox
+
+image: continuumio/miniconda3
+
+nox:
+  script:
+    - conda install -y -c conda-forge nox 
+    - nox
