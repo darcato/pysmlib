@@ -193,7 +193,7 @@ class mappedIOs(fsmIOs):
                                         candidate = replaces[candidate.upper()]  # use the replacement
                                     else:
                                         raise ValueError("inputMap ERROR, line {}: Cannot find macro substitutions for: {}".format(lines.index(line), candidate))
-                                cmap[pattern.items()[k]] = candidate  # the map of this input has a tuple as key (pattern, strelm) and the parsed candidate as value
+                                cmap[list(pattern.items())[k]] = candidate  # the map of this input has a tuple as key (pattern, strelm) and the parsed candidate as value
                             self._map[key] = (cmap, strgen)  # add the current map (of this input) and the whole strgen to the general map (all inputs)
                         else:
                             ValueError("inputMap ERROR, line {}: Multiple or no assignations in line".format(lines.index(line)))
