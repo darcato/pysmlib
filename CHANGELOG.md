@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.2.0] - 2020-10-29
+
+Adding method to detect the edge on the timer expiration.
+
+### Added
+
+- Added ``tmrExpiring()`` method to access the expiration event.
+- Added some tests, using pytest fixtures, pcaspy server and event queue.
+- Automatic testing with nox and gitlab-ci.
+- Documentation update.
+
+### Changed
+
+- Added ``io.changing()`` now returns ``False`` on the initialization event. Use ``io.initializing()`` instead.
+
 ## [3.1.0] - 2020-07-22
 
 Adding support for PV alarms.
