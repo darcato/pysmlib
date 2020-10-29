@@ -2,6 +2,7 @@ from smlib import fsmBase, loader
 from datetime import datetime
 import pytest
 from queue import Queue, Empty
+import time
 
 # Test timers
 # - must wake up the current state
@@ -25,7 +26,6 @@ class FSM(fsmBase):
         ev["t1_expiring"] = self.tmrExpiring('t1')
         ev["delta"] = datetime.now() - self.t
         ev["exec_n"] = self.exec_n
-        print(ev)
         self.events.put(ev)
 
     def run_entry(self):
@@ -58,26 +58,26 @@ def test_timer(loaded_fsm):
     events = loaded_fsm.events
     
     # before timer t1 is set
-    ev = events.get()
+    ev = events.get(timeout=1)
     assert ev["name"]=="before_set"
     assert ev["t1_expired"]
     assert not ev["t1_expiring"]
 
     # after timer t1 is set
-    ev = events.get()
+    ev = events.get(timeout=1)
     assert ev["name"]=="after_set"
     assert not ev["t1_expired"]
     assert not ev["t1_expiring"]
 
     # direct first run of run_eval
-    ev = events.get()
+    ev = events.get(timeout=1)
     assert ev["name"]=="run_eval"
     assert ev["exec_n"]==0
     assert not ev["t1_expired"]
     assert not ev["t1_expiring"]
 
     # after timer t1 is expired
-    ev = events.get()
+    ev = events.get(timeout=1)
     assert ev["name"]=="run_eval"
     assert ev["exec_n"]==1
     assert ev["t1_expired"]
@@ -87,7 +87,7 @@ def test_timer(loaded_fsm):
     assert delta == pytest.approx(0.5, rel=1e-2)
 
     # after timer t2 is expired
-    ev = events.get()
+    ev = events.get(timeout=1)
     assert ev["name"]=="run_eval"
     assert ev["exec_n"]==2
     assert ev["t1_expired"]
