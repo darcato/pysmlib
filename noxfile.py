@@ -7,7 +7,8 @@ import nox
 
 @nox.session(python=["3.6", "3.7", "3.8"], venv_backend="conda")
 def auto_tests(session):
-    session.conda_install("--channel", "conda-forge", "pcaspy", "pytest", "pytest-cov", "pyepics")
+    session.conda_install("--channel", "gsecars", "pyepics")
+    session.conda_install("--channel", "conda-forge", "pcaspy", "pytest", "pytest-cov")
     session.install("-e", ".", "--no-deps")
     session.cd("tests")
     session.run("pytest", "--cov=smlib")
