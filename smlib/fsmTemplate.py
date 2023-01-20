@@ -51,6 +51,6 @@ class fsmTemplate(fsmBase):
         return fsmBase.gotoState(self, state)
 
     def gotoError(self, errCod, errMsg='default error message'):
-        self.logI("Error: %s" % errMsg)
+        self.logE("Error: %s" % errMsg)
         self.setErrorStatus(errCod, errMsg)
         self.gotoState(self._errst)
