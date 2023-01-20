@@ -9,34 +9,44 @@ Timers to awake a fsm after a certain amount of time.
 
 import threading
 import time
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .fsm import fsmBase
 
 
-# Classe timer, utilizzabile dalle macchine a stati
-class fsmTimer(object):
-    def __init__(self, fsm, name):
+class fsmTimer():
+    '''A timer to awake a fsm after a certain amount of time.'''
+
+    def __init__(self, fsm: 'fsmBase', name: str) -> None:
         self.expire = 0
         self._fsm = fsm
         self._pending = False
         self._name = name
 
-    def reset(self, timeout):
+    def reset(self, timeout: float) -> None:
+        '''Reset the timer to expire after timeout seconds.'''
         self.expire = time.time() + timeout
         self._pending = True
 
-    def trigger(self):
+    def trigger(self) -> None:
+        '''Trigger the corresponding FSM.'''
         self._pending = False
         self._fsm.trigger(tmrobj=self, timername=self._name, reason="expired")
 
-    def name(self):
+    def name(self) -> str:
+        '''Return the name of the timer.'''
         return self._name
 
-    def expd(self):
+    def expd(self) -> bool:
+        '''Return if the timer is expired or not.'''
         return not self._pending
 
 
-# Classe per il management dei timers
 class fsmTimers(threading.Thread):
-    def __init__(self):
+    '''A thread to trigger timers when they expire.'''
+
+    def __init__(self) -> None:
         threading.Thread.__init__(self)
         # lock per l'accesso esclusivo
         self._cond = threading.Condition()
@@ -45,14 +55,16 @@ class fsmTimers(threading.Thread):
         self._timers = []
         self._stop_thread = False
 
-    # routine principale del thread.
-    # Funziona in questo modo: il thread va in sleep per un periodo di tempo pari a quello che manca
-    # allo scadere del prossimo timer (il primo di una lista ordinata per scadenza). Allo scadere dello
-    # sleep, il thread inizia a vedere quanti timer sono scaduti partendo dal prossimo (possono scaderene
-    # anche più di uno quando hanno la stessa ora di scadenza o gli intervalli rientrano nel jitter di
-    # esecuzione del thread). Per ogni timer scaduto esegue il trigger e lo rimuove dalla lista dei timer
-    # pendenti
-    def run(self):
+    def run(self) -> None:
+        '''
+        Main thread routine.
+        It sleeps for the time that remains to the next timer to expire
+        (the first of a list ordered by expiration time). When the sleep expires, the thread
+        starts to see how many timers have expired starting from the next one.
+        More than one can expire when they have the same expiration time or the intervals
+        fall into the jitter of the thread execution. For each expired timer it executes the
+        trigger and removes it from the list of pending timers.
+        '''
         # acquisisce il lock, per avere accesso esclusivo alla lista dei timer
         self._cond.acquire()
         next_wait = None
@@ -78,8 +90,9 @@ class fsmTimers(threading.Thread):
             # NB: wait rilascia il lock permettendo ad altri thread di impostare altri timer
             self._cond.wait(next_wait)
 
-    # imposta un timer
-    def set(self, timer, timeout, reset=True):
+    def set(self, timer: fsmTimer, timeout: float, reset=True) -> None:
+        '''Set a fsmTimer to expire after timeout seconds.'''
+
         # ottiene l'accesso esclusivo alla lista dei timer
         self._cond.acquire()
         try:
@@ -117,6 +130,7 @@ class fsmTimers(threading.Thread):
             self._cond.release()
 
     def kill(self):
+        '''Kill the thread.'''
         self._cond.acquire()
         self._stop_thread = True
         self._cond.notify()

@@ -14,9 +14,13 @@ from .io import fsmIOs, fsmIO
 from .logger import fsmLogger
 
 
-# base class for a finite state machine running in a separate thread
 class fsmBase(threading.Thread):
-    def __init__(self, name, **args):
+    '''
+    Base class for a finite state machine running in a separate thread
+    The user must implement FSM states as methods of the class.
+    '''
+
+    def __init__(self, name:str, **args) -> None:
         super(fsmBase, self).__init__(name=name)
         self._name = name
         if 'tmgr' not in args:
@@ -51,7 +55,7 @@ class fsmBase(threading.Thread):
         self._watchdog = None
 
     # populate the sensityvity list for each state
-    def setSensLists(self, statesWithIos):
+    def setSensLists(self, statesWithIos: dict) -> None:
         # statesWithIos e un dizionario in cui la chiave e il nome dello stato e
         # il valore un array di ingressi utilizzati dallo stato
         for state, iolist in statesWithIos.items():
@@ -60,19 +64,20 @@ class fsmBase(threading.Thread):
                 iodict[io.ioname()] = io
             self._senslists[state] = iodict
 
-    # return the name of the class
-    def fsmname(self):
+    def fsmname(self) -> str:
+        '''Return the name of this fsm'''
         return self._name
 
-    # ottiene accesso esclusivo a questo oggetto
-    def lock(self):
+    def lock(self) -> None:
+        '''Get exclusive access to this object'''
         self._cond.acquire()
 
-    def unlock(self):
+    def unlock(self) -> None:
+        '''Release exclusive access to this object'''
         self._cond.release()
 
-    # cambia stato
-    def gotoState(self, state):
+    def gotoState(self, state: str) -> None:
+        '''Change state to be executed at the next event'''
         self.logD('going to state -> %s' % state)
         if self._nextstate != self._curstate:
             self.logI('gotoState() called twice, ignoring subsequent calls')
@@ -87,31 +92,37 @@ class fsmBase(threading.Thread):
         # metodo exit del prossimo stato
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
-    def gotoPrevState(self):
+    def gotoPrevState(self) -> None:
+        '''Go back to the previous state'''
         if self._prevstatename:
             self.gotoState(self._prevstatename)
 
-    def log(self, lev, msg):
+    def log(self, lev: int, msg: str) -> None:
+        '''Base method to log a message to the default logger'''
         #whites = len(max(self._senslists.keys(), key=len)) - len(self._curstatename)
         self._logger.log(self._name, lev, '[%15s] : %s' % (self._curstatename, msg))
 
-    def logE(self, msg):
+    def logE(self, msg: str) -> None:
+        '''Log an error message'''
         self.log(0, msg)
 
-    def logW(self, msg):
+    def logW(self, msg: str) -> None:
+        '''Log a warning message'''
         self.log(1, msg)
 
-    def logI(self, msg):
+    def logI(self, msg: str) -> None:
+        '''Log an info message'''
         self.log(2, msg)
 
-    def logD(self, msg):
+    def logD(self, msg: str) -> None:
+        '''Log a debug message'''
         self.log(3, msg)
 
-    def logTimeReset(self):
+    def logTimeReset(self) -> None:
         self._logger.resetTime()
 
-    # valuta la macchina a stati nello stato corrente
-    def eval(self):
+    def eval(self) -> bool:
+        '''Execute the current state'''
         changed = False
         if self._nextstate != self._curstate:
             self.logD('%s => %s' % (self._curstatename, self._nextstatename))
@@ -136,8 +147,8 @@ class fsmBase(threading.Thread):
             self.commonExit()
         return changed
 
-    # valuta all'infinito la macchina a stati
-    def eval_forever(self):
+    def eval_forever(self) -> None:
+        '''Main loop of the FSM'''
         while not self._stop_thread:
             changed = self.eval()  # eval viene eseguito senza lock
             self.lock()  # blocca la coda degli eventi
@@ -148,32 +159,28 @@ class fsmBase(threading.Thread):
             self._process_one_event()  # PROCESS ONLY IF RETURN TRUE?
             self.unlock()
 
-    def connect(self, name, **args):
+    def connect(self, name: str, **args) -> fsmIO:
+        '''Create and connect to an fsmIO'''
         thisFsmIO = self._ios.get(name, self, **args)
         if not thisFsmIO in self._mirrors:
             self._mirrors[thisFsmIO] = fsmIO(self, thisFsmIO)
 
         return self._mirrors[thisFsmIO]
 
-    def run(self):
-        #self._killRequested = False
-        # while not self._killRequested:
-        # try:
+    def run(self) -> None:
+        '''Execute the FSM thread'''
         self.eval_forever()
-        # except Exception, e:
-        #    print(repr(e))
-        #    print("\nERROR: fsm %s crashed unexpectedly.\n" % self.fsm.fsmname())
-        # sleep(5)    #should RESET fsm status before restarting.. or boot loop!
 
-    def kill(self):
+    def kill(self) -> None:
+        '''Stop the FSM thread'''
         self._cond.acquire()
         self._stop_thread = True
         self._cond.notify()
         self._cond.release()
         self.join()
 
-    # chiamata dagli ingressi quando arrivano eventi
-    def trigger(self, **args):
+    def trigger(self, **args) -> None:
+        '''Enqueue an event to be processed by the FSM'''
         self._cond.acquire()
 #        self.logD("pushing event %s %d" %(repr(args), len(self._events)+1))
         self._events.append(args)  # append here also the shapshot of all ios
@@ -181,7 +188,8 @@ class fsmBase(threading.Thread):
             self._cond.notify()
         self._cond.release()
 
-    def _process_one_event(self):
+    def _process_one_event(self) -> bool:
+        '''Process one event from the queue'''
         if self._awaker and self._awakerType == 'io':
             # reset io to catch changes only on the eval triggered by the same change
             self._awaker.reset()
@@ -190,7 +198,8 @@ class fsmBase(threading.Thread):
             return self._process_event(**self._events.pop(0))
         return False
 
-    def _process_event(self, **args):
+    def _process_event(self, **args) -> bool:
+        '''Apply the updates carried by the event'''
         self.logD('Consuming event n° %d' % (len(self._events)))
         if 'inputname' in args:
             self.logD("input " + repr(args['inputname']) +
@@ -217,53 +226,68 @@ class fsmBase(threading.Thread):
     def commonEntry(self):
         pass
 
-    def tmrSet(self, name, timeout, reset=True):
+    def tmrSet(self, name: str, timeout: float, reset=True) -> None:
+        '''Set a timer with a given timeout in seconds'''
         if not name in self._timers:
             self._timers[name] = fsmTimer(self, name)
         t = self._timers[name]
         self._tmgr.set(t, timeout, reset)
         self.logD("activating a timer: '%s', %.2fs" % (name, timeout))
 
-    def tmrExpired(self, name):
+    def tmrExpired(self, name: str) -> bool:
+        '''Check if a timer has expired or does not exist'''
         return not name in self._timers or self._timers[name].expd()
 
-    def tmrExpiring(self, name):
+    def tmrExpiring(self, name: str) -> bool:
+        '''The current event is caused by the expiration of a this timer'''
         return name in self._timers \
             and self._awakerType == 'tmr' \
             and self._awakerReason == "expired" \
             and self._awaker is self._timers[name]
 
-    def isIoConnected(self):
+    def isIoConnected(self) -> bool:
+        '''Check if all the IOs are connected'''
         stateios = self._cursens if self._cursens is not None else self._mirrors.values()
         return self.allof(stateios.values(), "connected")
 
-    def anyof(self, objs, method):
+    def isIoInitialized(self) -> bool:
+        '''Check if all the IOs are initialized'''
+        stateios = self._cursens if self._cursens is not None else self._mirrors.values()
+        return self.allof(stateios.values(), "initialized")
+
+    def anyof(self, objs: list, method: str) -> bool:
+        '''Check if any of the IOs is in a given state'''
         return any(getattr(io, method)() for io in objs)
 
-    def allof(self, objs, method):
+    def allof(self, objs: list, method: str) -> bool:
+        '''Check if all the IOs are in a given state'''
         return all(getattr(io, method)() for io in objs)
 
-    def whoWokeMe(self):
+    def whoWokeMe(self) -> tuple:
+        '''Return the object that woke up the FSM'''
         return (self._awaker, self._awakerType)
 
-    def whyWokeMe(self):
+    def whyWokeMe(self) -> str:
+        '''Return the reason that woke up the FSM'''
         return self._awakerReason
 
-    def setAwaker(self, obj, objType, reason):
+    def setAwaker(self, obj: object, objType: str, reason: str) -> None:
+        '''Set the object that woke up the FSM'''
         self._awaker = obj
         self._awakerType = str(objType)
         self._awakerReason = str(reason)
 
-    def resetAwaker(self):
+    def resetAwaker(self) -> None:
+        '''Reset the object that woke up the FSM'''
         self._awaker = None
         self._awakerType = ""
         self._awakerReason = ""
 
-    def setWatchdogInput(self, inp, mode="on-off", interval=1):
+    def setWatchdogInput(self, inp: fsmIO, mode="on-off", interval=1) -> None:
         if isinstance(inp, fsmIO) and mode in ["off", "on", "on-off"]:
             self._watchdog = (inp, mode, interval)
         else:
             raise ValueError("Unrecognized input type or mode")
 
-    def getWatchdogInput(self):
+    def getWatchdogInput(self) -> fsmIO:
         return self._watchdog

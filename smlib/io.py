@@ -14,11 +14,17 @@ from math import sqrt
 from datetime import datetime
 import threading
 import epics
+from typing import Union, TYPE_CHECKING
+
+# avoid circular import
+if TYPE_CHECKING:
+    from .fsm import fsmBase
 
 
-# class representing an IO with epics support for a finite state machine
-class epicsIO(object):
-    def __init__(self, name):
+class epicsIO():
+    '''Class representing an IO with Epics support for a finite state machine.'''
+
+    def __init__(self, name:str) -> None:
         self._name = name
         self._data = {}  # keep all infos arriving with change callback
         self._conn = False  # keeps all infos arriving with connection callback
@@ -27,50 +33,62 @@ class epicsIO(object):
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._cond = threading.Condition()
 
-    def ioname(self):
+    def ioname(self) -> str:
+        '''Return the name of the PV.'''
         return self._name
 
-    def attach(self, obj):
-        self._attached.add(obj)
+    def attach(self, fsm: 'fsmBase') -> None:
+        '''
+        Attach a finite state machine to this IO.
+        When a FSM is attached to an IO, it will be triggered when the IO changes.
+        '''
+        self._attached.add(fsm)
 
-    def isAttached(self, obj):
-        return obj in self._attached
+    def isAttached(self, fsm: 'fsmBase') -> bool:
+        '''Return True if the finite state machine is attached to this IO.'''
+        return fsm in self._attached
 
-    # obtain exclusive access on io
-    def lock(self):
+    def lock(self) -> None:
+        '''Obtain exclusive access on IO.'''
         self._cond.acquire()
 
-    # release exclusive access on io
-    def unlock(self):
+    def unlock(self) -> None:
+        '''Release exclusive access on IO.'''
         self._cond.release()
 
-    # callback connessione - called on connections and disconnections
-    def concb(self, **args):
+    def concb(self, **args) -> None:
+        '''Callback called on connections and disconnections.'''
         self.lock()
         self._conn = args.get('conn', False)
         self._data = {}  # not to keep old values after disconnection
         self.trigger("conn", args)
         self.unlock()
 
-    # callback aggiornamento - value has changed or initial value after connection has arrived
-    def chgcb(self, **args):
+    def chgcb(self, **args) -> None:
+        '''Callback called on value changes, or initial value after connection.'''
         self.lock()
         self._data = args
         self.trigger("change", args)
         self.unlock()
 
-    # put callback - pv processing has been completed after being triggered by a put
-    def putcb(self, **args):
+    def putcb(self, **args) -> None:
+        '''Callback called when a put() and relative PV processing has completed.'''
         if 'fsm' in args:
             args['fsm'].trigger(iobj=self, inputname=self._name, reason="putcomp")
 
-    # "sveglia" le macchine a stati connesse a questo ingresso
-    def trigger(self, cbname, cbdata):
+    def trigger(self, cbname: str, cbdata: dict) -> None:
+        '''
+        Wakes up all the finite state machines attached to this IO.
+        The finite state machines will be triggered with the given callback name and data.
+        '''
         for fsm in self._attached:
             fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)
 
-    # caput and wait for pv processing to complete, then call putcb
-    def put(self, value, caller_fsm):
+    def put(self, value, caller_fsm: 'fsmBase') -> bool:
+        '''
+        Put a value to the PV without wait for the PV processing to complete.
+        Returns False if the put() fails to start, may still fail later.
+        '''
         # cbdata contains the fsm obj to wake up when putCompleted
         cbdata = {"fsm": caller_fsm}
         try:
@@ -80,30 +98,34 @@ class epicsIO(object):
             return False
         return True
 
-    # whether the most recent put() has completed.
-    def putComplete(self):
+    def putComplete(self) -> bool:
+        '''Return True if the most recent put() has completed.'''
         return self._pv.put_complete
 
-    # return pv data dictionary
-    def data(self):
+    def data(self) -> dict:
+        '''Return the data dictionary of the PV.'''
         return self._data
 
-    # returns whether the pv is connected or not
-    def connected(self):
+    def connected(self) -> bool:
+        '''Return True if the PV is connected.'''
         return self._conn
 
 
-# rappresenta una lista di oggetti input
-class fsmIOs(object):
-    def __init__(self):
+class fsmIOs():
+    '''Class representing a list of epicsIO objects.'''
+
+    def __init__(self) -> None:
         self._ios = {}
 
-    def get(self, name, fsm, **args):
+    def get(self, name: str, fsm: 'fsmBase', **args) -> epicsIO:
+        '''Returns the epicsIO object for the given name and attaches it to the given fsm.'''
+        
         # first time this input was requested: we create and attach it
         if name not in self._ios:
             self._ios[name] = epicsIO(name)
 
-        # input already created: if not already attached to the fsm, trigger some fake events to init fsm
+        # input already created: if not already attached to the fsm, trigger some 
+        # fake events to init fsm
         if not self._ios[name].isAttached(fsm):
             io = self._ios[name]
             io.lock()
@@ -116,21 +138,26 @@ class fsmIOs(object):
         fsm.logI("Connecting to PV: {:s}".format(name))
         return self._ios[name]
 
-    def getFsmIO(self, fsm):
+    def getFsmIO(self, fsm: 'fsmBase') -> dict:
+        '''Returns a dictionary of all the epicsIO objects attached to the given fsm.'''
         ret = {}
         for io in self._ios.values():
             if io.isAttached(fsm):
                 ret[io.ioname()] = io
         return ret
 
-    def getAll(self):
+    def getAll(self) -> list:
+        '''Returns a list of all the epicsIO objects.'''
         return self._ios.values()
 
 
-# performs the conversion from procedure internal namings of the inputs
-# and real pv names, base on naming convention and a map
 class mappedIOs(fsmIOs):
-    def __init__(self, mapFile):
+    '''
+    Performs the conversion from procedure internal namings of the inputs
+    and real pv names, base on naming convention and a map
+    '''
+    
+    def __init__(self, mapFile) -> None:
         super(mappedIOs, self).__init__()
         # converts the internal name to the ending of the pv name
 
@@ -205,7 +232,7 @@ class mappedIOs(fsmIOs):
 
     # call parent method to connect pvs with complete names
     # reads from calling fsm the targets and creates base pv name with those infos
-    def get(self, name, fsm, **args):
+    def get(self, name: str, fsm: 'fsmBase', **args) -> epicsIO:
         cmap, strgen = self._map[name]
 
         substitutions = ()  # a tuple containing the parts of pv name in order
@@ -240,12 +267,15 @@ class mappedIOs(fsmIOs):
     #    return iosDict
 
 
-# an io which changes only between evaluation of the fsm, due to progressive effect of the event queque
-# it reflects the changes of an fsmIO, one change per cycle
-# it implements flags to detect changes, edges, connections and disconnections
-# there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently
-class fsmIO(object):
-    def __init__(self, fsm, io):
+class fsmIO():
+    '''
+    An io which changes only between evaluation of the fsm, due to progressive effect of the event 
+    queque it reflects the changes of an fsmIO, one change per cycle
+    it implements flags to detect changes, edges, connections and disconnections
+    there should be a mirror of the same fsmIO for each fsm, in order to use flags indipendently
+    '''
+
+    def __init__(self, fsm: 'fsmBase', io: epicsIO) -> None:
         self._fsm = fsm
 
         self._name = None
@@ -263,7 +293,10 @@ class fsmIO(object):
         self._data = {}  # whole pv data
         self.setBufSize(0)
 
-    def setBufSize(self, s):
+    def setBufSize(self, s: int) -> None:
+        '''
+        Set the size of the circular buffer for the valAvg and valStd methods.
+        '''
         if s == 0:
             self._cbufVal = None
             self._cbufTime = None
@@ -275,7 +308,10 @@ class fsmIO(object):
             self._cbufVal = deque(maxlen=s)
             self._cbufTime = deque(maxlen=s)
 
-    def update(self, reason, cbdata):
+    def update(self, reason: str, cbdata: dict) -> None:
+        '''
+        Update this io with the new data from the callback.
+        '''
         if reason == 'change':
             self._currcb = reason
             self._data = cbdata
@@ -310,105 +346,111 @@ class fsmIO(object):
         else:
             self._currcb = ""  # a callback which does not modify this input (eg: putcb for other io)
 
-    def reset(self):
+    def reset(self) -> None:
+        '''When the state is changed, the current callback is reset'''
         self._currcb = ""
 
-    def ioname(self):
+    def ioname(self) -> str:
+        '''Return the name of the io'''
         return self._name
 
-    # make a put, specifying the object making the put
-    def put(self, value):
+    def put(self, value) -> bool:
+        '''Write a value to the io'''
         self._putComplete = False
         return self._reflectedIO.put(value, self._fsm)
 
     # ----- METHODS THAT CATCH CHANGE ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGE ------
     # ----- They return True if the fsm was woken up by this change in this cycle
 
-    # putCompleting: current awakening callback is a put callback
-    def putCompleting(self):
+    def putCompleting(self) -> bool:
+        '''The current event is a put complete callback of this IO'''
         return self._currcb == 'putcomp'
 
-    # Rising = connected and received at least 2 values, with the last > precedent
-    def rising(self):
+    def rising(self) -> bool:
+        '''The current event increases the value of this IO'''
         return self._currcb == 'change' and self._pval is not None and self._value > self._pval
 
-    # Falling = connected and received at least 2 values, with the last < precedent
-    def falling(self):
+    def falling(self) -> bool:
+        '''The current event decreases the value of this IO'''
         return self._currcb == 'change' and self._pval is not None and self._value < self._pval
 
-    # Alarm Increasing = last alarm > precedent (in absolute value)
-    def alarmIncreasing(self):
+    def alarmIncreasing(self) -> bool:
+        '''The current event increases the alarm value of this IO'''
         return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) > abs(self._psevr)
 
-    # Alarm Decreasing = last alarm < precedent (in absolute value)
-    def alarmDecreasing(self):
+    def alarmDecreasing(self) -> bool:
+        '''The current event decreases the alarm value of this IO'''
         return self._currcb == 'change' and self._psevr is not None and abs(self._sevr) < abs(self._psevr)
 
-    # Alarm changing = change callback and the alarm status != precedent
-    def alarmChanging(self):
+    def alarmChanging(self) -> bool:
+        '''The current event changes the alarm value of this IO'''
         return self._currcb == 'change' and self._psevr is not None and self._sevr != self._psevr
 
-    # changing = last callback was a change callback
-    def changing(self):
+    def changing(self) -> bool:
+        '''The current event changes the value of this IO'''
         return self._currcb == 'change' and self._pval is not None
 
-    # disconnecting = last callback was a connection callback due to disconnection
-    def disconnecting(self):
+    def disconnecting(self) -> bool:
+        '''The current event disconnects this IO'''
         return self._currcb == 'conn' and not self._conn
 
-    # connecting = last callback was a connection callback due to connection
-    def connecting(self):
+    def connecting(self) -> bool:
+        '''The current event connects this IO'''
         return self._currcb == 'conn' and self._conn
 
-    # initializing: the input has changed and this is the first value it got
-    def initializing(self):
+    def initializing(self) -> bool:
+        '''The current event brings the first value to this IO after connection'''
         return self._currcb == 'change' and self._pval is None
 
     # ------METHODS THAT KEEP VAlUE BETWEEN TRIGGERS------
 
-    # returns whether the pv processing after the last put has been completed
-    def putComplete(self):
+    def putComplete(self) -> bool:
+        '''The execution of the last `put` command on this IO has been completed'''
         return self._putComplete
 
-    # return whether the pv is connected and has received the initial value
-    def initialized(self):
+    def initialized(self) -> bool:
+        '''This IO has received the first value after connection'''
         return self._conn and self._value is not None
 
-    # returns whether the pv is connected or not
-    def connected(self):
+    def connected(self) -> bool:
+        '''This IO is connected'''
         return self._conn
 
-    # returns whether the pv is in alarm or not
-    def alarm(self):
+    def alarm(self) -> int:
+        '''The alarm level of this IO'''
         return self._sevr
-    
-    # returns whether the pv is in alarm or not
-    def alarmName(self, short=False):
-        alarm_levels = {-2: "UNDER THRESHOLD MAJOR ALARM", 
-                        -1: "UNDER THRESHOLD MINOR ALARM", 
+
+    def alarmName(self, short=False) -> str:
+        '''The alarm level string of this IO'''
+        alarm_levels = {-2: "UNDER THRESHOLD MAJOR ALARM",
+                        -1: "UNDER THRESHOLD MINOR ALARM",
                          0: "NO ALARM",
-                         1: "OVER THRESHOLD MINOR ALARM", 
+                         1: "OVER THRESHOLD MINOR ALARM",
                          2: "OVER THRESHOLD MAJOR ALARM"}
         if short:
             alarm_levels = {k: " ".join(v.split(' ')[-2:]) for k, v in alarm_levels.items()}
         return alarm_levels.get(self._sevr, 'UNKNOWN ALARM')
 
-    # Return alarm thresholds
-    def alarmLimits(self):
+    def alarmLimits(self) -> tuple:
+        '''The alarm thresholds of this IO'''
         lolo = self._data.get('lower_alarm_limit', None)
         low = self._data.get('lower_warning_limit', None)
         high = self._data.get('upper_warning_limit', None)
         hihi = self._data.get('upper_alarm_limit', None)
         return (lolo, low, high, hihi)
 
-    # return the pv value
-    def val(self, as_string=False):
+    def val(self, as_string=False) -> Union[float, str]:
+        '''Current value of this IO'''
         if as_string:
             return self._data.get('char_value', str(self._value))
         return self._value
 
-    # return the average values in the circular buffer
-    def valAvg(self, timeWeight=False):
+    def valAvg(self, timeWeight=False) -> float:
+        '''
+        Current average value of this IO.
+        Use `setBufSize` to set the size of the circular buffer for the average.
+        If timeWeight is True, the average is weighted by the time passed at each value.
+        '''
         if self._cbufVal is None or len(self._cbufVal) < 2:
             return self._value
 
@@ -419,8 +461,12 @@ class fsmIO(object):
 
         return mean(self._cbufVal)
 
-    # return the sample standard deviation of the circular buffer
-    def valStd(self, timeWeight=False):
+    def valStd(self, timeWeight=False) -> float:
+        '''
+        Current standard deviation of this IO.
+        Use `setBufSize` to set the size of the circular buffer for the calculation.
+        If timeWeight is True, the standard deviation is weighted by the time passed at each value.
+        '''
         if self._cbufVal is None or len(self._cbufVal) < 2:
             return 0
 
@@ -435,8 +481,8 @@ class fsmIO(object):
 
         return stdev(self._cbufVal)
 
-    # return the trend [0 = flat, 1 = increasing, -1 = decreasing]
-    def valTrend(self, k=1):
+    def valTrend(self, k=1) -> int:
+        '''Return the trend of this IO [0 = flat, 1 = increasing, -1 = decreasing]'''
         if self._cbufVal is None or len(self._cbufVal) < 2:
             return 0
         s = stdev(self._cbufVal)
@@ -447,64 +493,64 @@ class fsmIO(object):
             return -1
         return 0
 
-    # return the pv previous value
-    def pval(self):
+    def pval(self) -> float:
+        '''Previous value of this IO'''
         return self._pval
 
-    # return the last timestamp
-    def time(self):
+    def time(self) -> datetime:
+        '''Timestamp of the last value of this IO'''
         return datetime.fromtimestamp(self._timestamp)
 
-    # The status of the PV (1 for OK)
-    def status(self):
+    def status(self) -> int:
+        '''The status of the PV (1 for OK)'''
         return self._data.get('status', None)
-    
-    # PV PREC field
-    def precision(self):
+
+    def precision(self) -> int:
+        '''The precision of the PV (PREC)'''
         return self._data.get('precision', None)
 
-    # PV EGU field
-    def units(self):
+    def units(self) -> str:
+        '''The units of the PV (EGU)'''
         return self._data.get('units', None)
 
-    # True if read access granted
-    def readAccess(self):
+    def readAccess(self) -> bool:
+        '''The read access of the PV'''
         return self._data.get('read_access', None)
 
-    # True if write access granted
-    def writeAccess(self):
+    def writeAccess(self) -> bool:
+        '''The write access of the PV'''
         return self._data.get('write_access', None)
 
-    # Possible string values of enum PV
-    def enumStrings(self):
+    def enumStrings(self) -> list:
+        '''Possible string values of enum PV'''
         return self._data.get('enum_strs', None)
     
-    # LOPR, HOPR
-    def displayLimits(self):
+    def displayLimits(self) -> tuple:
+        '''The display limits of the PV (LOPR, HOPR)'''
         l = self._data.get('lower_disp_limit', None)
         u = self._data.get('upper_disp_limit', None)
-        return (l,u)
+        return (l, u)
 
-    # DRVL, DRVH
-    def controlLimits(self):
+    def controlLimits(self) -> tuple:
+        '''The control limits of the PV (DRVL, DRVH)'''
         l = self._data.get('lower_ctrl_limit', None)
         u = self._data.get('upper_ctrl_limit', None)
-        return (l,u)
+        return (l, u)
 
-    # Waveform NELM field
-    def maxLen(self):
+    def maxLen(self) -> int:
+        '''The maximum length of the waveform PV (NELM)'''
         return self._data.get('nelm', None)
 
-    # IP:port of IOC
-    def host(self):
+    def host(self) -> str:
+        '''The host of the IOC publishing this PV (IP:port)'''
         return self._data.get('host', None)
-    
-    # PV CA type
+
     def caType(self):
+        '''The CA type of the PV'''
         return self._data.get('type', None)
 
-    # return one element from pv data, chosen by key, or all data
     def data(self, key=None):
+        '''Return one element from pv data, chosen by key, or all data'''
         if key is not None:
             return self._data.get(key, None)
         return self._data

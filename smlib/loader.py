@@ -14,7 +14,9 @@ from . import fsmFileLogger, fsmLogger, mappedIOs, fsmIOs, fsmTimers, fsmWatchdo
 
 # class to load multiple fsm
 class loader(object):
-    def __init__(self):
+    '''A class to load multiple fsm and manage them.'''
+
+    def __init__(self) -> None:
         self._timerManager = fsmTimers()
         self._verbosity = 2
         self._logger = fsmLogger(self._verbosity)
@@ -23,7 +25,8 @@ class loader(object):
         self._fsmsList = []
         self._levelStrings = {"error": 0, "warning": 1, "info": 2, "debug": 3}
 
-    def setVerbosity(self, level):
+    def setVerbosity(self, level: int or str) -> None:
+        '''Set the verbosity level of the logger.'''
         if isinstance(level, int):
             n = max(0, min(level, 3))  # log level must be in range [0,3]
         elif isinstance(level, str) and level.lower().strip() in self._levelStrings.keys():
@@ -34,14 +37,17 @@ class loader(object):
         self._verbosity = n
         self._logger.changeLevel(n)
 
-    def logToFile(self, path, prefix):
+    def logToFile(self, path: str, prefix: str):
+        '''Set the logger to log to file.'''
         self._logger = fsmFileLogger(self._verbosity, path, prefix)
 
-    def setIoMap(self, iomap):
+    def setIoMap(self, iomap: str):
+        '''Set the iomap to use for the IOs.'''
         self._ioMap = iomap
         self._ioManager = mappedIOs(self._ioMap)
 
-    def load(self, fsmClass, name, *args, **kwargs):
+    def load(self, fsmClass: type, name: str, *args, **kwargs):
+        '''Load a fsm class to be executed.'''
         kwargs["tmgr"] = self._timerManager
         kwargs["ios"] = self._ioManager
         kwargs["logger"] = self._logger
@@ -52,6 +58,7 @@ class loader(object):
         return fsm
 
     def killAll(self, signum, frame): # pylint: disable=unused-argument
+        '''Kill all the fsms and the timer manager.'''
         #print("Signal: %d -> Going to kill all fsms" % signum)
         for fsm in self._fsmsList:
             if fsm.is_alive():
@@ -62,6 +69,7 @@ class loader(object):
         print("Killed the timer manager")
 
     def printUnconnectedIOs(self, signum, frame): # pylint: disable=unused-argument
+        '''Print all the unconnected IOs.'''
         ios = self._ioManager.getAll()
         s = 0
         print("DISCONNECTED INPUTS:")
@@ -73,6 +81,7 @@ class loader(object):
         signal.pause()
 
     def start(self, blocking=True):
+        '''Start all the loaded fsms.'''
         # start another fsm to report if all the others are alive to epics db
         wd = fsmWatchdog("REPORT", self._fsmsList, tmgr=self._timerManager, ios=self._ioManager, logger=self._logger)
         self._fsmsList.append(wd)

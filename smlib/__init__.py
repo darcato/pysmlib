@@ -32,7 +32,7 @@ __doc__ = """
 from .fsm import fsmBase
 from .logger import fsmLogger, fsmFileLogger
 from .timer import fsmTimers
-from .io import fsmIOs, mappedIOs
+from .io import fsmIOs, mappedIOs, fsmIO
 from .fsmTemplate import fsmTemplate
 from .fsmWatchdog import fsmWatchdog
 from .loader import loader

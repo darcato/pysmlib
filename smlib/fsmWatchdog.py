@@ -13,7 +13,9 @@ from . import fsmBase
 
 
 class fsmWatchdog(fsmBase):
-    def __init__(self, name, fsms, **args):
+    '''A FSM that implements watchdogs for others fsm.'''
+
+    def __init__(self, name: str, fsms: list, **args) -> None:
         super(fsmWatchdog, self).__init__(name, **args)
 
         # a list of timers with timer name and input linked
