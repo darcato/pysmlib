@@ -10,14 +10,14 @@ from smlib.fsm import fsmTimer
 from smlib.fsm import fsmIO
 from time import sleep
 import unittest
-import StringIO
+import io
 import sys
 
 
 class TestFsmLogger(unittest.TestCase):
     def setUp(self):
         self._oldstdout = sys.stdout
-        sys.stdout = StringIO.StringIO()
+        sys.stdout = io.StringIO()
         self.uut = fsmLogger()
 #        self.longMessage = True
 
@@ -137,7 +137,7 @@ class TestFsmIO(unittest.TestCase):
         self.fsm = TestFsmIO.fsm_fake()
 
     def test_conn_connected(self):
-        io = fsmIO("testinput")
+        io = fsmIO(self.fsm, "testinput")
         sleep(0.1)
         io.attach(self.fsm)
         self.assertGreater(len(self.fsm.evts), 0)
@@ -208,7 +208,7 @@ class fsmTest(fsmBase):
         }
         self.setSensLists(statesWithIOs)
         self.gotoState('uno')
-        print self._mirrors
+        print (self._mirrors)
 
     def uno_eval(self):
         if self.counter.val() == 0:
