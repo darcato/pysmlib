@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.3.0] - 2023-01-20
+
+### Added
+
+- Using typing and docstrings to improve code readability and documentation.
+
 ## [3.2.0] - 2020-10-29
 
 Adding method to detect the edge on the timer expiration.

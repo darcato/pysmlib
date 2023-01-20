@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Pysmlib overview &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Pysmlib overview</a><ul>
@@ -170,12 +171,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pysmlib-overview">
+  <section id="pysmlib-overview">
 <span id="id1"></span><h1>Pysmlib overview<a class="headerlink" href="#pysmlib-overview" title="Permalink to this headline">¶</a></h1>
 <p>This section will describe the standard workflow to go from an empty file
 editor to a running finite state machine with pysmlib. Each step will be then
 explained in detail in the following sections of this documentation.</p>
-<div class="section" id="define-your-fsm">
+<section id="define-your-fsm">
 <h2>Define your FSM<a class="headerlink" href="#define-your-fsm" title="Permalink to this headline">¶</a></h2>
 <p>Pysmlib lets you create finite state machines, so the first step is
 to adapt your algorithm to a fsm design. This means identifying all
@@ -187,7 +188,7 @@ perform actions on the external world.</p>
 <p>The library is designed to be connected to EPICS PVs, so EPICS IOCs must be
 running with the required PVs, otherwise the FSM will sleep waiting for the PVs
 to connect.</p>
-<div class="section" id="general-structure">
+<section id="general-structure">
 <h3>General structure<a class="headerlink" href="#general-structure" title="Permalink to this headline">¶</a></h3>
 <p>Each finite state machine is created as a derived class from <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>,
 which is part of pysmlib.</p>
@@ -206,8 +207,8 @@ will be created for each instance of the class.</p>
 <p class="admonition-title">Note</p>
 <p>Never forget to include <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> in the arguments of the super class as they are used by the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a>.</p>
 </div>
-</div>
-<div class="section" id="define-inputs-outputs">
+</section>
+<section id="define-inputs-outputs">
 <h3>Define inputs / outputs<a class="headerlink" href="#define-inputs-outputs" title="Permalink to this headline">¶</a></h3>
 <p>In the class constructor the I/O must be defined. Note that there is
 no actual distinction between a input and a output, both can be read
@@ -230,8 +231,8 @@ be executed when the fsm is run.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s1">&#39;idle&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="implement-states">
+</section>
+<section id="implement-states">
 <h3>Implement states<a class="headerlink" href="#implement-states" title="Permalink to this headline">¶</a></h3>
 <p>The states are simply defined as class methods, with a special
 convention on their names. The basic way of naming them is to give the
@@ -278,9 +279,9 @@ input has changed its value.</p>
 <p>The resulting effect is that, while enabled, this FSM will read
 the value of one input as soon as it changes and write it to another input.
 For a complete description of the available methods see <a class="reference internal" href="io.html#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a>.</p>
-</div>
-</div>
-<div class="section" id="load-and-execute-the-fsm">
+</section>
+</section>
+<section id="load-and-execute-the-fsm">
 <h2>Load and execute the FSM<a class="headerlink" href="#load-and-execute-the-fsm" title="Permalink to this headline">¶</a></h2>
 <p>The best approach with FSMs is to keep them simple and with a specific goal, so
 multiple instances of the same machine may have to be run with different
@@ -316,8 +317,8 @@ kill signal is received (Ctrl-C). This creates an always-on daemon:
 for this reason at the end of its algorithm an FSM should not exit
 but simply go back to an idle state.</p>
 <p>More options can be found at <a class="reference internal" href="loader.html#loader"><span class="std std-ref">Loader and fsm execution</span></a>.</p>
-</div>
-<div class="section" id="complete-example">
+</section>
+<section id="complete-example">
 <h2>Complete example<a class="headerlink" href="#complete-example" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete example described in this section:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#! /usr/bin/python</span>
@@ -358,8 +359,8 @@ but simply go back to an idle state.</p>
 </pre></div>
 </div>
 <p>This code is also available in the examples folder.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

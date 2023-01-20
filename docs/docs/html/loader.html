@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Loader and fsm execution &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -170,7 +171,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="loader-and-fsm-execution">
+  <section id="loader-and-fsm-execution">
 <span id="loader"></span><h1>Loader and fsm execution<a class="headerlink" href="#loader-and-fsm-execution" title="Permalink to this headline">¶</a></h1>
 <p>The loader is provided help the user create a single launcher of many FSMs
 sharing resources. All the configuration options are available via convenient
@@ -193,7 +194,7 @@ Update your code from this:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="loader-class-reference">
+<section id="loader-class-reference">
 <h2><a class="reference internal" href="#id0" title="loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">loader</span></code></a> class reference<a class="headerlink" href="#loader-class-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="id0">
@@ -284,8 +285,8 @@ all the loaded FSMs and suspends the main thread, waiting for a signal.</p>
 is received.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="example">
+</section>
+<section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">loader</span>
 <span class="kn">from</span> <span class="nn">myfsm</span> <span class="kn">import</span> <span class="n">myfsm</span>
@@ -315,8 +316,8 @@ is received.</p>
 <span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="how-to-run-the-application">
+</section>
+<section id="how-to-run-the-application">
 <h2>How to run the application<a class="headerlink" href="#how-to-run-the-application" title="Permalink to this headline">¶</a></h2>
 <p>All the parameters are specified via the loader, so you can easily run the
 application with python. For example, if the example above is saved on a file
@@ -333,8 +334,8 @@ named <code class="docutils literal notranslate"><span class="pre">myDaemon.py</
 </pre></div>
 </div>
 <p>and check logs for the output. This will not affect FSM execution.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

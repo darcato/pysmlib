@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Finite State Machine development &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -171,9 +172,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="finite-state-machine-development">
+  <section id="finite-state-machine-development">
 <span id="fsm-development"></span><h1>Finite State Machine development<a class="headerlink" href="#finite-state-machine-development" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="states-execution">
+<section id="states-execution">
 <h2>States execution<a class="headerlink" href="#states-execution" title="Permalink to this headline">¶</a></h2>
 <a class="reference internal image-reference" href="_images/pysmlib_states.png"><img alt="_images/pysmlib_states.png" class="align-center" src="_images/pysmlib_states.png" style="width: 80%;" /></a>
 <p>Pysmlib handles all the logic to implement the execution of finite state machine
@@ -211,8 +212,8 @@ state, which is often useful! Note that after the <code class="docutils literal 
 does not wait for an event to execute the <code class="docutils literal notranslate"><span class="pre">eval</span></code> one, but it is executed right
 away. The same is true for the execution of the <code class="docutils literal notranslate"><span class="pre">exit</span></code> method after the
 <code class="docutils literal notranslate"><span class="pre">eval</span></code>.</p>
-</div>
-<div class="section" id="state-definition-example">
+</section>
+<section id="state-definition-example">
 <h2>State definition example<a class="headerlink" href="#state-definition-example" title="Permalink to this headline">¶</a></h2>
 <p>In this example we will see how to program a FSM state will all the three
 methods available.</p>
@@ -244,8 +245,8 @@ are explained on the next pages of this documentation.</p>
 <span class="c1">#######################################################################</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="event-types">
+</section>
+<section id="event-types">
 <span id="id1"></span><h2>Event types<a class="headerlink" href="#event-types" title="Permalink to this headline">¶</a></h2>
 <p>The events which trigger the execution of the current state are:</p>
 <blockquote>
@@ -275,8 +276,8 @@ triggered by an event:</p>
 </div></blockquote>
 <p>In these cases, all the methods on the inputs which detect edges
 (<a class="reference internal" href="io.html#io-edges"><span class="std std-ref">Methods to detect edges</span></a>) return false.</p>
-</div>
-<div class="section" id="fsmbase-class-reference">
+</section>
+<section id="fsmbase-class-reference">
 <h2><a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a> class reference<a class="headerlink" href="#fsmbase-class-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="fsmBase">
@@ -488,8 +489,8 @@ meaning that they have received the first connection event.</p>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

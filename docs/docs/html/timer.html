@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Timers &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -169,9 +170,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="timers">
+  <section id="timers">
 <span id="id1"></span><h1>Timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="how-to-use-timers">
+<section id="how-to-use-timers">
 <h2>How to use timers<a class="headerlink" href="#how-to-use-timers" title="Permalink to this headline">¶</a></h2>
 <p>The FSM execution, as explained on <a class="reference internal" href="fsm.html#fsm-development"><span class="std std-ref">Finite State Machine development</span></a>, is event-driven. This
 means that no code will be executed, until an event (eg: an input changes its
@@ -205,8 +206,8 @@ that after 10 seconds a special event will be generated and the method
 same string, the same timer is used and if it is not expired, it is restarted.
 To avoid it being restarted, use a third optional parameter of <code class="xref py py-meth docutils literal notranslate"><span class="pre">tmrSet()</span></code>:
 <code class="docutils literal notranslate"><span class="pre">reset</span></code> and set it to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-</div>
-<div class="section" id="fsmtimers-class">
+</section>
+<section id="fsmtimers-class">
 <h2><a class="reference internal" href="#fsmTimers" title="fsmTimers"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmTimers</span></code></a> class<a class="headerlink" href="#fsmtimers-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="fsmTimers">
@@ -217,8 +218,8 @@ to all the FSMs, or (better) using the <a class="reference internal" href="loade
 manages it.</p>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

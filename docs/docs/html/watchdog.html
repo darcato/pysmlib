@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Watchdog &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -169,7 +170,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="watchdog">
+  <section id="watchdog">
 <span id="id1"></span><h1>Watchdog<a class="headerlink" href="#watchdog" title="Permalink to this headline">¶</a></h1>
 <p>When using pysmlib all the FSM logic is not directly connected to the EPICS IOC
 as is the case for the EPICS sequencer. This means that if the pysmlib
@@ -181,7 +182,7 @@ the IOC about the “online” status of the FSM executable.</p>
 <p>An easy way of doing it is to implement a <cite>watchdog</cite> logic, that is define a
 special input where to perform a periodic <a class="reference internal" href="io.html#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> and signal an “offline”
 status when no <a class="reference internal" href="io.html#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> is received for a time longer than the period.</p>
-<div class="section" id="ioc-side-definition-of-the-pv">
+<section id="ioc-side-definition-of-the-pv">
 <h2>IOC side: definition of the PV<a class="headerlink" href="#ioc-side-definition-of-the-pv" title="Permalink to this headline">¶</a></h2>
 <p>For this purpose a special kind of PV can be used: a binary output. This
 particular record type has a field called <code class="docutils literal notranslate"><span class="pre">HIGH</span></code> which sets the time its value
@@ -203,8 +204,8 @@ sufficient to write to it from a FSM with a smaller period to keep it always at
 </div>
 <p>Refer to the EPICS documentation for more informations on how to define PVs
 inside an IOC.</p>
-</div>
-<div class="section" id="fsm-side-the-watchdog-input">
+</section>
+<section id="fsm-side-the-watchdog-input">
 <h2>FSM side: the watchdog input<a class="headerlink" href="#fsm-side-the-watchdog-input" title="Permalink to this headline">¶</a></h2>
 <p>To signal being online each FSM has to perform periodic <a class="reference internal" href="io.html#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> to its
 watchdog PV. This can be easily achieved with the <code class="xref py py-meth docutils literal notranslate"><span class="pre">setWatchdogInput()</span></code>
@@ -224,7 +225,7 @@ method of <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase">
 <li><p>The watchdog period in seconds.</p></li>
 </ol>
 </div></blockquote>
-<div class="section" id="example">
+<section id="example">
 <h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
 <p>In the following example the input <code class="docutils literal notranslate"><span class="pre">wdog</span></code> is used as watchdog. A <code class="docutils literal notranslate"><span class="pre">put(1)</span></code>
 will be automatically performed to it every 5s, as long as the FSM is running.</p>
@@ -238,9 +239,9 @@ will be automatically performed to it every 5s, as long as the FSM is running.</
     <span class="o">...</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

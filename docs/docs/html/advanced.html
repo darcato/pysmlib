@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Advanced &mdash; Epics Finite State Machines for Python</title>
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -89,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -167,9 +168,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="advanced">
+  <section id="advanced">
 <h1>Advanced<a class="headerlink" href="#advanced" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="understanding-event-handling">
+<section id="understanding-event-handling">
 <h2>Understanding event handling<a class="headerlink" href="#understanding-event-handling" title="Permalink to this headline">¶</a></h2>
 <p>The event described in <a class="reference internal" href="fsm.html#event-types"><span class="std std-ref">Event types</span></a> above are defined by Channel Access
 but it can be important to understand exactly their behaviour, to avoid getting
@@ -205,8 +206,8 @@ from the list, its new value is written to the corresponding input and the
 current state is executed. In cases where there are a lot of received events,
 there may be a certain delay between the time of arrival and the time when it is
 evaluated. For this reason it is important to keep the states simple and non-blocking.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

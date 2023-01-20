@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Logger &mdash; Epics Finite State Machines for Python</title>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.0
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -171,7 +172,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="logger">
+  <section id="logger">
 <span id="id1"></span><h1>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
 <p>All the log messages should be printed with the methods available in
 <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>. This ensures that they are threaded in a coherent way. In the
@@ -180,7 +181,7 @@ verbosity level lower or equal to that are printed. For example a verbosity of
 zero is related to ERROR logging, and messages are always printed, while a
 higher verbosity may be useful only while debugging.</p>
 <p>There are three options to log:</p>
-<div class="section" id="log-to-standard-output">
+<section id="log-to-standard-output">
 <h2>Log to Standard Output<a class="headerlink" href="#log-to-standard-output" title="Permalink to this headline">¶</a></h2>
 <p>This is the easiest method, and the default one if no other is specified. Should
 be used only while developing or on small tests. All the messages are written to
@@ -195,8 +196,8 @@ stdout.</p>
 
 <p>This can be used by creating an instance and passing it as an optional argument
 to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> with no option specified. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
-</div>
-<div class="section" id="log-to-file">
+</section>
+<section id="log-to-file">
 <h2>Log to File<a class="headerlink" href="#log-to-file" title="Permalink to this headline">¶</a></h2>
 <p>A better approach is to write logs to file, in order to open them only when
 needed. For this reason a derivate class of the previous one has been developed:</p>
@@ -219,12 +220,12 @@ will use the prefix, plus the name of the FSM to name the file.</p>
 <p>It can be used directly by  creating an instance and passing it as an optional
 argument to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> and its
 <a class="reference internal" href="loader.html#logToFile" title="logToFile"><code class="xref py py-func docutils literal notranslate"><span class="pre">logToFile()</span></code></a> function. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
-</div>
-<div class="section" id="log-to-syslog">
+</section>
+<section id="log-to-syslog">
 <h2>Log to Syslog<a class="headerlink" href="#log-to-syslog" title="Permalink to this headline">¶</a></h2>
 <p><strong>Planned</strong></p>
-</div>
-<div class="section" id="examples">
+</section>
+<section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Choosing the logging method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smblib</span> <span class="kn">import</span> <span class="n">loader</span>
@@ -246,8 +247,8 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
     <span class="bp">self</span><span class="o">.</span><span class="n">logD</span><span class="p">(</span><span class="s2">&quot;This is an DEBUG level log message!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
