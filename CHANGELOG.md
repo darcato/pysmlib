@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.4.0] - 2023-01-25
+
+### Added
+
+- Added support for arguments in state methods and gotoState.
+
 ## [3.3.0] - 2023-01-20
 
 ### Added
