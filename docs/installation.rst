@@ -133,3 +133,19 @@ and Davide Marcato <davide.marcato@lnl.infn.it> at Legnaro National Laboratories
 INFN. The development started in 2016 in order to have a simpler alternative to
 the Epics sequencer to create high level automation for the RF control
 system of the ALPI accelerator. After that it has been separated in a standalone library to be used for the whole SPES project.
+
+If you use pysmlib in your scientific research, please cite the following paper::
+
+    @article{Marcato:2022kbb,
+        author = "Marcato, Davide and Arena, Giovanni and Bellato, Marco and Bortolato, Damiano and Gelain, Fabio and Lilli, Giordano and Martinelli, Valentina and Munaron, Enrico and Roetta, Marco and Savarese, Giovanni",
+        title = "{Pysmlib: A Python Finite State Machine Library for EPICS}",
+        doi = "10.18429/JACoW-ICALEPCS2021-TUBL05",
+        journal = "JACoW",
+        volume = "ICALEPCS2021",
+        pages = "TUBL05",
+        year = "2022"
+    }
+
+or::
+
+    D. Marcato et al., Pysmlib: A Python Finite State Machine Library for EPICS, Published in: JACoW ICALEPCS2021 (2022), TUBL05. DOI: 10.18429/JACoW-ICALEPCS2021-TUBL05. 
