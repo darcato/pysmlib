@@ -16,7 +16,7 @@ states. The user only has to implement the actual states, as methods of
 :class:`fsmBase`. Each state can have up to 3 methods defined, for example for a
 state called "exampleState" these are:
 
-    ``exampleState_entry()`` [optional]
+    ``exampleState_entry(self, *args, **kwargs)`` [optional]
         This method is executed only once on the transition from previous state
         to the current one ("exampleState"). It can be useful for
         initializations or to perform specific actions related to the
@@ -26,7 +26,7 @@ state called "exampleState" these are:
         method for a manual reset of the error before continuing. If it is
         omitted the ``eval`` method is executed directly.
 
-    ``exampleState_eval()`` [mandatory]
+    ``exampleState_eval(self, *args, **kwargs)`` [mandatory]
         This the the main body of the state, and the only mandatory part. If
         this method is defined, so is the state. If this is the current state,it
         is executed every time an event occurs on one of the FSM inputs. Here
@@ -34,7 +34,7 @@ state called "exampleState" these are:
         actions accordingly. These can be a ``put()`` to write a value to an
         output or a change of FSM state, by calling ``gotoState("nextStateName")``. The FSM  will remain in this state and execute this method until the first call to ``gotoState()``.
 
-    ``exampleState_exit()`` [optional]
+    ``exampleState_exit(self, *args, **kwargs)`` [optional]
         This method is the opposite of the ``entry`` one and is execute only
         on the transition from this state to the next one, with no distinction
         on the destination. It can be used to perform some clean-up after the
@@ -45,7 +45,13 @@ This architecture gives easy access to the first and last execution of the
 state, which is often useful! Note that after the ``entry`` method the library
 does not wait for an event to execute the ``eval`` one, but it is executed right
 away. The same is true for the execution of the ``exit`` method after the
-``eval``.
+``eval``. This is useful to perform some actions right after the transition to
+the next state, without waiting for an event.
+
+These state methods can accept any number of arguments, which are passed to
+them by the ``gotoState()`` method. This is useful to pass some parameters to
+the state, which can be used to perform some actions. For example, if the state
+is called "move" and it is used to move a motor, the ``gotoState('move', 200)`` method can be called with the number of steps to move as argument, and the ``move_entry(self, steps)`` method can use this value to perform the movement. Keyword arguments are also supported. In the same example, one could define the method ``move_entry(self, steps, speed=100)`` with the default speed and call ``gotoState('move', 200, speed=200)`` to move the motor at a different speed. The ``entry``, ``eval`` and ``exit`` method will receive the same arguments during their execution.
 
 
 State definition example
@@ -71,7 +77,7 @@ are explained on the next pages of this documentation. ::
     def move_eval(self):
         if self.doneMoving.rising():            # If the motor movement completed
             self.gotoState("nextState")         # continue to next state
-        elif self.tmrExpired("moveTimeout"):        # Timer expired event
+        elif self.tmrExpired("moveTimeout"):    # Timer expired event
             self.gotoState("error")             # go to an error state
             self.logE("The movement did not complete before timeout reached")   #write to error log
     
@@ -137,20 +143,23 @@ In these cases, all the methods on the inputs which detect edges
     classes is shared between all the FSMs on an executable. The :ref:`loader`
     automatically takes care of these arguments.
 
-    .. method:: gotoState (stateName)
+    .. method:: gotoState (stateName, *args, **kwargs)
 
-        Force a transition from the current state to "stateName". First of all the
-        ``exit`` method of the current state is executed, then the library will
-        look for the three methods associated to the string "stateName", as
+        Force a transition from the current state to "stateName". First of all the ``exit`` method of the current state is executed, then the library will look for the three methods associated to the string "stateName", as
         described above, will execute the ``entry`` and ``eval`` method, then
-        wait for an event. When this arrives, the ``stateName_eval`` method is executed again.
+        wait for an event. When this arrives, the ``stateName_eval`` method is executed again. The parameters passed to this method are passed to the ``entry``, ``eval`` and ``exit`` methods of the new state.
 
         :param stateName:  the name of the next state
         :type stateName:  String
+        :param args:  the positional arguments to pass to the state methods
+        :param kwargs:  the keyword arguments to pass to the state methods
 
-    .. method:: gotoPrevState ()
+    .. method:: gotoPrevState (*args, **kwargs)
 
-        Return to the previous state
+        Return to the previous state. If no args are passed, the previous args are used.
+
+        :param args:  the positional arguments to pass to the state methods
+        :param kwargs:  the keyword arguments to pass to the state methods
 
     .. method:: fsmname ()
 
@@ -238,6 +247,13 @@ In these cases, all the methods on the inputs which detect edges
         meaning that they have received the first connection event.
 
         :returns: ``True`` if all I/Os are connected.
+
+    .. method:: isIoInitialized ()
+
+        This will return ``True`` only when all the FSM inputs are initialized,
+        meaning that they have received the first value.
+
+        :returns: ``True`` if all I/Os are initialized.
 
     .. method:: setWatchdogInput (input[, mode="on-off"[, interval=1]])
 

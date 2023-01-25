@@ -183,7 +183,7 @@ states. The user only has to implement the actual states, as methods of
 state called “exampleState” these are:</p>
 <blockquote>
 <div><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_entry()</span></code> [optional]</dt><dd><p>This method is executed only once on the transition from previous state
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_entry(self,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> [optional]</dt><dd><p>This method is executed only once on the transition from previous state
 to the current one (“exampleState”). It can be useful for
 initializations or to perform specific actions related to the
 transition. For example if this is an error state, one could use the
@@ -192,14 +192,14 @@ off the output of a power supply), and then wait on the <code class="docutils li
 method for a manual reset of the error before continuing. If it is
 omitted the <code class="docutils literal notranslate"><span class="pre">eval</span></code> method is executed directly.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_eval()</span></code> [mandatory]</dt><dd><p>This the the main body of the state, and the only mandatory part. If
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_eval(self,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> [mandatory]</dt><dd><p>This the the main body of the state, and the only mandatory part. If
 this method is defined, so is the state. If this is the current state,it
 is executed every time an event occurs on one of the FSM inputs. Here
 the code should check some conditions and when they are met, perform
 actions accordingly. These can be a <code class="docutils literal notranslate"><span class="pre">put()</span></code> to write a value to an
 output or a change of FSM state, by calling <code class="docutils literal notranslate"><span class="pre">gotoState(&quot;nextStateName&quot;)</span></code>. The FSM  will remain in this state and execute this method until the first call to <code class="docutils literal notranslate"><span class="pre">gotoState()</span></code>.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">exampleState_exit()</span></code> [optional]</dt><dd><p>This method is the opposite of the <code class="docutils literal notranslate"><span class="pre">entry</span></code> one and is execute only
+<dt><code class="docutils literal notranslate"><span class="pre">exampleState_exit(self,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> [optional]</dt><dd><p>This method is the opposite of the <code class="docutils literal notranslate"><span class="pre">entry</span></code> one and is execute only
 on the transition from this state to the next one, with no distinction
 on the destination. It can be used to perform some clean-up after the
 execution of the state and to perform actions related to this
@@ -211,7 +211,12 @@ transition.</p>
 state, which is often useful! Note that after the <code class="docutils literal notranslate"><span class="pre">entry</span></code> method the library
 does not wait for an event to execute the <code class="docutils literal notranslate"><span class="pre">eval</span></code> one, but it is executed right
 away. The same is true for the execution of the <code class="docutils literal notranslate"><span class="pre">exit</span></code> method after the
-<code class="docutils literal notranslate"><span class="pre">eval</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">eval</span></code>. This is useful to perform some actions right after the transition to
+the next state, without waiting for an event.</p>
+<p>These state methods can accept any number of arguments, which are passed to
+them by the <code class="docutils literal notranslate"><span class="pre">gotoState()</span></code> method. This is useful to pass some parameters to
+the state, which can be used to perform some actions. For example, if the state
+is called “move” and it is used to move a motor, the <code class="docutils literal notranslate"><span class="pre">gotoState('move',</span> <span class="pre">200)</span></code> method can be called with the number of steps to move as argument, and the <code class="docutils literal notranslate"><span class="pre">move_entry(self,</span> <span class="pre">steps)</span></code> method can use this value to perform the movement. Keyword arguments are also supported. In the same example, one could define the method <code class="docutils literal notranslate"><span class="pre">move_entry(self,</span> <span class="pre">steps,</span> <span class="pre">speed=100)</span></code> with the default speed and call <code class="docutils literal notranslate"><span class="pre">gotoState('move',</span> <span class="pre">200,</span> <span class="pre">speed=200)</span></code> to move the motor at a different speed. The <code class="docutils literal notranslate"><span class="pre">entry</span></code>, <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">exit</span></code> method will receive the same arguments during their execution.</p>
 </section>
 <section id="state-definition-example">
 <h2>State definition example<a class="headerlink" href="#state-definition-example" title="Permalink to this headline">¶</a></h2>
@@ -234,7 +239,7 @@ are explained on the next pages of this documentation.</p>
 <span class="k">def</span> <span class="nf">move_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">doneMoving</span><span class="o">.</span><span class="n">rising</span><span class="p">():</span>            <span class="c1"># If the motor movement completed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;nextState&quot;</span><span class="p">)</span>         <span class="c1"># continue to next state</span>
-    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExpired</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>        <span class="c1"># Timer expired event</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmrExpired</span><span class="p">(</span><span class="s2">&quot;moveTimeout&quot;</span><span class="p">):</span>    <span class="c1"># Timer expired event</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gotoState</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>             <span class="c1"># go to an error state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logE</span><span class="p">(</span><span class="s2">&quot;The movement did not complete before timeout reached&quot;</span><span class="p">)</span>   <span class="c1">#write to error log</span>
 
@@ -300,23 +305,33 @@ classes is shared between all the FSMs on an executable. The <a class="reference
 automatically takes care of these arguments.</p>
 <dl class="py method">
 <dt id="fsmBase.gotoState">
-<code class="sig-name descname">gotoState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stateName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force a transition from the current state to “stateName”. First of all the
-<code class="docutils literal notranslate"><span class="pre">exit</span></code> method of the current state is executed, then the library will
-look for the three methods associated to the string “stateName”, as
+<code class="sig-name descname">gotoState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stateName</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force a transition from the current state to “stateName”. First of all the <code class="docutils literal notranslate"><span class="pre">exit</span></code> method of the current state is executed, then the library will look for the three methods associated to the string “stateName”, as
 described above, will execute the <code class="docutils literal notranslate"><span class="pre">entry</span></code> and <code class="docutils literal notranslate"><span class="pre">eval</span></code> method, then
-wait for an event. When this arrives, the <code class="docutils literal notranslate"><span class="pre">stateName_eval</span></code> method is executed again.</p>
+wait for an event. When this arrives, the <code class="docutils literal notranslate"><span class="pre">stateName_eval</span></code> method is executed again. The parameters passed to this method are passed to the <code class="docutils literal notranslate"><span class="pre">entry</span></code>, <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">exit</span></code> methods of the new state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stateName</strong> (<em>String</em>) – the name of the next state</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stateName</strong> (<em>String</em>) – the name of the next state</p></li>
+<li><p><strong>args</strong> – the positional arguments to pass to the state methods</p></li>
+<li><p><strong>kwargs</strong> – the keyword arguments to pass to the state methods</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="fsmBase.gotoPrevState">
-<code class="sig-name descname">gotoPrevState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoPrevState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return to the previous state</p>
+<code class="sig-name descname">gotoPrevState</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoPrevState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return to the previous state. If no args are passed, the previous args are used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – the positional arguments to pass to the state methods</p></li>
+<li><p><strong>kwargs</strong> – the keyword arguments to pass to the state methods</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -454,6 +469,18 @@ meaning that they have received the first connection event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if all I/Os are connected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fsmBase.isIoInitialized">
+<code class="sig-name descname">isIoInitialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoInitialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only when all the FSM inputs are initialized,
+meaning that they have received the first value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if all I/Os are initialized.</p>
 </dd>
 </dl>
 </dd></dl>
