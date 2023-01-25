@@ -42,6 +42,9 @@ class fsmBase(threading.Thread):
         self._nextstate = None
         self._nextentry = None
         self._nextexit = None
+        self._nextstateargs = ((), {})
+        self._curstateargs = ((), {})
+        self._prevstateargs = ((), {})
         self._senslists = {}
         self._cursens = {}
         self._cond = threading.Condition()
@@ -76,7 +79,7 @@ class fsmBase(threading.Thread):
         '''Release exclusive access to this object'''
         self._cond.release()
 
-    def gotoState(self, state: str) -> None:
+    def gotoState(self, state: str, *args, **kwargs) -> None:
         '''Change state to be executed at the next event'''
         self.logD('going to state -> %s' % state)
         if self._nextstate != self._curstate:
@@ -85,6 +88,7 @@ class fsmBase(threading.Thread):
         if self._curstatename == state:
             return
         self._nextstatename = state
+        self._nextstateargs = (args, kwargs)
         # metodo eval del prossimo stato
         self._nextstate = getattr(self, '%s_eval' % state)
         # metodo entry del prossimo stato
@@ -92,10 +96,11 @@ class fsmBase(threading.Thread):
         # metodo exit del prossimo stato
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
-    def gotoPrevState(self) -> None:
+    def gotoPrevState(self, **kwargs) -> None:
         '''Go back to the previous state'''
         if self._prevstatename:
-            self.gotoState(self._prevstatename)
+            args = kwargs if kwargs else self._prevstateargs
+            self.gotoState(self._prevstatename, **args)
 
     def log(self, lev: int, msg: str) -> None:
         '''Base method to log a message to the default logger'''
@@ -127,23 +132,25 @@ class fsmBase(threading.Thread):
         if self._nextstate != self._curstate:
             self.logD('%s => %s' % (self._curstatename, self._nextstatename))
             self._prevstatename = self._curstatename
+            self._prevstateargs = self._curstateargs
             self._curstatename = self._nextstatename
             self._curstate = self._nextstate
+            self._curstateargs = self._nextstateargs
             self._curexit = self._nextexit
             self._cursens = self._senslists.get(self._nextstatename, {})
             self.commonEntry()
             if self._nextentry:
                 self.logD('executing %s_entry()' % (self._curstatename))
-                self._nextentry()
+                self._nextentry(*self._curstateargs[0], **self._curstateargs[1])
         self.commonEval()
         self.logD('executing %s_eval()' % (self._curstatename))
-        self._curstate()
+        self._curstate(*self._curstateargs[0], **self._curstateargs[1])
         self.logD('end of %s_eval()' % (self._curstatename))
         if self._nextstate != self._curstate:
             changed = True
             if self._curexit:
                 self.logD('executing %s_exit()' % (self._curstatename))
-                self._curexit()
+                self._curexit(*self._curstateargs[0], **self._curstateargs[1])
             self.commonExit()
         return changed
 
