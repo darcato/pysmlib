@@ -1,42 +1,50 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Pysmlib overview &mdash; Epics Finite State Machines for Python</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Finite State Machine development" href="fsm.html" />
@@ -84,6 +92,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -91,7 +100,7 @@
               
             
             
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Pysmlib overview</a><ul>
@@ -112,6 +121,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -146,18 +156,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Pysmlib overview</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/overview.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -172,12 +184,12 @@
            <div itemprop="articleBody">
             
   <section id="pysmlib-overview">
-<span id="id1"></span><h1>Pysmlib overview<a class="headerlink" href="#pysmlib-overview" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Pysmlib overview<a class="headerlink" href="#pysmlib-overview" title="Permalink to this heading">¶</a></h1>
 <p>This section will describe the standard workflow to go from an empty file
 editor to a running finite state machine with pysmlib. Each step will be then
 explained in detail in the following sections of this documentation.</p>
 <section id="define-your-fsm">
-<h2>Define your FSM<a class="headerlink" href="#define-your-fsm" title="Permalink to this headline">¶</a></h2>
+<h2>Define your FSM<a class="headerlink" href="#define-your-fsm" title="Permalink to this heading">¶</a></h2>
 <p>Pysmlib lets you create finite state machines, so the first step is
 to adapt your algorithm to a fsm design. This means identifying all
 the states required and the conditions that trigger a transition from
@@ -189,7 +201,7 @@ perform actions on the external world.</p>
 running with the required PVs, otherwise the FSM will sleep waiting for the PVs
 to connect.</p>
 <section id="general-structure">
-<h3>General structure<a class="headerlink" href="#general-structure" title="Permalink to this headline">¶</a></h3>
+<h3>General structure<a class="headerlink" href="#general-structure" title="Permalink to this heading">¶</a></h3>
 <p>Each finite state machine is created as a derived class from <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>,
 which is part of pysmlib.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">fsmBase</span>
@@ -209,7 +221,7 @@ will be created for each instance of the class.</p>
 </div>
 </section>
 <section id="define-inputs-outputs">
-<h3>Define inputs / outputs<a class="headerlink" href="#define-inputs-outputs" title="Permalink to this headline">¶</a></h3>
+<h3>Define inputs / outputs<a class="headerlink" href="#define-inputs-outputs" title="Permalink to this heading">¶</a></h3>
 <p>In the class constructor the I/O must be defined. Note that there is
 no actual distinction between a input and a output, both can be read
 and written, the only difference is how they will be used. For this
@@ -233,7 +245,7 @@ be executed when the fsm is run.</p>
 </div>
 </section>
 <section id="implement-states">
-<h3>Implement states<a class="headerlink" href="#implement-states" title="Permalink to this headline">¶</a></h3>
+<h3>Implement states<a class="headerlink" href="#implement-states" title="Permalink to this heading">¶</a></h3>
 <p>The states are simply defined as class methods, with a special
 convention on their names. The basic way of naming them is to give the
 desired name, plus <code class="docutils literal notranslate"><span class="pre">_eval</span></code>. For example the <code class="docutils literal notranslate"><span class="pre">idle</span></code> state can be
@@ -282,7 +294,7 @@ For a complete description of the available methods see <a class="reference inte
 </section>
 </section>
 <section id="load-and-execute-the-fsm">
-<h2>Load and execute the FSM<a class="headerlink" href="#load-and-execute-the-fsm" title="Permalink to this headline">¶</a></h2>
+<h2>Load and execute the FSM<a class="headerlink" href="#load-and-execute-the-fsm" title="Permalink to this heading">¶</a></h2>
 <p>The best approach with FSMs is to keep them simple and with a specific goal, so
 multiple instances of the same machine may have to be run with different
 parameters, or even multiple different machine can be loaded to implement
@@ -319,7 +331,7 @@ but simply go back to an idle state.</p>
 <p>More options can be found at <a class="reference internal" href="loader.html#loader"><span class="std std-ref">Loader and fsm execution</span></a>.</p>
 </section>
 <section id="complete-example">
-<h2>Complete example<a class="headerlink" href="#complete-example" title="Permalink to this headline">¶</a></h2>
+<h2>Complete example<a class="headerlink" href="#complete-example" title="Permalink to this heading">¶</a></h2>
 <p>Here is the complete example described in this section:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#! /usr/bin/python</span>
 <span class="kn">from</span> <span class="nn">smlib</span> <span class="kn">import</span> <span class="n">fsmBase</span><span class="p">,</span> <span class="n">loader</span>
@@ -367,29 +379,29 @@ but simply go back to an idle state.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="fsm.html" class="btn btn-neutral float-right" title="Finite State Machine development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="installation.html" class="btn btn-neutral float-left" title="Download and Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="fsm.html" class="btn btn-neutral float-right" title="Finite State Machine development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Download and Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2023, Davide Marcato
+        &#169; Copyright 2023, Davide Marcato.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -397,7 +409,6 @@ but simply go back to an idle state.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

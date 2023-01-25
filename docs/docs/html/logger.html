@@ -1,42 +1,50 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Logger &mdash; Epics Finite State Machines for Python</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Loader and fsm execution" href="loader.html" />
@@ -84,6 +92,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -91,7 +100,7 @@
               
             
             
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Pysmlib overview</a></li>
@@ -113,6 +122,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -147,18 +157,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Logger</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/logger.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -173,7 +185,7 @@
            <div itemprop="articleBody">
             
   <section id="logger">
-<span id="id1"></span><h1>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Logger<a class="headerlink" href="#logger" title="Permalink to this heading">¶</a></h1>
 <p>All the log messages should be printed with the methods available in
 <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>. This ensures that they are threaded in a coherent way. In the
 loader a verbosity level can be specified, so that only the messages with
@@ -182,14 +194,14 @@ zero is related to ERROR logging, and messages are always printed, while a
 higher verbosity may be useful only while debugging.</p>
 <p>There are three options to log:</p>
 <section id="log-to-standard-output">
-<h2>Log to Standard Output<a class="headerlink" href="#log-to-standard-output" title="Permalink to this headline">¶</a></h2>
+<h2>Log to Standard Output<a class="headerlink" href="#log-to-standard-output" title="Permalink to this heading">¶</a></h2>
 <p>This is the easiest method, and the default one if no other is specified. Should
 be used only while developing or on small tests. All the messages are written to
 the standard output of the console where the executable is launched.</p>
 <p>This is achieved via a base class called <a class="reference internal" href="#fsmLogger" title="fsmLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmLogger</span></code></a>.</p>
 <dl class="py class">
-<dt id="fsmLogger">
-<em class="property">class </em><code class="sig-name descname">fsmLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">level=3</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmLogger" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="fsmLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmLogger</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">level=3</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect all the log messages from the various FSMs loaded and print them to
 stdout.</p>
 </dd></dl>
@@ -198,14 +210,14 @@ stdout.</p>
 to all the FSMs, or (better) using the <a class="reference internal" href="loader.html#id0" title="loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">loader</span></code></a> with no option specified. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
 </section>
 <section id="log-to-file">
-<h2>Log to File<a class="headerlink" href="#log-to-file" title="Permalink to this headline">¶</a></h2>
+<h2>Log to File<a class="headerlink" href="#log-to-file" title="Permalink to this heading">¶</a></h2>
 <p>A better approach is to write logs to file, in order to open them only when
 needed. For this reason a derivate class of the previous one has been developed:</p>
 <dl class="py class">
-<dt id="fsmFileLogger">
-<em class="property">class </em><code class="sig-name descname">fsmFileLogger</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">level=3</em><span class="optional">[</span>, <em class="sig-param">directory=&quot;logs/&quot;</em><span class="optional">[</span>, <em class="sig-param">prefix=&quot;&quot;</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmFileLogger" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="fsmFileLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmFileLogger</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">level=3</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">directory=&quot;logs/&quot;</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">prefix=&quot;&quot;</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmFileLogger" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>level</strong> (<em>int</em>) – the log level</p></li>
 <li><p><strong>directory</strong> (<em>string</em>) – the folder where all the log files will be written</p></li>
@@ -222,11 +234,11 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
 <a class="reference internal" href="loader.html#logToFile" title="logToFile"><code class="xref py py-func docutils literal notranslate"><span class="pre">logToFile()</span></code></a> function. The verbosity can be set with <a class="reference internal" href="loader.html#setVerbosity" title="setVerbosity"><code class="xref py py-func docutils literal notranslate"><span class="pre">setVerbosity()</span></code></a> function.</p>
 </section>
 <section id="log-to-syslog">
-<h2>Log to Syslog<a class="headerlink" href="#log-to-syslog" title="Permalink to this headline">¶</a></h2>
+<h2>Log to Syslog<a class="headerlink" href="#log-to-syslog" title="Permalink to this heading">¶</a></h2>
 <p><strong>Planned</strong></p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Choosing the logging method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smblib</span> <span class="kn">import</span> <span class="n">loader</span>
 
@@ -255,29 +267,29 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="loader.html" class="btn btn-neutral float-right" title="Loader and fsm execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="io.html" class="btn btn-neutral float-left" title="Accessing I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="loader.html" class="btn btn-neutral float-right" title="Loader and fsm execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="io.html" class="btn btn-neutral float-left" title="Accessing I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2023, Davide Marcato
+        &#169; Copyright 2023, Davide Marcato.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -285,7 +297,6 @@ argument to all the FSMs, or (better) using the <a class="reference internal" hr
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
