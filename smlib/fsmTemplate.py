@@ -45,10 +45,10 @@ class fsmTemplate(fsmBase):
         if self._errm:
             self._errm.put(errMsg)
 
-    def gotoState(self, state):
+    def gotoState(self, state, *args, **kwargs):
         if self._stat:
             self._stat.put(state)
-        return fsmBase.gotoState(self, state)
+        return fsmBase.gotoState(self, state, *args, **kwargs)
 
     def gotoError(self, errCod, errMsg='default error message'):
         self.logE("Error: %s" % errMsg)
