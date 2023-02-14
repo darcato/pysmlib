@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.4.1] - 2023-02-14
+
+### Fixed
+  
+- State arguments in ``fsmTemplate``.
+- Fix default value of cursens for ``isIoInitialized()`` and ``isIoConnected()``.
+
 ## [3.4.0] - 2023-01-25
 
 ### Added
