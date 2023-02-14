@@ -254,12 +254,12 @@ class fsmBase(threading.Thread):
 
     def isIoConnected(self) -> bool:
         '''Check if all the IOs are connected'''
-        stateios = self._cursens if self._cursens is not None else self._mirrors.values()
+        stateios = self._cursens if self._cursens else self._mirrors
         return self.allof(stateios.values(), "connected")
 
     def isIoInitialized(self) -> bool:
         '''Check if all the IOs are initialized'''
-        stateios = self._cursens if self._cursens is not None else self._mirrors.values()
+        stateios = self._cursens if self._cursens else self._mirrors
         return self.allof(stateios.values(), "initialized")
 
     def anyof(self, objs: list, method: str) -> bool:
