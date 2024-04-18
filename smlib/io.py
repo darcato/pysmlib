@@ -24,12 +24,13 @@ if TYPE_CHECKING:
 class epicsIO():
     '''Class representing an IO with Epics support for a finite state machine.'''
 
-    def __init__(self, name:str) -> None:
+    def __init__(self, name:str, do_putcb=True) -> None:
         self._name = name
         self._data = {}  # keep all infos arriving with change callback
         self._conn = False  # keeps all infos arriving with connection callback
 
         self._attached = set()  # set of finite state machines using this IO
+        self._do_putcb = do_putcb # whether or not to do a put completion
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._cond = threading.Condition()
 
@@ -90,9 +91,12 @@ class epicsIO():
         Returns False if the put() fails to start, may still fail later.
         '''
         # cbdata contains the fsm obj to wake up when putCompleted
-        cbdata = {"fsm": caller_fsm}
         try:
-            self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+            if self._do_putcb:
+                cbdata = {"fsm": caller_fsm}
+                self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+            else:
+                self._pv.put(value)
         except Exception as e:
             caller_fsm.logE("FAILED putting to pv %s  -- exception: %s" % (self._name, str(e)))
             return False
@@ -122,7 +126,7 @@ class fsmIOs():
         
         # first time this input was requested: we create and attach it
         if name not in self._ios:
-            self._ios[name] = epicsIO(name)
+            self._ios[name] = epicsIO(name, **args)
 
         # input already created: if not already attached to the fsm, trigger some 
         # fake events to init fsm
