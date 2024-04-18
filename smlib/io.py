@@ -24,13 +24,12 @@ if TYPE_CHECKING:
 class epicsIO():
     '''Class representing an IO with Epics support for a finite state machine.'''
 
-    def __init__(self, name:str, do_putcb=True) -> None:
+    def __init__(self, name:str) -> None:
         self._name = name
         self._data = {}  # keep all infos arriving with change callback
         self._conn = False  # keeps all infos arriving with connection callback
 
         self._attached = set()  # set of finite state machines using this IO
-        self._do_putcb = do_putcb # whether or not to do a put completion
         self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._cond = threading.Condition()
 
@@ -85,14 +84,15 @@ class epicsIO():
         for fsm in self._attached:
             fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)
 
-    def put(self, value, caller_fsm: 'fsmBase') -> bool:
+    def put(self, value, caller_fsm: 'fsmBase', wait_complete=True) -> bool:
         '''
-        Put a value to the PV without wait for the PV processing to complete.
+        Put a value to the PV without wait for the PV processing to complete
+        if wait_complete=True or issue regular PV put otherwise.
         Returns False if the put() fails to start, may still fail later.
         '''
         # cbdata contains the fsm obj to wake up when putCompleted
         try:
-            if self._do_putcb:
+            if wait_complete:
                 cbdata = {"fsm": caller_fsm}
                 self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
             else:
@@ -126,7 +126,7 @@ class fsmIOs():
         
         # first time this input was requested: we create and attach it
         if name not in self._ios:
-            self._ios[name] = epicsIO(name, **args)
+            self._ios[name] = epicsIO(name)
 
         # input already created: if not already attached to the fsm, trigger some 
         # fake events to init fsm
@@ -358,10 +358,10 @@ class fsmIO():
         '''Return the name of the io'''
         return self._name
 
-    def put(self, value) -> bool:
+    def put(self, value, wait_complete=True) -> bool:
         '''Write a value to the io'''
         self._putComplete = False
-        return self._reflectedIO.put(value, self._fsm)
+        return self._reflectedIO.put(value, self._fsm, wait_complete)
 
     # ----- METHODS THAT CATCH CHANGE ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGE ------
     # ----- They return True if the fsm was woken up by this change in this cycle
