@@ -84,15 +84,19 @@ class epicsIO():
         for fsm in self._attached:
             fsm.trigger(iobj=self, inputname=self._name, reason=cbname, cbdata=cbdata)
 
-    def put(self, value, caller_fsm: 'fsmBase') -> bool:
+    def put(self, value, caller_fsm: 'fsmBase', use_complete=True) -> bool:
         '''
-        Put a value to the PV without wait for the PV processing to complete.
+        Put a value to the PV without wait for the PV processing to complete
+        if use_complete=True or issue regular PV put otherwise.
         Returns False if the put() fails to start, may still fail later.
         '''
         # cbdata contains the fsm obj to wake up when putCompleted
-        cbdata = {"fsm": caller_fsm}
         try:
-            self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+            if use_complete:
+                cbdata = {"fsm": caller_fsm}
+                self._pv.put(value, callback=self.putcb, use_complete=True, callback_data=cbdata)
+            else:
+                self._pv.put(value)
         except Exception as e:
             caller_fsm.logE("FAILED putting to pv %s  -- exception: %s" % (self._name, str(e)))
             return False
@@ -354,10 +358,10 @@ class fsmIO():
         '''Return the name of the io'''
         return self._name
 
-    def put(self, value) -> bool:
+    def put(self, value, use_complete=True) -> bool:
         '''Write a value to the io'''
         self._putComplete = False
-        return self._reflectedIO.put(value, self._fsm)
+        return self._reflectedIO.put(value, self._fsm, use_complete)
 
     # ----- METHODS THAT CATCH CHANGE ONLY if CHECKED WHEN TRIGGERED BY THE SAME CHANGE ------
     # ----- They return True if the fsm was woken up by this change in this cycle
