@@ -30,8 +30,8 @@ class epicsIO():
         self._conn = False  # keeps all infos arriving with connection callback
 
         self._attached = set()  # set of finite state machines using this IO
-        self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
         self._cond = threading.Condition()
+        self._pv = epics.PV(name, callback=self.chgcb, connection_callback=self.concb, auto_monitor=True)
 
     def ioname(self) -> str:
         '''Return the name of the PV.'''
