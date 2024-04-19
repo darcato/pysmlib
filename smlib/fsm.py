@@ -24,9 +24,11 @@ class fsmBase(threading.Thread):
         super(fsmBase, self).__init__(name=name)
         self._name = name
         if 'tmgr' not in args:
+            self._private_tmgr = True
             self._tmgr = fsmTimers()
             self._tmgr.start()
         else:
+            self._private_tmgr = False
             self._tmgr = args['tmgr']
             if not self._tmgr.is_alive():
                 self._tmgr.start()
@@ -185,6 +187,8 @@ class fsmBase(threading.Thread):
         self._cond.notify()
         self._cond.release()
         self.join()
+        if self._private_tmgr:
+            self._tmgr.kill()
 
     def trigger(self, **args) -> None:
         '''Enqueue an event to be processed by the FSM'''
