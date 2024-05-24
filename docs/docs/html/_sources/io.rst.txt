@@ -63,7 +63,7 @@ moment ago.
         
     .. method:: putComplete ()
 
-        :returns: ``True`` if a previous (or no) :meth:`put()` on this input has completed, ``False`` if a :meth:`put()` is being executed in this moment.
+        :returns: ``True`` if a previous (or no) :meth:`put()` on this input has completed, ``False`` if a :meth:`put()` is being executed in this moment. Applicable only if :meth:`put()` was called with ``use_complete=True``.
 
     .. method:: alarm ()
 
@@ -165,11 +165,11 @@ condition is true.
 
     .. method:: rising ()
 
-        :returns: ``True`` if the input has just gone from 0 to not zero. Best to use only with boolean values (binary PVs).
+        :returns: ``True`` if the input has just increased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from 0 to non-zero.
 
     .. method:: falling ()
 
-        :returns: ``True`` if the input has just gone from not zero to 0. Best to use only with boolean values (binary PVs).
+        :returns: ``True`` if the input has just decreased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from non-zero to 0.
         
     .. method:: changing ()
 
@@ -189,7 +189,7 @@ condition is true.
 
     .. method:: putCompleting ()
 
-        :returns: ``True`` if the input has just completed a previous ``put()``.
+        :returns: ``True`` if the input has just completed a previous :meth:`put()` with ``use_complete=True``.
 
     .. method:: alarmIncreasing ()
 
@@ -264,12 +264,16 @@ Methods to write outputs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 At least, of course, this method can be used to write a new value to a output.
 
-    .. method:: put (newValue)
+    .. method:: put (newValue, use_complete=True)
 
-        Write `newValue` to output.
+        Write `newValue` to output. If `use_complete` is ``True`` PV put will be
+        made asynchronously and the caller will receive a put completion event.
+        Otherwise, if `use_complete` is ``False``, a regular PV put will be performed.
 
         :param newValue: the value to be written
         :type newValue: type depends on PV type
+        :param use_complete: wait for put completion
+        :type use_complete: bool
         :returns: ``False`` if :meth:`put()` failed, ``True`` otherwise. 
 
 .. _io-mapping:

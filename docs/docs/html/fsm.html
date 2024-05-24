@@ -1,105 +1,56 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Finite State Machine development &mdash; Epics Finite State Machines for Python</title>
-  
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/my_theme.css" />
 
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Accessing I/O" href="io.html" />
     <link rel="prev" title="Pysmlib overview" href="overview.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html">
           
-
-          
+          <a href="index.html">
             
-            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
-          
+              <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
           </a>
-
-          
-            
-            
               <div class="version">
                 3.4.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
@@ -119,75 +70,34 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pysmlib</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>Finite State Machine development</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Finite State Machine development</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/fsm.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="finite-state-machine-development">
-<span id="fsm-development"></span><h1>Finite State Machine development<a class="headerlink" href="#finite-state-machine-development" title="Permalink to this heading">¶</a></h1>
+<span id="fsm-development"></span><h1>Finite State Machine development<a class="headerlink" href="#finite-state-machine-development" title="Permalink to this heading"></a></h1>
 <section id="states-execution">
-<h2>States execution<a class="headerlink" href="#states-execution" title="Permalink to this heading">¶</a></h2>
+<h2>States execution<a class="headerlink" href="#states-execution" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/pysmlib_states.png"><img alt="_images/pysmlib_states.png" class="align-center" src="_images/pysmlib_states.png" style="width: 80%;" /></a>
 <p>Pysmlib handles all the logic to implement the execution of finite state machine
 states. The user only has to implement the actual states, as methods of
@@ -231,7 +141,7 @@ the state, which can be used to perform some actions. For example, if the state
 is called “move” and it is used to move a motor, the <code class="docutils literal notranslate"><span class="pre">gotoState('move',</span> <span class="pre">200)</span></code> method can be called with the number of steps to move as argument, and the <code class="docutils literal notranslate"><span class="pre">move_entry(self,</span> <span class="pre">steps)</span></code> method can use this value to perform the movement. Keyword arguments are also supported. In the same example, one could define the method <code class="docutils literal notranslate"><span class="pre">move_entry(self,</span> <span class="pre">steps,</span> <span class="pre">speed=100)</span></code> with the default speed and call <code class="docutils literal notranslate"><span class="pre">gotoState('move',</span> <span class="pre">200,</span> <span class="pre">speed=200)</span></code> to move the motor at a different speed. The <code class="docutils literal notranslate"><span class="pre">entry</span></code>, <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">exit</span></code> method will receive the same arguments during their execution.</p>
 </section>
 <section id="state-definition-example">
-<h2>State definition example<a class="headerlink" href="#state-definition-example" title="Permalink to this heading">¶</a></h2>
+<h2>State definition example<a class="headerlink" href="#state-definition-example" title="Permalink to this heading"></a></h2>
 <p>In this example we will see how to program a FSM state will all the three
 methods available.</p>
 <p>The goal of this snippet of code is to achieve a motor movement and wait for its
@@ -264,7 +174,7 @@ are explained on the next pages of this documentation.</p>
 </div>
 </section>
 <section id="event-types">
-<span id="id1"></span><h2>Event types<a class="headerlink" href="#event-types" title="Permalink to this heading">¶</a></h2>
+<span id="id1"></span><h2>Event types<a class="headerlink" href="#event-types" title="Permalink to this heading"></a></h2>
 <p>The events which trigger the execution of the current state are:</p>
 <blockquote>
 <div><dl class="simple">
@@ -295,10 +205,10 @@ triggered by an event:</p>
 (<a class="reference internal" href="io.html#io-edges"><span class="std std-ref">Methods to detect edges</span></a>) return false.</p>
 </section>
 <section id="fsmbase-class-reference">
-<h2><a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a> class reference<a class="headerlink" href="#fsmbase-class-reference" title="Permalink to this heading">¶</a></h2>
+<h2><a class="reference internal" href="#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a> class reference<a class="headerlink" href="#fsmbase-class-reference" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="fsmBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">tmgr=None</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">ios=None</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">logger=None</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">tmgr=None</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">ios=None</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">logger=None</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase" title="Permalink to this definition"></a></dt>
 <dd><p>Create an empty FSM: usually you derive from this to add custom states.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -317,7 +227,7 @@ classes is shared between all the FSMs on an executable. The <a class="reference
 automatically takes care of these arguments.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.gotoState">
-<span class="sig-name descname"><span class="pre">gotoState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stateName</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoState" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gotoState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stateName</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoState" title="Permalink to this definition"></a></dt>
 <dd><p>Force a transition from the current state to “stateName”. First of all the <code class="docutils literal notranslate"><span class="pre">exit</span></code> method of the current state is executed, then the library will look for the three methods associated to the string “stateName”, as
 described above, will execute the <code class="docutils literal notranslate"><span class="pre">entry</span></code> and <code class="docutils literal notranslate"><span class="pre">eval</span></code> method, then
 wait for an event. When this arrives, the <code class="docutils literal notranslate"><span class="pre">stateName_eval</span></code> method is executed again. The parameters passed to this method are passed to the <code class="docutils literal notranslate"><span class="pre">entry</span></code>, <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">exit</span></code> methods of the new state.</p>
@@ -334,7 +244,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.gotoPrevState">
-<span class="sig-name descname"><span class="pre">gotoPrevState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoPrevState" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gotoPrevState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.gotoPrevState" title="Permalink to this definition"></a></dt>
 <dd><p>Return to the previous state. If no args are passed, the previous args are used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -348,7 +258,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.fsmname">
-<span class="sig-name descname"><span class="pre">fsmname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.fsmname" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fsmname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.fsmname" title="Permalink to this definition"></a></dt>
 <dd><p>Return the FSM name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -359,7 +269,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.logE">
-<span class="sig-name descname"><span class="pre">logE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logE" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">logE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logE" title="Permalink to this definition"></a></dt>
 <dd><p>Write to log with ERROR verbosity level = 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -370,7 +280,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.logW">
-<span class="sig-name descname"><span class="pre">logW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logW" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">logW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logW" title="Permalink to this definition"></a></dt>
 <dd><p>Write to log with WARNING verbosity level = 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -381,7 +291,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.logI">
-<span class="sig-name descname"><span class="pre">logI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logI" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">logI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logI" title="Permalink to this definition"></a></dt>
 <dd><p>Write to log with INFO verbosity level = 2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -392,7 +302,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.logD">
-<span class="sig-name descname"><span class="pre">logD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logD" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">logD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.logD" title="Permalink to this definition"></a></dt>
 <dd><p>Write to log with DEBUG verbosity level = 3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -403,7 +313,7 @@ wait for an event. When this arrives, the <code class="docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.connect" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.connect" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -421,13 +331,13 @@ get further specification on the desired input. See <a class="reference internal
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.start" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.start" title="Permalink to this definition"></a></dt>
 <dd><p>Start FSM execution.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.kill">
-<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.kill" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.kill" title="Permalink to this definition"></a></dt>
 <dd><p>Stop FSM execution. FSM are derivate of <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code> so they
 cannot be restarted after a kill, but a new instance must be created.
 However, a better approach is to use an idle state where the FSM will do
@@ -436,7 +346,7 @@ nothing, instead of killing it.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.tmrSet">
-<span class="sig-name descname"><span class="pre">tmrSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">reset=True</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrSet" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tmrSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">reset=True</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrSet" title="Permalink to this definition"></a></dt>
 <dd><p>Create a new timer which will expire in <cite>timeout</cite> seconds, generating an
 timer expired event, which will execute the FSM current state (at expiration
 time).</p>
@@ -453,7 +363,7 @@ time).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.tmrExpired">
-<span class="sig-name descname"><span class="pre">tmrExpired</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpired" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tmrExpired</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpired" title="Permalink to this definition"></a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the timer has expired or does not exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -464,7 +374,7 @@ time).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.tmrExpiring">
-<span class="sig-name descname"><span class="pre">tmrExpiring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpiring" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tmrExpiring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.tmrExpiring" title="Permalink to this definition"></a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the timer is expiring in the current event (rising condition). This means that it will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only during a single execution of the current state, when the state execution was triggered by the timer expiring.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -475,7 +385,7 @@ time).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.isIoConnected">
-<span class="sig-name descname"><span class="pre">isIoConnected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoConnected" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">isIoConnected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoConnected" title="Permalink to this definition"></a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only when all the FSM inputs are connected,
 meaning that they have received the first connection event.</p>
 <dl class="field-list simple">
@@ -487,7 +397,7 @@ meaning that they have received the first connection event.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.isIoInitialized">
-<span class="sig-name descname"><span class="pre">isIoInitialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoInitialized" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">isIoInitialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.isIoInitialized" title="Permalink to this definition"></a></dt>
 <dd><p>This will return <code class="docutils literal notranslate"><span class="pre">True</span></code> only when all the FSM inputs are initialized,
 meaning that they have received the first value.</p>
 <dl class="field-list simple">
@@ -499,7 +409,7 @@ meaning that they have received the first value.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.setWatchdogInput">
-<span class="sig-name descname"><span class="pre">setWatchdogInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">mode=&quot;on-off&quot;</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">interval=1</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.setWatchdogInput" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">setWatchdogInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">mode=&quot;on-off&quot;</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">interval=1</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.setWatchdogInput" title="Permalink to this definition"></a></dt>
 <dd><p>This set an input to be used for the <a class="reference internal" href="watchdog.html#watchdog"><span class="std std-ref">Watchdog</span></a> logic.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -517,7 +427,7 @@ meaning that they have received the first value.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fsmBase.getWatchdogInput">
-<span class="sig-name descname"><span class="pre">getWatchdogInput</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.getWatchdogInput" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">getWatchdogInput</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fsmBase.getWatchdogInput" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the input set as a watchdog or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -533,50 +443,33 @@ meaning that they have received the first value.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="io.html" class="btn btn-neutral float-right" title="Accessing I/O" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="overview.html" class="btn btn-neutral float-left" title="Pysmlib overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="io.html" class="btn btn-neutral float-right" title="Accessing I/O" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2023, Davide Marcato.
-
-    </p>
+    <p>&#169; Copyright 2024, Davide Marcato.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

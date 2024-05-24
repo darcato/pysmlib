@@ -1,105 +1,56 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Accessing I/O &mdash; Epics Finite State Machines for Python</title>
-  
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/my_theme.css" />
 
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="_static/pysmlib_smalllogo.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Logger" href="logger.html" />
     <link rel="prev" title="Finite State Machine development" href="fsm.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html">
           
-
-          
+          <a href="index.html">
             
-            <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
-          
+              <img src="_static/pysmlib_logo.png" class="logo" alt="Logo"/>
           </a>
-
-          
-            
-            
               <div class="version">
                 3.4.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Download and Installation</a></li>
@@ -117,83 +68,42 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pysmlib</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>Accessing I/O</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Accessing I/O</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/io.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="accessing-i-o">
-<span id="accessing-io"></span><h1>Accessing I/O<a class="headerlink" href="#accessing-i-o" title="Permalink to this heading">¶</a></h1>
+<span id="accessing-io"></span><h1>Accessing I/O<a class="headerlink" href="#accessing-i-o" title="Permalink to this heading"></a></h1>
 <p>Input and Outputs are the only way to comunicate with the external world. In the
 context of pysmlib each input is directly mapped to an EPICS PV. Furthermore the
 term “input” is used as a generic term for I/O because each input can be also an
 output. In fact, all the PVs can be read (get) and written (put).</p>
 <p>The main class to access inputs is <a class="reference internal" href="#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a>.</p>
 <section id="fsmio-class-reference">
-<h2><a class="reference internal" href="#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> class reference<a class="headerlink" href="#fsmio-class-reference" title="Permalink to this heading">¶</a></h2>
+<h2><a class="reference internal" href="#fsmIO" title="fsmIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIO</span></code></a> class reference<a class="headerlink" href="#fsmio-class-reference" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="fsmIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmIO" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsmIO" title="Permalink to this definition"></a></dt>
 <dd><p>This represent an input as an object. The constructor should be never called
 directly by the user. Each input is created with the method
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code>, which returns an instance of this class.</p>
@@ -210,7 +120,7 @@ methods. These are divided in four macro categories:</p>
 </ul>
 </div></blockquote>
 <section id="methods-for-stationary-conditions">
-<span id="io-status"></span><h3>Methods for stationary conditions<a class="headerlink" href="#methods-for-stationary-conditions" title="Permalink to this heading">¶</a></h3>
+<span id="io-status"></span><h3>Methods for stationary conditions<a class="headerlink" href="#methods-for-stationary-conditions" title="Permalink to this heading"></a></h3>
 <p>These kind of methods return static informations about an input. For example
 they can tell if an input is connected or not, but do not give any informations
 on when the input has connected: it may have connected yesterday or just a
@@ -218,7 +128,7 @@ moment ago.</p>
 <blockquote>
 <div><dl class="py method">
 <dt class="sig sig-object py" id="ioname">
-<span class="sig-name descname"><span class="pre">ioname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ioname" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ioname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ioname" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the name of the input.</p>
@@ -228,7 +138,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="val">
-<span class="sig-name descname"><span class="pre">val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">as_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#val" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">as_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#val" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>short</strong> – as_string.</p>
@@ -241,7 +151,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="connected">
-<span class="sig-name descname"><span class="pre">connected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connected" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connected" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input is connected, via Channel Access.</p>
@@ -251,7 +161,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="initialized">
-<span class="sig-name descname"><span class="pre">initialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initialized" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">initialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initialized" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input is connected and has received the first value, meaning its value is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
@@ -261,17 +171,17 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="putComplete">
-<span class="sig-name descname"><span class="pre">putComplete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putComplete" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">putComplete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putComplete" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if a previous (or no) <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> on this input has completed, <code class="docutils literal notranslate"><span class="pre">False</span></code> if a <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> is being executed in this moment.</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if a previous (or no) <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> on this input has completed, <code class="docutils literal notranslate"><span class="pre">False</span></code> if a <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> is being executed in this moment. Applicable only if <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> was called with <code class="docutils literal notranslate"><span class="pre">use_complete=True</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarm">
-<span class="sig-name descname"><span class="pre">alarm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarm" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarm" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the alarm status: one of [-2, -1, 0, 1, 2] where 0 is the <code class="docutils literal notranslate"><span class="pre">NO_ALARM</span></code> state.</p>
@@ -281,7 +191,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarmName">
-<span class="sig-name descname"><span class="pre">alarmName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#alarmName" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarmName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#alarmName" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>short</strong> – return a short version of the name.</p>
@@ -294,7 +204,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarmLimits">
-<span class="sig-name descname"><span class="pre">alarmLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmLimits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarmLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmLimits" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a tuple with the 4 alarm thresholds, in the following order: lower major threshold, lower minor threshold, upper minor threshold, upper major threshold.</p>
@@ -304,7 +214,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pval">
-<span class="sig-name descname"><span class="pre">pval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pval" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pval" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the previous value of the input.</p>
@@ -314,7 +224,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="time">
-<span class="sig-name descname"><span class="pre">time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#time" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#time" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the processing time associated with the current value. This is a datetime object.</p>
@@ -324,7 +234,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#status" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#status" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the status of the input (1 for OK).</p>
@@ -334,7 +244,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="precision">
-<span class="sig-name descname"><span class="pre">precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#precision" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#precision" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the number of decimal positions to display.</p>
@@ -344,7 +254,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="units">
-<span class="sig-name descname"><span class="pre">units</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#units" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">units</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#units" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the unit of measure of the value.</p>
@@ -354,7 +264,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="readAccess">
-<span class="sig-name descname"><span class="pre">readAccess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#readAccess" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">readAccess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#readAccess" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you can read the input.</p>
@@ -364,7 +274,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="writeAccess">
-<span class="sig-name descname"><span class="pre">writeAccess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#writeAccess" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">writeAccess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#writeAccess" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you can write the input..</p>
@@ -374,7 +284,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="enumStrings">
-<span class="sig-name descname"><span class="pre">enumStrings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#enumStrings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">enumStrings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#enumStrings" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the list of possible string values of an input which defines an enumeration.</p>
@@ -384,7 +294,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="displayLimits">
-<span class="sig-name descname"><span class="pre">displayLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#displayLimits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">displayLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#displayLimits" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <code class="docutils literal notranslate"><span class="pre">(minimum,</span> <span class="pre">maximum)</span></code> values to use to display the input.</p>
@@ -394,7 +304,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="controlLimits">
-<span class="sig-name descname"><span class="pre">controlLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlLimits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">controlLimits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlLimits" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <code class="docutils literal notranslate"><span class="pre">(minimum,</span> <span class="pre">maximum)</span></code> control limits.</p>
@@ -404,7 +314,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="maxLen">
-<span class="sig-name descname"><span class="pre">maxLen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#maxLen" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">maxLen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#maxLen" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the maximum length of an input with an array value.</p>
@@ -414,7 +324,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="host">
-<span class="sig-name descname"><span class="pre">host</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#host" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">host</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#host" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the IP and port of the host hosting the input.</p>
@@ -424,7 +334,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="caType">
-<span class="sig-name descname"><span class="pre">caType</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#caType" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">caType</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#caType" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the channel access type of this input.</p>
@@ -434,7 +344,7 @@ moment ago.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="data">
-<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data" title="Permalink to this definition"></a></dt>
 <dd><p>PyEpics PV objects contain more informations than value and connection
 status. To access those fields, use this method. The available key are listed
 here: &lt;<a class="reference external" href="http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions">http://cars9.uchicago.edu/software/python/pyepics3/pv.html#user-supplied-callback-functions</a>&gt;</p>
@@ -451,7 +361,7 @@ here: &lt;<a class="reference external" href="http://cars9.uchicago.edu/software
 </div></blockquote>
 </section>
 <section id="methods-to-detect-edges">
-<span id="io-edges"></span><h3>Methods to detect edges<a class="headerlink" href="#methods-to-detect-edges" title="Permalink to this heading">¶</a></h3>
+<span id="io-edges"></span><h3>Methods to detect edges<a class="headerlink" href="#methods-to-detect-edges" title="Permalink to this heading"></a></h3>
 <p>As described on <a class="reference internal" href="fsm.html#fsm-development"><span class="std std-ref">Finite State Machine development</span></a>, while the FSM is running the current
 state is executed exactly once for each event received on any of the FSM inputs,
 or timers. With the methods on this group the user can access the information on
@@ -471,27 +381,27 @@ condition is true.</p>
 <blockquote>
 <div><dl class="py method">
 <dt class="sig sig-object py" id="rising">
-<span class="sig-name descname"><span class="pre">rising</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rising" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rising</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rising" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just gone from 0 to not zero. Best to use only with boolean values (binary PVs).</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just increased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from 0 to non-zero.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falling">
-<span class="sig-name descname"><span class="pre">falling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#falling" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">falling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#falling" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just gone from not zero to 0. Best to use only with boolean values (binary PVs).</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just decreased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from non-zero to 0.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="changing">
-<span class="sig-name descname"><span class="pre">changing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#changing" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">changing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#changing" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just changed its value.</p>
@@ -501,7 +411,7 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="connecting">
-<span class="sig-name descname"><span class="pre">connecting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connecting" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connecting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#connecting" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just connected.</p>
@@ -511,7 +421,7 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="disconnecting">
-<span class="sig-name descname"><span class="pre">disconnecting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#disconnecting" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">disconnecting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#disconnecting" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just disconnected. Note that the Channel Access uses timeouts to check the connection status, so a certain delay is to be expected.</p>
@@ -521,7 +431,7 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="initializing">
-<span class="sig-name descname"><span class="pre">initializing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initializing" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">initializing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initializing" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just received its first value after a connection.</p>
@@ -531,17 +441,17 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="putCompleting">
-<span class="sig-name descname"><span class="pre">putCompleting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putCompleting" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">putCompleting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#putCompleting" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just completed a previous <code class="docutils literal notranslate"><span class="pre">put()</span></code>.</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the input has just completed a previous <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">use_complete=True</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarmIncreasing">
-<span class="sig-name descname"><span class="pre">alarmIncreasing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmIncreasing" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarmIncreasing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmIncreasing" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed from <code class="docutils literal notranslate"><span class="pre">NO_ALARM</span></code> to <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> or from <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> to <code class="docutils literal notranslate"><span class="pre">MAJOR</span></code>.</p>
@@ -551,7 +461,7 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarmDecreasing">
-<span class="sig-name descname"><span class="pre">alarmDecreasing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmDecreasing" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarmDecreasing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmDecreasing" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed from <code class="docutils literal notranslate"><span class="pre">MAJOR</span></code> to <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> or from <code class="docutils literal notranslate"><span class="pre">MINOR</span></code> to <code class="docutils literal notranslate"><span class="pre">NO_ALARMs</span></code>.</p>
@@ -561,7 +471,7 @@ condition is true.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="alarmChanging">
-<span class="sig-name descname"><span class="pre">alarmChanging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmChanging" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">alarmChanging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#alarmChanging" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the alarm severity has just changed.</p>
@@ -572,14 +482,14 @@ condition is true.</p>
 </div></blockquote>
 </section>
 <section id="methods-to-detect-trends">
-<h3>Methods to detect trends<a class="headerlink" href="#methods-to-detect-trends" title="Permalink to this heading">¶</a></h3>
+<h3>Methods to detect trends<a class="headerlink" href="#methods-to-detect-trends" title="Permalink to this heading"></a></h3>
 <p>In scientific applications, when an input has a physical meaning, it is often
 useful to filter it, get average value or check the trend over a certain amount
 of time. These methods cover most common use cases.</p>
 <blockquote>
 <div><dl class="py method">
 <dt class="sig sig-object py" id="setBufSize">
-<span class="sig-name descname"><span class="pre">setBufSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numOfElements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#setBufSize" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">setBufSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numOfElements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#setBufSize" title="Permalink to this definition"></a></dt>
 <dd><p>This method has to be called at initialization, or before accessing the
 following methods. It creates a buffer of the required lenght where the read
 value are stored to be used as the input history.</p>
@@ -594,7 +504,7 @@ one, so transient effects can be observed. Python <code class="docutils literal 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="valAvg">
-<span class="sig-name descname"><span class="pre">valAvg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeWeight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#valAvg" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valAvg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeWeight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#valAvg" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>timeWeight</strong> (<em>bool</em><em>, </em><em>optional.</em>) – <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want a time-weighted average.</p>
@@ -612,7 +522,7 @@ to <code class="docutils literal notranslate"><span class="pre">True</span></cod
 
 <dl class="py method">
 <dt class="sig sig-object py" id="valStd">
-<span class="sig-name descname"><span class="pre">valStd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#valStd" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valStd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#valStd" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Standard deviation of the elements on the buffer.</p>
@@ -622,7 +532,7 @@ to <code class="docutils literal notranslate"><span class="pre">True</span></cod
 
 <dl class="py method">
 <dt class="sig sig-object py" id="valTrend">
-<span class="sig-name descname"><span class="pre">valTrend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#valTrend" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valTrend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#valTrend" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>k</strong> (<em>float</em><em>, </em><em>optional</em>) – comparison coefficient</p>
@@ -650,16 +560,21 @@ or decreasing trend in the series.</p>
 </div></blockquote>
 </section>
 <section id="methods-to-write-outputs">
-<h3>Methods to write outputs<a class="headerlink" href="#methods-to-write-outputs" title="Permalink to this heading">¶</a></h3>
+<h3>Methods to write outputs<a class="headerlink" href="#methods-to-write-outputs" title="Permalink to this heading"></a></h3>
 <p>At least, of course, this method can be used to write a new value to a output.</p>
 <blockquote>
 <div><dl class="py method">
 <dt class="sig sig-object py" id="put">
-<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#put" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write <cite>newValue</cite> to output.</p>
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_complete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#put" title="Permalink to this definition"></a></dt>
+<dd><p>Write <cite>newValue</cite> to output. If <cite>use_complete</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code> PV put will be
+made asynchronously and the caller will receive a put completion event.
+Otherwise, if <cite>use_complete</cite> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, a regular PV put will be performed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>newValue</strong> (<em>type depends on PV type</em>) – the value to be written</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>newValue</strong> (<em>type depends on PV type</em>) – the value to be written</p></li>
+<li><p><strong>use_complete</strong> (<em>bool</em>) – wait for put completion</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if <a class="reference internal" href="#put" title="put"><code class="xref py py-meth docutils literal notranslate"><span class="pre">put()</span></code></a> failed, <code class="docutils literal notranslate"><span class="pre">True</span></code> otherwise.</p>
@@ -671,12 +586,12 @@ or decreasing trend in the series.</p>
 </section>
 </section>
 <section id="i-o-mapping-and-parametrization">
-<span id="io-mapping"></span><h2>I/O mapping and parametrization<a class="headerlink" href="#i-o-mapping-and-parametrization" title="Permalink to this heading">¶</a></h2>
+<span id="io-mapping"></span><h2>I/O mapping and parametrization<a class="headerlink" href="#i-o-mapping-and-parametrization" title="Permalink to this heading"></a></h2>
 <p>The inputs on pysmlib are shared resources. The class which groups all the
 inputs from all the FSMs is:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="fsmIOs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmIOs</span></span><a class="headerlink" href="#fsmIOs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fsmIOs</span></span><a class="headerlink" href="#fsmIOs" title="Permalink to this definition"></a></dt>
 <dd><p>This is a container of all inputs of all FSMs. It can be instantiated by the
 user and passed to all the FSMs as a optional argument (<code class="docutils literal notranslate"><span class="pre">ios</span></code>, see
 <a class="reference internal" href="fsm.html#fsmBase" title="fsmBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmBase</span></code></a>) on their constructor, but the easiest way is to use
@@ -700,7 +615,7 @@ approach has some disadvantages:</p>
 <p>For all these reasons a derivate class of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a> has been developed.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mappedIOs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mappedIOs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mappedIOs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mappedIOs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mappedIOs" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mapFile</strong> (<em>string</em>) – the path to a map file, whose syntax is described below.</p>
@@ -808,7 +723,7 @@ is replaced with <code class="docutils literal notranslate"><span class="pre">Al
 and then the PV name will be built concatenating all the pieces following the
 pattern logic, and replacing the parameters with the values passed at run time.</p>
 <section id="summary-of-the-steps-to-implement-a-map-on-inputs">
-<h3>Summary of the steps to implement a map on inputs<a class="headerlink" href="#summary-of-the-steps-to-implement-a-map-on-inputs" title="Permalink to this heading">¶</a></h3>
+<h3>Summary of the steps to implement a map on inputs<a class="headerlink" href="#summary-of-the-steps-to-implement-a-map-on-inputs" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>Use <a class="reference internal" href="#mappedIOs" title="mappedIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">mappedIOs</span></code></a> instead of <a class="reference internal" href="#fsmIOs" title="fsmIOs"><code class="xref py py-class docutils literal notranslate"><span class="pre">fsmIOs</span></code></a>.  This is achieved by calling <a class="reference internal" href="loader.html#setIoMap" title="setIoMap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setIoMap()</span></code></a> method of the <cite>loader</cite> class.</p></li>
@@ -822,50 +737,33 @@ pattern logic, and replacing the parameters with the values passed at run time.<
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="logger.html" class="btn btn-neutral float-right" title="Logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="fsm.html" class="btn btn-neutral float-left" title="Finite State Machine development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="logger.html" class="btn btn-neutral float-right" title="Logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2023, Davide Marcato.
-
-    </p>
+    <p>&#169; Copyright 2024, Davide Marcato.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

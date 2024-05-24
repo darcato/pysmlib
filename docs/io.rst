@@ -165,11 +165,11 @@ condition is true.
 
     .. method:: rising ()
 
-        :returns: ``True`` if the input has just gone from 0 to not zero. Best to use only with boolean values (binary PVs).
+        :returns: ``True`` if the input has just increased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from 0 to non-zero.
 
     .. method:: falling ()
 
-        :returns: ``True`` if the input has just gone from not zero to 0. Best to use only with boolean values (binary PVs).
+        :returns: ``True`` if the input has just decreased. Best to use with boolean values (binary PVs), where it can be used to detect transitions from non-zero to 0.
         
     .. method:: changing ()
 
