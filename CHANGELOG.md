@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introducing event objects
 - Using ```ca.replace_printf_handler()``` to silence ca warnings.
 
+## [3.4.2] - 2024-05-24
+
+### Fixed
+
+- Fix race condition on fsm restart (#1 by @hinxx).
+- Make `use_complete` optional in put methods (#3 by @hinxx).
+- Fix documentation of `rising` and `falling` methods.
+
 ## [3.4.1] - 2023-02-14
 
 ### Fixed
