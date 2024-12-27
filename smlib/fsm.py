@@ -98,11 +98,14 @@ class fsmBase(threading.Thread):
         # metodo exit del prossimo stato
         self._nextexit = getattr(self, '%s_exit' % state, None)
 
-    def gotoPrevState(self, **kwargs) -> None:
+    def gotoPrevState(self, *args, **kwargs) -> None:
         '''Go back to the previous state'''
         if self._prevstatename:
-            args = kwargs if kwargs else self._prevstateargs
-            self.gotoState(self._prevstatename, **args)
+            if args or kwargs:
+                self.gotoState(self._prevstatename, *args, **kwargs)
+            else:
+                args, kwargs = self._prevstateargs
+                self.gotoState(self._prevstatename, *args, **kwargs)
 
     def log(self, lev: int, msg: str) -> None:
         '''Base method to log a message to the default logger'''
